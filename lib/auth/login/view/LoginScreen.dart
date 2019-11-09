@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/auth/mobileVerification/view/MobileVerificationScreen.dart';
+import 'package:go_luggage_free/auth/shared/Utils.dart';
+import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -64,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'Please Enter Phone Number'
                       ),
                       controller: phoneController,
-                      validator: phoneValidator,
+                      validator: Utils.phoneValidator,
                     ),
                   ),
                 ),
@@ -80,55 +83,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       obscureText: true,
                       controller: passwordController,
-                      validator: passwordValidator,
+                      validator: Utils.passwordValidator,
                     ),
                   ),
                 ),
-                customLoginButton(text: "LOGIN", onPressed: onLoginPressesed),
+                CustomWidgets.customLoginButton(text: "LOGIN", onPressed: onLoginPressesed),
                 Flexible(
                   flex: 1,
                   child: Center(child: Text("OR", style: TextStyle(color: Colors.black), textAlign: TextAlign.center,),),
                 ),
-                customLoginButton(text: "CREATE NEW ACCOUNT", onPressed: onSignUpPressed),
+                CustomWidgets.customLoginButton(text: "CREATE NEW ACCOUNT", onPressed: onSignUpPressed),
               ],
             ),
           ),
         ),
       );
     }
-  }
-
-  Widget customLoginButton({String text, Function onPressed}) {
-    return Flexible(
-      flex: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.lightBlue,
-          borderRadius: BorderRadius.all(Radius.circular(25.0))
-        ),
-        child: FlatButton(
-          child: SizedBox(
-            width: 200.0,
-            height: 50.0,
-            child: Center(child: Text(text, 
-              style: TextStyle(color: Colors.white),
-              textAlign: TextAlign.center,
-              )
-            ),
-         ),
-          color: Colors.transparent,
-          onPressed: onPressed,
-        ),
-      ),
-    );
-  }
-
-  passwordValidator(String password) {
-
-  }
-
-  phoneValidator(String phone) {
-
   }
 
   onLoginPressesed() {
@@ -156,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  onSignUpPressed() {
-
+  onSignUpPressed() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MobileVerificationScreen()));
   }
 }

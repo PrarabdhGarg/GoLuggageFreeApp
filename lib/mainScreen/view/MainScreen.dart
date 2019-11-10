@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
+import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
 
 class MainScreen extends StatefulWidget {
   int currentPage;
@@ -23,7 +24,7 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
     switch(index) {
       case 0: {
         print("Entered Case 0");
-        return Container(child: Text("Home Page"));
+        return HomePage();
       }
       default: {
         print("Entered Case default");

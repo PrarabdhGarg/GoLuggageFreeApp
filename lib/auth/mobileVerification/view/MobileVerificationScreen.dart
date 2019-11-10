@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
+import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
 
 class MobileVerificationScreen extends StatefulWidget {
   @override
@@ -69,7 +70,9 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
     );
   }
 
-  onSubmitPressed() {
-
+  onSubmitPressed() async {
+    if(_formKey.currentState.validate()) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+    }
   }
 }

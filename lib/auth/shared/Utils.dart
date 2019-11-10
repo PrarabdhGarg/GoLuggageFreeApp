@@ -6,4 +6,8 @@ class Utils {
   static String phoneValidator(String phone) {
 
   }
+
+  static String emailValidator(String email) {
+    
+  }
 }

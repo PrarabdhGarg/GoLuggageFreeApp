@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
+import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -116,7 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  onSignUpPressed() {
-
+  onSignUpPressed() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
   }
 }

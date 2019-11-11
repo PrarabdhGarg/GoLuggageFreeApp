@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
@@ -45,7 +44,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
               child: Container(
                 margin: EdgeInsets.only(bottom: 16),
                 padding: EdgeInsets.all(32),
-                child: Image.network("https://goluggagefree.com/image/hero-img-blue.png"),
+                child: Image.network("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"),
               ),
             ),
             Flexible(

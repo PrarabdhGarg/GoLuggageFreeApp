@@ -44,7 +44,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Container(
                   margin: EdgeInsets.only(bottom: 16),
                   padding: EdgeInsets.all(32),
-                  child: Image.network("https://goluggagefree.com/image/hero-img-blue.png"),
+                  child: Image.network("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"),
                 ),
               ),
               Flexible(

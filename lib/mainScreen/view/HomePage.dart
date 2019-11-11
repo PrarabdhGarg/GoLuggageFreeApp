@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/mainScreen/view/StoreListingsPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget getCurrentPage() {
     if(currentPageId == 0) {
-      return SizedBox.expand(child: Text("Home Page"),);      
+      return SizedBox.expand(child: StoreListingsPage(),);      
     } else {
       return SizedBox.expand(child: Text("Bookings"),);
     }

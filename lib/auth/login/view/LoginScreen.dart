@@ -6,7 +6,7 @@ import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    precacheImage(NetworkImage("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"), context);
+    // precacheImage(NetworkImage("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"), context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),

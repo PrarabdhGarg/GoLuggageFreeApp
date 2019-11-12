@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/StoreListingsPage.dart';
+import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -21,7 +22,10 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             isLoading ? Center(child: CircularProgressIndicator(),) : Flexible(
               flex: 1,
-              child: getCurrentPage(),
+              child: Container(
+                color: Colors.white,
+                child: getCurrentPage(),
+              ),
             ),
             customBottomNav()
           ],
@@ -46,10 +50,20 @@ class _HomePageState extends State<HomePage> {
             flex: 1,
             child: SizedBox.expand(
               child: Container(
-                color: Colors.blue[900],
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: HexColor("#DDDDDD"),
+                      spreadRadius: 1.0,
+                      blurRadius: 1.0
+                    )
+                  ]
+                ),
+                // color: Colors.white,
                 child: Center(
                   child: FlatButton(
-                    child: Icon(Icons.home, color: Colors.white,),
+                    child: Icon(Icons.home, color: Colors.blue[900],),
                     onPressed: () {
                       setState(() {
                        currentPageId = 0; 
@@ -64,10 +78,20 @@ class _HomePageState extends State<HomePage> {
             flex: 1,
             child: SizedBox.expand(
               child: Container(
-                color: Colors.blue[900],
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: HexColor("#DDDDDD"),
+                      spreadRadius: 1.0,
+                      blurRadius: 1.0,
+                    )
+                  ]
+                ),
+                // color: Colors.white,
                 child: Center(
                   child: FlatButton(
-                    child: Icon(Icons.print, color: Colors.white,),
+                    child: Icon(Icons.print, color: Colors.blue[900],),
                     onPressed: () {
                       setState(() {
                        currentPageId = 1; 

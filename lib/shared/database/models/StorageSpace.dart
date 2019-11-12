@@ -1,3 +1,5 @@
+import 'package:go_luggage_free/shared/utils/Helpers.dart';
+
 class StorageSpace {
   String id;
   String name;
@@ -10,6 +12,7 @@ class StorageSpace {
   double costPerHour;
   String timings; 
   String ownerImage;
+  String displayLocation;
 
   StorageSpace({
     this.id,
@@ -22,7 +25,8 @@ class StorageSpace {
     this.rating,
     this.costPerHour,
     this.timings,
-    this.ownerName
+    this.ownerName,
+    this.displayLocation
   });
 
   factory StorageSpace.fromResponse(Map<String, dynamic> response) => new StorageSpace(
@@ -36,6 +40,7 @@ class StorageSpace {
     hasCCTV: response["hasCCTV"],
     ownerName: response["ownerName"].toString(),
     timings: response["timings"].toString(),
-    storeImages: response["storeImages"]
+    storeImages: extractListFromJson(response["storeImages"]),
+    displayLocation: response["area"]["name"].toString() + "Cloakroom"
   );
 }

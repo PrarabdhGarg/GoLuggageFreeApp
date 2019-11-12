@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
 class StoreListingsPage extends StatefulWidget {
   @override
@@ -9,12 +13,21 @@ class StoreListingsPage extends StatefulWidget {
 class _StoreListingsPageState extends State<StoreListingsPage> {
   String getStrorageSpaces = """
   query {
-    areas {
-      _id
       storageSpaces {
+      _id
+      name
+      ownerName
+      storeImages
+      hasCCTV
+      address
+      longAddress
+      rating
+      costPerHour
+      timings
+      ownerImage
+      area {
         _id
         name
-        location
       }
     }
   }
@@ -36,18 +49,92 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
             return Center(child: CircularProgressIndicator(),);
           }
           print("Result = ${result.data.toString()}");
-          // return Container(child: Text("Data fetched successfully"),);
-          var repositories = result.data['areas'];
+          List<dynamic> storageSpaces = result.data['storageSpaces'];
           return ListView.builder(
-            itemCount: repositories.length,
+            itemCount: storageSpaces.length,
             itemBuilder: (context, index) {
-              return Text(
-                repositories[index]['_id'].toString()
-              );
+              return StorageWidget(StorageSpace.fromResponse(storageSpaces[index]));
             },
           );
         },
       ),
+    );
+  }
+
+  Widget StorageWidget(StorageSpace storageSpace) {
+    return Container(
+      margin: EdgeInsets.only(left: 8.0, top: 6.0, right: 8.0, bottom: 6.0),
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: HexColor("#DDDDDD"),
+            spreadRadius: 1.0,
+            blurRadius: 1.0,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 3,
+            child: Container(
+              child: Image.network(
+                imageBaseUrl + storageSpace.storeImages[0],
+                fit: BoxFit.scaleDown,
+                gaplessPlayback: true,                
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 7,
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Text(storageSpace.name, style: TextStyle(fontWeight: FontWeight.bold),),
+                  ),
+                  Container(
+                    child: Text(storageSpace.displayLocation,),
+                  ),
+                  Container(height: 20,),
+                  Container(
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: RatingBarIndicator(
+                        rating: storageSpace.rating,
+                        itemCount: 5,
+                        itemBuilder: (context, index) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        itemSize: 20,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Container(
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.videocam, color: storageSpace.hasCCTV ? Colors.green: Colors.transparent),
+                Container(child: Text("CCTV", style: TextStyle(fontSize: 8,color: storageSpace.hasCCTV ? Colors.black : Colors.transparent),),),
+                Container(height: 15,),
+                Container(child: Text("\u20B9${storageSpace.costPerHour*24}", style: TextStyle(fontWeight: FontWeight.bold),),),
+                Container(child: Text("Per Day", style: TextStyle(fontSize: 12),),),
+              ],
+            ),
+          )
+        ],
+      )
     );
   }
 }

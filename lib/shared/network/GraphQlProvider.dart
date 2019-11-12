@@ -3,7 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 ValueNotifier<GraphQLClient> getClient() {
   final HttpLink httpLink = HttpLink(
-    uri: "https://luglog.herokuapp.com/graphql"
+    uri: "http://test.goluggagefree.com/graphql"
   );
 
   /* final AuthLink authLink = AuthLink(

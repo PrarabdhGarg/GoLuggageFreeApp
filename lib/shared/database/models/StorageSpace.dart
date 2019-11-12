@@ -13,6 +13,7 @@ class StorageSpace {
   String timings; 
   String ownerImage;
   String displayLocation;
+  String location;
 
   StorageSpace({
     this.id,
@@ -26,7 +27,8 @@ class StorageSpace {
     this.costPerHour,
     this.timings,
     this.ownerName,
-    this.displayLocation
+    this.displayLocation,
+    this.location
   });
 
   factory StorageSpace.fromResponse(Map<String, dynamic> response) => new StorageSpace(
@@ -42,5 +44,14 @@ class StorageSpace {
     timings: response["timings"].toString(),
     storeImages: extractListFromJson(response["storeImages"]),
     displayLocation: response["area"]["name"].toString() + "Cloakroom"
+  );
+
+  factory StorageSpace.fromResponseForBookings(Map<String, dynamic> response) => new StorageSpace(
+    id: response["_id"].toString(),
+    name: response["name"].toString(),
+    ownerImage: response["ownerImage"].toString(),
+    address: response["address"].toString(),
+    longAddress: response["longAddress"].toString(),
+    location: response["location"].toString()
   );
 }

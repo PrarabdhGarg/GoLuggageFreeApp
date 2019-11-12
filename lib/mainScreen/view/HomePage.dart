@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/mainScreen/view/PastBookingsList.dart';
 import 'package:go_luggage_free/mainScreen/view/StoreListingsPage.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     if(currentPageId == 0) {
       return SizedBox.expand(child: StoreListingsPage(),);      
     } else {
-      return SizedBox.expand(child: Text("Bookings"),);
+      return SizedBox.expand(child: PastBookings(),);
     }
   }
 

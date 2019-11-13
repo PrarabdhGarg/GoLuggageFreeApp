@@ -6,15 +6,15 @@ BookingTicket bookingTicketFromJson(String str) => BookingTicket.fromJson(json.d
 
 class BookingTicket {
     String id;
-    dynamic bookingId;
+    String bookingId;
     StorageSpace storageSpace;
-    String netStorageCost;
+    double netStorageCost;
     String checkInTime;
     String checkOutTime;
-    dynamic bookingPersonName;
+    String bookingPersonName;
     int numberOfBags;
-    String numberOfDays;
-    dynamic userGovtId;
+    int numberOfDays;
+    String userGovtId;
 
     BookingTicket({
         this.id,
@@ -30,15 +30,15 @@ class BookingTicket {
     });
 
     factory BookingTicket.fromJson(Map<String, dynamic> json) => BookingTicket(
-        id: json["_id"],
-        bookingId: json["bookingID"],
+        id: json["_id"].toString(),
+        bookingId: json["bookingID"].toString(),
         storageSpace: StorageSpace.fromResponseForBookings(json["storageSpace"]),
-        netStorageCost: json["netStorageCost"],
-        checkInTime: json["checkInTime"],
-        checkOutTime: json["checkOutTime"],
-        bookingPersonName: json["bookingPersonName"],
-        numberOfBags: json["numberOfBags"],
-        numberOfDays: json["numberOfDays"],
-        userGovtId: json["userGovtId"],
+        netStorageCost: double.parse(json["netStorageCost"].toString()),
+        checkInTime: json["checkInTime"].toString(),
+        checkOutTime: json["checkOutTime"].toString(),
+        bookingPersonName: json["bookingPersonName"].toString(),
+        numberOfBags: int.parse(json["numberOfBags"].toString()),
+        numberOfDays: int.parse(json["numberOfDays"].toString()),
+        userGovtId: json["userGovtId"].toString(),
     );
 }

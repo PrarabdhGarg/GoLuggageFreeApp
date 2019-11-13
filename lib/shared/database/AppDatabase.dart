@@ -1,3 +1,4 @@
+import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
 import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
 import 'package:sqflite/sqflite.dart';
@@ -23,6 +24,7 @@ class AppDatabase {
   static final AppDatabase databaseProvider = AppDatabase._();
   static Database _database;
   StorageSpacesDAO _storageSpacesDAO;
+  BookingTicketDAO _bookingTicketDAO;
 
   /* This function uses the concept of lazy loading to initialize a new instance of the database, only when the
    * instance was not previously created, other-wise it returns the previous instance only 
@@ -57,6 +59,20 @@ class AppDatabase {
         storageId TEXT PRIMARY KEY,
         FOREIGN KEY(id) REFERENCES Storages(id)
       )''');
+      // TODO: Add non-null assertion to booking Id after testing
+      await db.execute('''CREATE TABLE BookingTickets(
+        id TEXT PRIMARY KEY NOT NULL,
+        bookingId TEXT NULL,
+        storageSpaceId TEXT NOT NULL,
+        netStorageCost REAL NOT NULL,
+        checkInTime TEXT NOT NULL,
+        checkOutTime TEXT NOT NULL,
+        bookingPersonName TEXT,
+        numberOfBags INTEGER,
+        numberOfDays INTEGER,
+        userGovtId TEXT
+        FOREIGN KEY(storageSpaceId) REFERENCES Storages(id)
+      )''');
     });
     return _database;
   }
@@ -65,7 +81,13 @@ class AppDatabase {
     if(_storageSpacesDAO != null) {
       return _storageSpacesDAO;
     }
-    Database _database = await getDatabase();
     return StorageSpacesDAO();
+  }
+
+  Future<BookingTicketDAO> getBookingTicketDAO() async {
+    if(_bookingTicketDAO != null) {
+      return _bookingTicketDAO;
+    }
+    return BookingTicketDAO();
   }
 }

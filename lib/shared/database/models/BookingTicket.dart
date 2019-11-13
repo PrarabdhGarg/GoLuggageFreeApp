@@ -41,4 +41,30 @@ class BookingTicket {
         numberOfDays: int.parse(json["numberOfDays"].toString()),
         userGovtId: json["userGovtId"].toString(),
     );
+
+    factory BookingTicket.fromDatabaseResult(Map<String, dynamic> json, StorageSpace storageSpace) => BookingTicket(
+        id: json["_id"].toString(),
+        bookingId: json["bookingID"].toString(),
+        storageSpace: storageSpace,
+        netStorageCost: double.parse(json["netStorageCost"].toString()),
+        checkInTime: json["checkInTime"].toString(),
+        checkOutTime: json["checkOutTime"].toString(),
+        bookingPersonName: json["bookingPersonName"].toString(),
+        numberOfBags: int.parse(json["numberOfBags"].toString()),
+        numberOfDays: int.parse(json["numberOfDays"].toString()),
+        userGovtId: json["userGovtId"].toString(),
+    );
+
+    Map<String, dynamic> toMap() => {
+      "id": id,
+      "bookingId": bookingId,
+      "netStorageCost": netStorageCost,
+      "checkInTime": checkInTime,
+      "checkOutTime": checkOutTime,
+      "bookingPersonName": bookingPersonName,
+      "numberOfDays": numberOfDays,
+      "numberOfBags": numberOfBags,
+      "userGovtId": userGovtId,
+      "storageSpaceId": storageSpace.id
+    };
 }

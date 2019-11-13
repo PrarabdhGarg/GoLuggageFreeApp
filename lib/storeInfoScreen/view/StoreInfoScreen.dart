@@ -18,23 +18,26 @@ class _StoreInfoScreenState extends State<StoreInfoScreen> {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Cloakroom"),
-        leading :IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black,),
-          onPressed:() => Navigator.pop(context, false)
-        )
-      ),
-      body: ChangeNotifierProvider<StoreInfoScreenController>(
-        builder: (BuildContext context) => StoreInfoScreenController(widget.storeId),
-        child: StoreInfoPage(context),
+    return ChangeNotifierProvider<StoreInfoScreenController>(
+      builder: (BuildContext context) => StoreInfoScreenController(widget.storeId),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Cloakroom"),
+          leading :IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black,),
+            onPressed:() => Navigator.pop(context, false)
+          )
+        ),
+        body: StoreInfoPage(),
       ),
     );
-  }
+  }  
+}
 
-  Widget StoreInfoPage(BuildContext context) {
-    final StoreInfoScreenController _controller = Provider.of<StoreInfoScreenController>(context);
+class StoreInfoPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+   final StoreInfoScreenController _controller = Provider.of<StoreInfoScreenController>(context);
     return _controller.isLoading ? Center(child: CircularProgressIndicator(),) : 
     _controller.displayMessage.isNotEmpty ? showErrorMessage(_controller.displayMessage) : SingleChildScrollView(
       child: Container(

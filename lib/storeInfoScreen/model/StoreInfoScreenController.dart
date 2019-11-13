@@ -9,7 +9,9 @@ class StoreInfoScreenController with ChangeNotifier {
   String displayMessage = "";
 
   StoreInfoScreenController(this.storeId) {
+    print("Entered Constructor");
     isLoading = true;
+    getStoreInfo();
   }
 
   Future<Null> getStoreInfo() async {
@@ -17,10 +19,12 @@ class StoreInfoScreenController with ChangeNotifier {
       storageSpace = await StorageSpacesDAO.getStorageSpace(storeId);
       if(storageSpace == null) {
         displayMessage = "Unable to fetch data. Please try again after some time";
+        isLoading = false;
       }
     } catch (e) {
       displayMessage = "Exception Occoured. ${e.toString()}";
     }
+    isLoading = false;
     notifyListeners();
   }
 

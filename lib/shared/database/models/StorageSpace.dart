@@ -69,6 +69,21 @@ class StorageSpace {
     location: response["location"].toString()
   );
 
+  factory StorageSpace.fromDatabaseResponse(Map<String, dynamic> response, List<String> images) => new StorageSpace(
+    id: response["_id"].toString(),
+    name: response["name"].toString(),
+    ownerImage: response["ownerImage"].toString(),
+    address: response["address"].toString(),
+    longAddress: response["longAddress"].toString(),
+    rating: double.parse(response["rating"].toString()),
+    costPerHour: double.parse(response["costPerHour"].toString()),
+    hasCCTV: response["hasCCTV"] == 1 ? true : false,
+    ownerName: response["ownerName"].toString(),
+    timings: response["timings"].toString(),
+    storeImages: extractListFromJson(images),
+    displayLocation: response["displayLocation"]
+  );
+
   Map<String, dynamic> toMap() => {
     "id": id,
     "name": name,

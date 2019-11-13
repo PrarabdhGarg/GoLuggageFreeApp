@@ -3,6 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
 import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/storeInfoScreen/view/StoreInfoScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
@@ -55,7 +56,12 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
           return ListView.builder(
             itemCount: storageSpaces.length,
             itemBuilder: (context, index) {
-              return StorageWidget(storageSpaces[index]);
+              return GestureDetector(
+                child: StorageWidget(storageSpaces[index]),
+                onTap: () async {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id)));
+                },
+              );
             },
           );
         },

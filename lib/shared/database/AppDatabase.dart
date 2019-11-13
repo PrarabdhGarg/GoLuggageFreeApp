@@ -53,9 +53,9 @@ class AppDatabase {
         location TEXT NULL
       )''');
       await db.execute('''CREATE TABLE Media(
-        id TEXT PRIMARY KEY,
-        storageId TEXT,
-        FOREIGN KEY(storageId) REFERENCES Storages(id)
+        id TEXT,
+        storageId TEXT PRIMARY KEY,
+        FOREIGN KEY(id) REFERENCES Storages(id)
       )''');
     });
     return _database;

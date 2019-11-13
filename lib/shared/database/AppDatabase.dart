@@ -54,7 +54,7 @@ class AppDatabase {
         displayLocation TEXT NULL,
         location TEXT NULL,
         ownerDetail TEXT NULL,
-        isOpen INTEGER NOT NULL CHECK(isOpen IN (0,1))
+        open INTEGER NOT NULL CHECK(open IN (0,1))
       )''');
       await db.execute('''CREATE TABLE Media(
         id TEXT,

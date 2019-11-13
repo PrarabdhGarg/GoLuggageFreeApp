@@ -123,7 +123,7 @@ class StoreInfoPage extends StatelessWidget {
                   infoRow("Has CCTV", _controller.storageSpace.hasCCTV ? "Yes" : "No"),
                   Divider(color: Colors.grey[300],),
                   // TODO cdhange row from CCTV to isOpen
-                  infoRow("Current Status", _controller.storageSpace.isOpen ? "Open" : "Closed"),
+                  infoRow("Current Status", _controller.storageSpace.open ? "Open" : "Closed"),
                   Divider(color: Colors.grey[300],),
                   infoRow("Store Tmings", _controller.storageSpace.timings),
                   Divider(color: Colors.grey[300],),

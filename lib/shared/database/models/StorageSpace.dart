@@ -29,7 +29,7 @@ class StorageSpace {
   String displayLocation;
   String location;
   String ownerDetail;
-  bool isOpen;
+  bool open;
 
   StorageSpace({
     this.id,
@@ -46,7 +46,7 @@ class StorageSpace {
     this.displayLocation,
     this.location,
     this.ownerDetail,
-    this.isOpen
+    this.open
   });
 
   factory StorageSpace.fromResponse(Map<String, dynamic> response) => new StorageSpace(
@@ -63,7 +63,7 @@ class StorageSpace {
     storeImages: extractListFromJson(response["storeImages"]),
     displayLocation: response["area"]["name"].toString() + " Cloakroom",
     ownerDetail: response["ownerDetail"].toString(),
-    isOpen: response["open"]
+    open: response["open"]
   );
 
   factory StorageSpace.fromResponseForBookings(Map<String, dynamic> response) => new StorageSpace(
@@ -74,7 +74,7 @@ class StorageSpace {
     longAddress: response["longAddress"].toString(),
     location: response["location"].toString(),
     ownerDetail: response["ownerDetail"].toString(),
-    isOpen: response["open"]
+    open: response["open"]
   );
 
   factory StorageSpace.fromDatabaseResponse(Map<String, dynamic> response, List<String> images) => new StorageSpace(
@@ -85,13 +85,13 @@ class StorageSpace {
     longAddress: response["longAddress"].toString(),
     rating: double.parse(response["rating"].toString()),
     costPerHour: double.parse(response["costPerHour"].toString()),
-    hasCCTV: response["hasCCTV"] == 1 ? true : false,
+    hasCCTV: response["hasCCTV"] == 1,
     ownerName: response["ownerName"].toString(),
     timings: response["timings"].toString(),
     storeImages: extractListFromJson(images),
     displayLocation: response["displayLocation"],
     ownerDetail: response["ownerDetail"].toString(),
-    isOpen: response["open"]
+    open: response["open"] == 1 
   );
 
   Map<String, dynamic> toMap() => {
@@ -108,6 +108,6 @@ class StorageSpace {
     "displayLocation": displayLocation,
     "location": location,
     "ownerDetail": ownerDetail,
-    "isOpen": isOpen ? 1 : 0
+    "open": open ? 1 : 0
   };
 }

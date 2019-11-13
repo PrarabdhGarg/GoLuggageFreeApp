@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 ValueNotifier<GraphQLClient> getClient() {
   final HttpLink httpLink = HttpLink(
-    uri: "http://test.goluggagefree.com/graphql"
+    uri: baseUrl + "graphql"
   );
 
   /* final AuthLink authLink = AuthLink(

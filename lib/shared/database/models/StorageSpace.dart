@@ -1,5 +1,19 @@
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
+class StorageSpaces {
+  List<StorageSpace> list;
+
+  StorageSpaces(this.list);
+
+  factory StorageSpaces.fronMap(List<dynamic> listOfDynamic) {
+    List<StorageSpace> newList = new List();
+    listOfDynamic.forEach((item) => {
+      newList.add(StorageSpace.fromResponse(item))
+    });
+    return new StorageSpaces(newList);
+  }
+}
+
 class StorageSpace {
   String id;
   String name;

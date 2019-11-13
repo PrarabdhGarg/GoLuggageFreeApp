@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
 import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -49,11 +50,12 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
             return Center(child: CircularProgressIndicator(),);
           }
           print("Result = ${result.data.toString()}");
-          List<dynamic> storageSpaces = result.data['storageSpaces'];
+          List<StorageSpace> storageSpaces = StorageSpaces.fronMap(result.data['storageSpaces']).list;
+          StorageSpacesDAO.insertStorageSpaces(storageSpaces);
           return ListView.builder(
             itemCount: storageSpaces.length,
             itemBuilder: (context, index) {
-              return StorageWidget(StorageSpace.fromResponse(storageSpaces[index]));
+              return StorageWidget(storageSpaces[index]);
             },
           );
         },

@@ -1,3 +1,3 @@
-String baseUrl = "http://test.goluggagefree.com/";
+String baseUrl = "https://api.goluggagefree.com/";
 
 String imageBaseUrl = baseUrl + "media/image/";

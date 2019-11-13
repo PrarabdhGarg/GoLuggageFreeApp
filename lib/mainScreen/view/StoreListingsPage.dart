@@ -26,6 +26,8 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
       rating
       costPerHour
       timings
+      ownerDetail
+      open
       ownerImage
       area {
         _id

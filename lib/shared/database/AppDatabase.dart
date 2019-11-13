@@ -44,15 +44,17 @@ class AppDatabase {
         id TEXT PRIMARY KEY NOT NULL,
         name TEXT NOT NULL,
         ownerName TEXT NULL,
-        hasCCTV INTEGER NOT NULL,
+        hasCCTV INTEGER NOT NULL CHECK(hasCCTV IN (0,1)),
         address TEXT NULL,
         longAddress TEXT NULL,
-        rating REAL NULL,
+        rating REAL NULL CHECK(rating IN (0.0,5.0)),
         costPerHour REAL NOT NULL,
         timings TEXT NOT NULL,
         ownerImage TEXT NULL,
         displayLocation TEXT NULL,
-        location TEXT NULL
+        location TEXT NULL,
+        ownerDetail TEXT NULL,
+        isOpen INTEGER NOT NULL CHECK(isOpen IN (0,1))
       )''');
       await db.execute('''CREATE TABLE Media(
         id TEXT,
@@ -68,8 +70,8 @@ class AppDatabase {
         checkInTime TEXT NOT NULL,
         checkOutTime TEXT NOT NULL,
         bookingPersonName TEXT,
-        numberOfBags INTEGER,
-        numberOfDays INTEGER,
+        numberOfBags INTEGER CHECK(numberOfBags>0),
+        numberOfDays INTEGER CHECK(numberOfDays>0),
         userGovtId TEXT,
         FOREIGN KEY(storageSpaceId) REFERENCES Storages(id)
       )''');

@@ -28,6 +28,8 @@ class StorageSpace {
   String ownerImage;
   String displayLocation;
   String location;
+  String ownerDetail;
+  bool isOpen;
 
   StorageSpace({
     this.id,
@@ -42,7 +44,9 @@ class StorageSpace {
     this.timings,
     this.ownerName,
     this.displayLocation,
-    this.location
+    this.location,
+    this.ownerDetail,
+    this.isOpen
   });
 
   factory StorageSpace.fromResponse(Map<String, dynamic> response) => new StorageSpace(
@@ -57,7 +61,9 @@ class StorageSpace {
     ownerName: response["ownerName"].toString(),
     timings: response["timings"].toString(),
     storeImages: extractListFromJson(response["storeImages"]),
-    displayLocation: response["area"]["name"].toString() + " Cloakroom"
+    displayLocation: response["area"]["name"].toString() + " Cloakroom",
+    ownerDetail: response["ownerDetail"].toString(),
+    isOpen: response["open"]
   );
 
   factory StorageSpace.fromResponseForBookings(Map<String, dynamic> response) => new StorageSpace(
@@ -66,7 +72,9 @@ class StorageSpace {
     ownerImage: response["ownerImage"].toString(),
     address: response["address"].toString(),
     longAddress: response["longAddress"].toString(),
-    location: response["location"].toString()
+    location: response["location"].toString(),
+    ownerDetail: response["ownerDetail"].toString(),
+    isOpen: response["open"]
   );
 
   factory StorageSpace.fromDatabaseResponse(Map<String, dynamic> response, List<String> images) => new StorageSpace(
@@ -81,7 +89,9 @@ class StorageSpace {
     ownerName: response["ownerName"].toString(),
     timings: response["timings"].toString(),
     storeImages: extractListFromJson(images),
-    displayLocation: response["displayLocation"]
+    displayLocation: response["displayLocation"],
+    ownerDetail: response["ownerDetail"].toString(),
+    isOpen: response["open"]
   );
 
   Map<String, dynamic> toMap() => {
@@ -96,6 +106,8 @@ class StorageSpace {
     "timings": timings,
     "ownerImage": ownerImage,
     "displayLocation": displayLocation,
-    "location": location
+    "location": location,
+    "ownerDetail": ownerDetail,
+    "isOpen": isOpen ? 1 : 0
   };
 }

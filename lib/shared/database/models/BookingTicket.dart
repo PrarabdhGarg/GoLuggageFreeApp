@@ -2,6 +2,21 @@ import 'dart:convert';
 
 import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
 
+class BookingTickets {
+  List<BookingTicket> list;
+
+  BookingTickets(this.list);
+
+  factory BookingTickets.fromMap(List<dynamic> listOfDynamic) {
+    List<BookingTicket> newList = new List();
+    listOfDynamic.forEach((item) {
+      // print("Converting item = ${item.toString()}");
+      newList.add(BookingTicket.fromJson(item));
+    });
+    return new BookingTickets(newList);
+  }
+}
+
 BookingTicket bookingTicketFromJson(String str) => BookingTicket.fromJson(json.decode(str));
 
 class BookingTicket {
@@ -29,9 +44,11 @@ class BookingTicket {
         this.userGovtId,
     });
 
+// TODO Change capital or small capital D to small D
+// TODO Change hard-coded booking id
     factory BookingTicket.fromJson(Map<String, dynamic> json) => BookingTicket(
         id: json["_id"].toString(),
-        bookingId: json["bookingID"].toString(),
+        bookingId: "123456", // json["bookingID"].toString(),
         storageSpace: StorageSpace.fromResponseForBookings(json["storageSpace"]),
         netStorageCost: double.parse(json["netStorageCost"].toString()),
         checkInTime: json["checkInTime"].toString(),
@@ -42,9 +59,11 @@ class BookingTicket {
         userGovtId: json["userGovtId"].toString(),
     );
 
+// TODO Change capital or small capital D to small D
+// TODO Change hard-coded booking id
     factory BookingTicket.fromDatabaseResult(Map<String, dynamic> json, StorageSpace storageSpace) => BookingTicket(
         id: json["_id"].toString(),
-        bookingId: json["bookingID"].toString(),
+        bookingId: "123456", //json["bookingID"].toString(),
         storageSpace: storageSpace,
         netStorageCost: double.parse(json["netStorageCost"].toString()),
         checkInTime: json["checkInTime"].toString(),

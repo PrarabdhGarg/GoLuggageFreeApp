@@ -70,7 +70,7 @@ class AppDatabase {
         bookingPersonName TEXT,
         numberOfBags INTEGER,
         numberOfDays INTEGER,
-        userGovtId TEXT
+        userGovtId TEXT,
         FOREIGN KEY(storageSpaceId) REFERENCES Storages(id)
       )''');
     });

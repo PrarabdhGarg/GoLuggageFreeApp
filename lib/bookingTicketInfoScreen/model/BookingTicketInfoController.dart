@@ -16,7 +16,8 @@ class BookingInfoScreenController with ChangeNotifier {
   Future<Null> getTicketInfo() async {
     try {
       bookingTicket = await BookingTicketDAO.getBookingTicket(ticketId);
-      if(bookingTicket != null) {
+      print("Recived booking ticket after query ${bookingTicket.toString()}");
+      if(bookingTicket == null) {
         displayMessage = "Unable to fetch data. Please try again after some time";
       }
     } catch(e) {

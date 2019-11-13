@@ -32,6 +32,8 @@ class BookingTicketDAO {
       print("Result for Storage Space = ${storageSpace.toString()}");
       bookingTicket = BookingTicket.fromDatabaseResult(result[0], storageSpace);
       print("Final Booking Ticket = ${bookingTicket.toString()}");
+    } else {
+      print("Result of query is null!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
     return bookingTicket;
   }

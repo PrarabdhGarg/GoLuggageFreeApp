@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/bookingTicketInfoScreen/view/BookingTicketInfoScreen.dart';
+import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
@@ -10,7 +12,8 @@ class PastBookings extends StatefulWidget {
 }
 
 class _PastBookingsState extends State<PastBookings> {
-  String userId = "5d9f413ad90cd60017050d79";
+  // TODO Change capital or small capital D to small D
+  String userId = "5dc73841aff11c0017963b5b";
   String getBookings = """
   query GetBookings(\$userId: String!) {
     bookings(consumer: \$userId) {
@@ -59,12 +62,19 @@ class _PastBookingsState extends State<PastBookings> {
             print("Loading the result");
             return Center(child: CircularProgressIndicator(),);
           }
-          print("Result = ${result.data.toString()}");
+          // print("Result = ${result.data.toString()}");
           List<dynamic> bookings = result.data['bookings'];
+          // print("Recived Bookings = ${bookings.toString()}");
+          BookingTicketDAO.insertBookingTickets(BookingTickets.fromMap(bookings).list);
           return ListView.builder(
             itemCount: bookings.length,
             itemBuilder: (context, index) {
-              return BookingWidget(BookingTicket.fromJson(bookings[index]));
+              return GestureDetector(
+                onTap: () async {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(bookings[index]["_id"])));
+                },
+                child: BookingWidget(BookingTicket.fromJson(bookings[index])),
+              );
             },
           );
         },

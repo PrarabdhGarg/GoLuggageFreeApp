@@ -57,7 +57,7 @@ class StorageSpace {
     ownerName: response["ownerName"].toString(),
     timings: response["timings"].toString(),
     storeImages: extractListFromJson(response["storeImages"]),
-    displayLocation: response["area"]["name"].toString() + "Cloakroom"
+    displayLocation: response["area"]["name"].toString() + " Cloakroom"
   );
 
   factory StorageSpace.fromResponseForBookings(Map<String, dynamic> response) => new StorageSpace(

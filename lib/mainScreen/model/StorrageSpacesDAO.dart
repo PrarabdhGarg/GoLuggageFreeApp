@@ -16,4 +16,16 @@ class StorageSpacesDAO {
     }
     return true;
   }
+
+  static Future<StorageSpace> getStorageSpace(String id) async {
+    final Database _database = await AppDatabase.databaseProvider.getDatabase();
+    List<Map<String, dynamic>> result = await _database.query('Storages', where: 'id = ?', whereArgs: [id]);
+    print(result);
+    StorageSpace storageSpace;
+    result.forEach((item) {
+      storageSpace = StorageSpace.fromResponse(item);
+    });
+    print(storageSpace);
+    return storageSpace;
+  }
 }

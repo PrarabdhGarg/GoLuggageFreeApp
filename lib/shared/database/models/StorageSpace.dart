@@ -54,4 +54,19 @@ class StorageSpace {
     longAddress: response["longAddress"].toString(),
     location: response["location"].toString()
   );
+
+  Map<String, dynamic> toMap() => {
+    "id": id,
+    "name": name,
+    "ownerName": ownerName,
+    "hasCCTV": hasCCTV ? 1 : 0,
+    "address": address,
+    "longAddress": longAddress,
+    "rating": rating,
+    "costPerHour": costPerHour,
+    "timings": timings,
+    "ownerImage": ownerImage,
+    "displayLocation": displayLocation,
+    "location": location
+  };
 }

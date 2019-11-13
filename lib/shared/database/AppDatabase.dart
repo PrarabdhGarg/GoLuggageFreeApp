@@ -1,3 +1,5 @@
+import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
+import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 
@@ -20,6 +22,7 @@ class AppDatabase {
 
   static final AppDatabase databaseProvider = AppDatabase._();
   static Database _database;
+  StorageSpacesDAO _storageSpacesDAO;
 
   /* This function uses the concept of lazy loading to initialize a new instance of the database, only when the
    * instance was not previously created, other-wise it returns the previous instance only 
@@ -35,7 +38,48 @@ class AppDatabase {
     String databasePath = path.join(await getDatabasesPath(), 'database.db');
     _database = await openDatabase(databasePath, version: 1, onCreate: (db,_) async {
       await db.execute('''PRAGMA foreign_keys = ON''');
+      await db.execute('''CREATE TABLE Storages(
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        ownerName TEXT,
+        hasCCTV INTEGER NOT NULL CHECK(hasCCTV IN (0,1)),
+        address TEXT,
+        longAddress TEXT,
+        rating REAL CHECK(rating IN (0.0,5.0)),
+        costPerHour REAL NOT NULL,
+        timings TEXT NOT NULL,
+        ownerImage TEXT,
+        displayLocation TEXT,
+        location TEXT,
+      )''');
+      await db.execute('''CREATE TABLE Media(
+        id TEXT PRIMARY KEY,
+        storageId TEXT,
+        FOREIGN KEY(storageId) REFERENCES Storages(id)
+      )''');
     });
     return _database;
+  }
+
+  Future<StorageSpacesDAO> getStorageSpaceDAO() async {
+    if(_storageSpacesDAO != null) {
+      return _storageSpacesDAO;
+    }
+    Database _database = await getDatabase();
+    return StorageSpacesDAO();
+  }
+
+  Future<bool> insertStorageSpaces(List<StorageSpace> list) async {
+    final _database = await getDatabase();
+    for(StorageSpace space in list) {
+      var map = space.toMap();
+      try {
+        var result = await _database.insert('Storages', map, conflictAlgorithm: ConflictAlgorithm.replace);
+        print("Result for id = ${space.id} = ${result}");
+      } catch (e) {
+        print("Exception in inderting ${space.id} = ${e.toString()}");
+      }
+    }
+    return true;
   }
 }

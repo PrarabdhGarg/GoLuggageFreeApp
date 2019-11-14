@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "95332013477",
+    "firebase_url": "https://goluggagefree.firebaseio.com",
+    "project_id": "goluggagefree",
+    "storage_bucket": "goluggagefree.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95332013477:android:cfec5384f49b7ffc49444c",
+        "android_client_info": {
+          "package_name": "com.example.go_luggage_free"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "95332013477-m9dkratuhu7j57uvas0mvc9208nf9il1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKHCt-uqtgjVBxHF7jVraIRHjULw64p0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95332013477-m9dkratuhu7j57uvas0mvc9208nf9il1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95332013477:android:d700f144a6a323a649444c",
+        "android_client_info": {
+          "package_name": "com.goluggagefree.goluggagefree"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "95332013477-m9dkratuhu7j57uvas0mvc9208nf9il1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKHCt-uqtgjVBxHF7jVraIRHjULw64p0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95332013477-m9dkratuhu7j57uvas0mvc9208nf9il1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

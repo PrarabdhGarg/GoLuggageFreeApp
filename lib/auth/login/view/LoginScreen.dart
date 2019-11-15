@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/mobileVerification/view/MobileVerificationScreen.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
+import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -67,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'Please Enter Phone Number'
                       ),
                       controller: phoneController,
-                      validator: Utils.phoneValidator,
+                      validator: Validators.phoneValidator,
                     ),
                   ),
                 ),
@@ -83,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       obscureText: true,
                       controller: passwordController,
-                      validator: Utils.passwordValidator,
+                      validator: Validators.passwordValidator,
                     ),
                   ),
                 ),
@@ -101,28 +108,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  onLoginPressesed() {
+  onLoginPressesed() async {
     if(_formKey.currentState.validate()) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Login"),
-            content: Text("Number = ${phoneController.text}\nPassword = ${passwordController.text}"),
-            actions: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(4.0),
-                child: FlatButton(
-                  child: Text("OK"),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ],
-          );
-        }
-      );
+      var response = await http.post(logInUrl, body: {
+        "phone_number": phoneController.text,
+        "password": passwordController.text });
+      print("Response Status = ${response.statusCode}");
+      if(response.statusCode == 200) {
+        var map = jsonDecode(response.body)["user"];
+        print("Map = ${map}");
+        var userId = map["_id"];
+        var name = map["name"];
+        var email = map["email"];
+        var mobileNumber = map["mobile_number"].toString();
+        print("REcivedData = $userId\t$name\t$email\t$mobileNumber");
+        await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber);
+        Navigator.pop(context);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
+      }
     }
   }
 

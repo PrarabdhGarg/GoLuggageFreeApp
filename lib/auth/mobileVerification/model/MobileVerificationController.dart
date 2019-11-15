@@ -5,7 +5,6 @@ class MobileVerificationController with ChangeNotifier {
   bool isLoading;
   bool isOTPVerification;
   String message;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String _verificationId;
   TextEditingController phoneController;
 
@@ -21,7 +20,7 @@ class MobileVerificationController with ChangeNotifier {
     notifyListeners();
     final PhoneVerificationCompleted verificationCompleted = (AuthCredential phoneAuthCredential) {
       print("Phone Number Verification Completed");
-      _firebaseAuth.signInWithCredential(phoneAuthCredential);
+      // _firebaseAuth.signInWithCredential(phoneAuthCredential);
       print("Recived PhoneAuth Credential = ${phoneAuthCredential}");
     };
 
@@ -45,14 +44,14 @@ class MobileVerificationController with ChangeNotifier {
       _verificationId = verificationId;
     };
 
-    await _firebaseAuth.verifyPhoneNumber(
+    /* await _firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneController.text,
       timeout: const Duration(seconds: 5),
       verificationCompleted: verificationCompleted,
       verificationFailed: verificaitonFailed,
       codeSent: codeSent,
       codeAutoRetrievalTimeout: autoretrivalTimeout
-    );
+    ); */
   }
 
   resetDisplayMessage() {

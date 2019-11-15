@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_luggage_free/bookingForm/view/CustomCounter.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:intl/intl.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 
 class BookingFormPage extends StatefulWidget {
   int price;
@@ -202,17 +205,51 @@ class _BookingFormPageState extends State<BookingFormPage> {
               ),
               child: FlatButton(
                 child: Text("Book Now", style: TextStyle(color: Colors.white),),
-                onPressed: () {
-                  if(_formKey.currentState.validate()) {
-                    // TODO Open Razor pay sdk
-                  }
-                }
+                onPressed: onBookingButtonPressed
               ),
             ),
           )
         ],
       ),
     );
+  }
+
+  onBookingButtonPressed() {
+    if(_formKey.currentState.validate()) {
+      var _razorPay = Razorpay();
+      _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
+      _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalEvent);
+
+      var _options = {
+        "key": "rzp_live_Cod208QgiAuDMf",
+        "amount": "${(_numberOfBags*_numberOfDays*24*widget.price)*100}",
+        "name": "GoLuggageFree",
+        "description": "Cloakrooms in Delhi"
+      };
+      _razorPay.open(_options);
+    }
+  }
+
+  void _handlePaymentSucess(PaymentSuccessResponse response) async {
+    print("Payment Sucessfull");
+    var paymentConfirmationResponse = await http.post(razorPayCallbackUrl, body: {
+      "razorpay_payment_id": response.paymentId,
+      "razorpay_order_id": response.orderId,
+      "razorpay_signature": response.signature
+    });
+    if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
+      print("Payment Validation Recived");
+      // TODO handle backstack operations
+    }
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    print("Error in making payment ${response.message.toString()}");
+  }
+
+  void _handleExternalEvent(ExternalWalletResponse response) {
+    print("External Event to handle");
   }
 
   Widget customEditText(String label, String hint, Function validator, TextEditingController controller) {

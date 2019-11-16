@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/bookingForm/view/BookingFromScreen.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/storeInfoScreen/model/StoreInfoScreenController.dart';
 import 'package:provider/provider.dart';
@@ -127,7 +128,7 @@ class StoreInfoPage extends StatelessWidget {
                   Divider(color: Colors.grey[300],),
                   infoRow("Store Tmings", _controller.storageSpace.timings),
                   Divider(color: Colors.grey[300],),
-                  infoRow("Price(per bag per day)", (_controller.storageSpace.costPerHour*24).toString()),
+                  infoRow("Price(per bag per day)", (_controller.storageSpace.costPerHour*24.round()).toString()),
                   Container(height: 20,)
                 ],
               ),
@@ -140,7 +141,9 @@ class StoreInfoPage extends StatelessWidget {
                 color: Colors.blue
               ),
               child: FlatButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => BookingFormScreen(_controller.storageSpace.costPerHour.round())));
+                },
                 child: Text("BOOK NOW", style: TextStyle(color: Colors.white),),
               ),
             )

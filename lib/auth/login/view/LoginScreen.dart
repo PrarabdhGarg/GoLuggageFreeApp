@@ -68,11 +68,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Flexible(
                   flex: 1,
-                  child: CustomWidgets.customEditText(controller: phoneController, context: context, hint: "Please Enter Phone Number", label: "Phone Number", validator: Validators.phoneValidator),
+                  child: CustomWidgets.customEditText(controller: phoneController, context: context, hint: "Please Enter Phone Number", label: "Phone Number", validator: Validators.phoneValidator, inputType: TextInputType.phone),
                 ),
                 Flexible(
                   flex: 1,
-                  child: CustomWidgets.customEditText(context: context, controller: passwordController, hint: "Please Enter Password", label: "Password", validator: Validators.passwordValidator),
+                  child: CustomWidgets.customEditText(context: context, controller: passwordController, hint: "Please Enter Password", label: "Password", validator: Validators.passwordValidator, obscureText: true),
                 ),
                 Container(height: 24,),
                 CustomWidgets.customLoginButton(text: "Login", onPressed: onLoginPressesed),

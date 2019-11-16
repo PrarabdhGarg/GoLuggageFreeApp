@@ -29,12 +29,13 @@ class CustomWidgets {
     );
   }
 
-  static Widget customEditText({@required BuildContext context, @required TextEditingController controller, @required String label, @required String hint, @required Function validator}) {
+  static Widget customEditText({@required BuildContext context, @required TextEditingController controller, @required String label, @required String hint, @required Function validator, TextInputType inputType = TextInputType.text, bool obscureText = false}) {
     return Container(
       margin: EdgeInsets.only(right: 30.0, left: 30.0),
       child: TextFormField(
-        keyboardType: TextInputType.phone,
+        keyboardType: inputType,
         cursorColor: cursorColor,
+        obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
           focusedBorder: UnderlineInputBorder(

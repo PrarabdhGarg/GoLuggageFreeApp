@@ -20,6 +20,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
   String _verificationId = "";
   AuthCredential _authCredential;
   AuthResult _user;
+  String phoneNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
             ),
             Flexible(
               flex: 1,
-              child: CustomWidgets.customEditText(controller: phoneController, context: context, label: "OTP", hint: "Please enter your OTP", validator: Validators.otpValidator),
+              child: CustomWidgets.customEditText(controller: phoneController, context: context, label: "OTP", hint: "Please enter your OTP", validator: Validators.otpValidator, inputType: TextInputType.phone),
             ),
             Container(height: 30,),
             CustomWidgets.customLoginButton(text: "Verify", onPressed: onVerifyRequest)
@@ -90,7 +91,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
             ),
             Flexible(
               flex: 1,
-              child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Phone Number", hint: "Please Enter Phone Number", validator: Validators.phoneValidator)
+              child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Phone Number", hint: "Please Enter Phone Number", validator: Validators.phoneValidator, inputType: TextInputType.phone)
             ),
             Container(height: 30,),
             CustomWidgets.customLoginButton(text: "Submit", onPressed: onMobileVerificationPressed)
@@ -101,10 +102,12 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
   }
 
   onMobileVerificationPressed() async {
-    setState(() {
-        this.isLoading = true;
-      });
     if(_formKey.currentState.validate()) {
+      phoneNumber = phoneController.text;
+      setState(() {
+        this.isLoading = true;
+        phoneController.text = "";
+      });
       final PhoneVerificationCompleted verificationCompleted = (AuthCredential phoneAuthCredential) async {
         print("Phone Number Verification Completed");
         _user = await _firebaseAuth.signInWithCredential(phoneAuthCredential);
@@ -136,7 +139,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
       };
 
       await _firebaseAuth.verifyPhoneNumber(
-        phoneNumber: phoneController.text,
+        phoneNumber: phoneNumber,
         timeout: const Duration(seconds: 5),
         verificationCompleted: verificationCompleted,
         verificationFailed: verificaitonFailed,
@@ -166,7 +169,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         this.isLoading = false;
         this.isOtpVerification = false;
       });
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber)));
     } catch(e) {
       print("${e.toString()}");
       if(e is PlatformException) {

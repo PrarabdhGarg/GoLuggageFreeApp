@@ -10,6 +10,8 @@ String logInUrl = baseUrl + "users/login";
 
 String razorPayCallbackUrl = "api/confirmPayment/KLkajafj3434jaf";
 
+String signUpUrl = baseUrl + "users";
+
 Color buttonColor = HexColor("#0078FF");
 
 Color cursorColor = Colors.grey;

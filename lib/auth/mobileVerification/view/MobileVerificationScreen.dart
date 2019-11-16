@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
@@ -57,8 +58,9 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
             ),
             Flexible(
               flex: 1,
-              child: CustomWidgets.customEditText(controller: phoneController, context: context, label: "OTP", hint: "Please enter your OTP", validator: (){return null;}),
+              child: CustomWidgets.customEditText(controller: phoneController, context: context, label: "OTP", hint: "Please enter your OTP", validator: Validators.otpValidator),
             ),
+            Container(height: 30,),
             CustomWidgets.customLoginButton(text: "Verify", onPressed: onVerifyRequest)
           ],
         ),
@@ -107,11 +109,8 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         print("Phone Number Verification Completed");
         _user = await _firebaseAuth.signInWithCredential(phoneAuthCredential);
         _authCredential = phoneAuthCredential;
-        setState(() {
-          this.isLoading = false;
-          this.isOtpVerification = true;
-        });
         print("Recived PhoneAuth Credential = ${phoneAuthCredential}");
+        await signInWithFirebase(phoneAuthCredential);
       };
 
       final PhoneVerificationFailed verificaitonFailed = (AuthException exception) {
@@ -124,19 +123,16 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
       };
 
       final PhoneCodeSent codeSent = (String verificationId, [int forceResendingToken]) async {
-        setState(() {
-          isLoading = false;
-        });
-        print("Verification Id recived = ${verificationId}");
+        print("Verification Id recived = ${verificationId} \n ${forceResendingToken}");
         _verificationId = verificationId;
       };
 
       final PhoneCodeAutoRetrievalTimeout autoretrivalTimeout = (String verificationId) {
         print("Auto Reterival Timed Out, VerificationId = ${verificationId}");
         setState(() {
+          isLoading = false;
           isOtpVerification = true;
         });
-        _verificationId = verificationId;
       };
 
       await _firebaseAuth.verifyPhoneNumber(
@@ -154,7 +150,34 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
     }
   }
 
-  onVerifyRequest() {
-    _firebaseAuth.signOut();
+  onVerifyRequest() async {
+    print("Code Entered = ${phoneController.text}");
+    _authCredential = await PhoneAuthProvider.getCredential(verificationId: _verificationId, smsCode: phoneController.text);
+    print("Recived Auth Credential = ${_authCredential.toString()}");
+    await signInWithFirebase(_authCredential);
+  }
+
+  Future<Null> signInWithFirebase(AuthCredential phoneAuthCredential) async {
+    AuthResult result;
+    try {
+      AuthResult result = await _firebaseAuth.signInWithCredential(phoneAuthCredential);
+      print("Recived firebase User != null");
+      setState(() {
+        this.isLoading = false;
+        this.isOtpVerification = false;
+      });
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+    } catch(e) {
+      print("${e.toString()}");
+      if(e is PlatformException) {
+        PlatformException exception = e as PlatformException;
+        String message = exception.message;
+        // TODO display this message appropriately
+      }
+      print("Code Verification Falied");
+      setState(() {
+        this.isLoading = false;
+      });
+    }
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
+import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -20,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Sign Up"),
+        title: Text("Sign Up", style: Theme.of(context).textTheme.title,),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black,),
           onPressed:() => Navigator.pop(context, false)
@@ -33,6 +35,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget signUpPage(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: lightGrey,
+            )
+          ),
+          color: Theme.of(context).backgroundColor
+        ),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: Form(
@@ -44,70 +54,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Container(
                   margin: EdgeInsets.only(bottom: 16),
                   padding: EdgeInsets.all(32),
-                  child: Image.network("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"),
+                  child: Image.asset("assets/images/logo.png"),
                 ),
               ),
               Flexible(
                 flex: 1,
-                child: Container(
-                  margin: EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      hintText: 'Please Enter Your Name'
-                    ),
-                    controller: nameController,
-                  ),
-                ),
+                child: CustomWidgets.customEditText(controller: nameController, context: context, label: "Name", hint: "Please enter your name", validator: Validators.nameValidator),
               ),
               Flexible(
                 flex: 1,
-                child: Container(
-                  margin: EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Please Enter Your E-mail id'
-                    ),
-                    controller: emailController,
-                    validator: Utils.emailValidator,
-                  ),
-                ),
+                child: CustomWidgets.customEditText(context: context, controller: emailController, label: "Email", hint: "Please enter a valid email", validator: Validators.emailValidator),
               ),
               Flexible(
                 flex: 1,
-                child: Container(
-                  margin: EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Please Select a Password'
-                    ),
-                    controller: passwordController,
-                    validator: Utils.passwordValidator,
-                  ),
-                ),
+                child: CustomWidgets.customEditText(controller: passwordController, context: context, label: "Password", hint: "Please Select a password", validator: Validators.passwordValidator),
               ),
               Flexible(
                 flex: 1,
-                child: Container(
-                  margin: EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    enabled: passwordController.text.toString().isNotEmpty,
-                    decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      hintText: 'Please Confirm your password'
-                    ),
-                    controller: passwordConfirmationController,
-                    validator: Utils.passwordValidator,
-                  ),
-                ),
+                child: CustomWidgets.customEditText(context: context, controller: passwordConfirmationController, hint: "Please confirm your password", label: "Confirm Password", validator: Validators.otpValidator),
               ),
               CustomWidgets.customLoginButton(text: "Sign Up", onPressed: onSignUpPressed)
             ],

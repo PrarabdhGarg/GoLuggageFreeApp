@@ -27,17 +27,37 @@ class SharedPrefsHelper {
   static final  String NAME = "NAME";
 
   static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber}) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     if(userId != null) {
-      await prefs.setString(USER_ID, userId);
+      await _prefs.setString(USER_ID, userId);
     }
     if(email != null) {
-      await prefs.setString(EMAIL, email);
+      await _prefs.setString(EMAIL, email);
     }
     if(mobileNumber != null) {
-      await prefs.setString(MOBILE_NUMBER, mobileNumber);
+      await _prefs.setString(MOBILE_NUMBER, mobileNumber);
     }
     if(name != null) {}
-    await prefs.setString(NAME, name);
+    await _prefs.setString(NAME, name);
+  }
+
+  static Future<String> getUserNumber() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var number = await _prefs.getString(MOBILE_NUMBER);
+    if(number != null) {
+      return number;
+    } else {
+      return "";
+    }
+  }
+
+  static Future<String> getUserEmail() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var email = _prefs.getString(EMAIL);
+    if(email != null) {
+      return email;
+    } else {
+      return "";
+    }
   }
 }

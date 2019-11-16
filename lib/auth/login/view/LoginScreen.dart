@@ -6,6 +6,7 @@ import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,11 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // precacheImage(NetworkImage("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"), context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
-        leading: Container(),
+        title: Text('Login', style: Theme.of(context).textTheme.title),
+        leading: Container(child: Image.asset("assets/images/logo.png"),padding: EdgeInsets.all(8.0),),
       ),
       body: LoginScreen(),
     );
@@ -49,57 +49,38 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       return SingleChildScrollView(
         child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).backgroundColor,
+            border: Border(
+              top: BorderSide(color: HexColor("#F5F5F5"),)
+            )
+          ),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
-                Flexible(
-                  flex: 4,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 16),
-                    padding: EdgeInsets.all(32),
-                    child: Image.network("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"),
-                  ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 16),
+                  padding: EdgeInsets.all(32),
+                  child: Image.asset("assets/images/logo.png"),
                 ),
                 Flexible(
                   flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: 'Phone Number',
-                        hintText: 'Please Enter Phone Number'
-                      ),
-                      controller: phoneController,
-                      validator: Validators.phoneValidator,
-                    ),
-                  ),
+                  child: CustomWidgets.customEditText(controller: phoneController, context: context, hint: "Please Enter Phone Number", label: "Phone Number"),
                 ),
                 Flexible(
                   flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.visiblePassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Please Enter Password',
-                      ),
-                      obscureText: true,
-                      controller: passwordController,
-                      validator: Validators.passwordValidator,
-                    ),
-                  ),
+                  child: CustomWidgets.customEditText(context: context, controller: passwordController, hint: "Please Enter Password", label: "Password"),
                 ),
-                CustomWidgets.customLoginButton(text: "LOGIN", onPressed: onLoginPressesed),
-                Flexible(
-                  flex: 1,
+                Container(height: 24,),
+                CustomWidgets.customLoginButton(text: "Login", onPressed: onLoginPressesed),
+                Container(
+                  margin: EdgeInsets.all(8.0),
                   child: Center(child: Text("OR", style: TextStyle(color: Colors.black), textAlign: TextAlign.center,),),
                 ),
-                CustomWidgets.customLoginButton(text: "CREATE NEW ACCOUNT", onPressed: onSignUpPressed),
+                CustomWidgets.customLoginButton(text: "Create New Account", onPressed: onSignUpPressed),
               ],
             ),
           ),

@@ -29,7 +29,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget customEditText({@required BuildContext context, @required TextEditingController controller, @required String label, @required String hint}) {
+  static Widget customEditText({@required BuildContext context, @required TextEditingController controller, @required String label, @required String hint, @required Function validator}) {
     return Container(
       margin: EdgeInsets.only(right: 30.0, left: 30.0),
       child: TextFormField(
@@ -46,7 +46,7 @@ class CustomWidgets {
           labelStyle: Theme.of(context).textTheme.overline
         ),
         controller: controller,
-        validator: Validators.phoneValidator,
+        validator: validator,
       ),
     );
   }

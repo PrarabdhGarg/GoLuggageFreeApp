@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 
 class MobileVerificationScreen extends StatefulWidget {
   @override
@@ -24,7 +25,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Sign Up"),
+        title: Text("Sign Up", style: Theme.of(context).textTheme.title,),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black,),
           onPressed:() => Navigator.pop(context, false)
@@ -36,6 +37,12 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
 
   Widget otpVerificationWidget(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
+        border: Border(
+          top: BorderSide(color: lightGrey,)
+        )
+      ),
       child: Form(
         key: _formKey,
         child: Column(
@@ -45,22 +52,12 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
               child: Container(
                 margin: EdgeInsets.only(bottom: 16),
                 padding: EdgeInsets.all(32),
-                child: Image.network("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"),
+                child: Image.asset("assets/images/logo.png"),
               ),
             ),
             Flexible(
               flex: 1,
-              child: Container(
-                margin: EdgeInsets.all(16.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: 'OTP',
-                    hintText: 'Please Enter OTP'
-                  ),
-                  controller: phoneController,
-                ),
-              ),
+              child: CustomWidgets.customEditText(controller: phoneController, context: context, label: "OTP", hint: "Please enter your OTP", validator: (){return null;}),
             ),
             CustomWidgets.customLoginButton(text: "Verify", onPressed: onVerifyRequest)
           ],
@@ -71,6 +68,12 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
 
   Widget phoneNumberWidget(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
+        border: Border(
+          top: BorderSide(color: lightGrey,)
+        )
+      ),
       child: Form(
         key: _formKey,
         child: Column(
@@ -80,24 +83,14 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
               child: Container(
                 margin: EdgeInsets.only(bottom: 16),
                 padding: EdgeInsets.all(32),
-                child: Image.network("https://goluggagefree.com/static/media/hero-img-blue.d5bcd689.png"),
+                child: Image.asset("assets/images/logo.png"),
               ),
             ),
             Flexible(
               flex: 1,
-              child: Container(
-                margin: EdgeInsets.all(16.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    hintText: 'Please Enter Phone Number'
-                  ),
-                  controller: phoneController,
-                  validator: Utils.phoneValidator,
-                ),
-              ),
+              child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Phone Number", hint: "Please Enter Phone Number", validator: Validators.phoneValidator)
             ),
+            Container(height: 30,),
             CustomWidgets.customLoginButton(text: "Submit", onPressed: onMobileVerificationPressed)
           ],
         ),

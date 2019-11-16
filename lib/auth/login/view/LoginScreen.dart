@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: BoxDecoration(
             color: Theme.of(context).backgroundColor,
             border: Border(
-              top: BorderSide(color: HexColor("#F5F5F5"),)
+              top: BorderSide(color: lightGrey,)
             )
           ),
           width: MediaQuery.of(context).size.width,
@@ -68,11 +68,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Flexible(
                   flex: 1,
-                  child: CustomWidgets.customEditText(controller: phoneController, context: context, hint: "Please Enter Phone Number", label: "Phone Number"),
+                  child: CustomWidgets.customEditText(controller: phoneController, context: context, hint: "Please Enter Phone Number", label: "Phone Number", validator: Validators.phoneValidator),
                 ),
                 Flexible(
                   flex: 1,
-                  child: CustomWidgets.customEditText(context: context, controller: passwordController, hint: "Please Enter Password", label: "Password"),
+                  child: CustomWidgets.customEditText(context: context, controller: passwordController, hint: "Please Enter Password", label: "Password", validator: Validators.passwordValidator),
                 ),
                 Container(height: 24,),
                 CustomWidgets.customLoginButton(text: "Login", onPressed: onLoginPressesed),

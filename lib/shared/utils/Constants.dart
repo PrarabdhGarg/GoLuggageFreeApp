@@ -13,3 +13,5 @@ String razorPayCallbackUrl = "api/confirmPayment/KLkajafj3434jaf";
 Color buttonColor = HexColor("#0078FF");
 
 Color cursorColor = Colors.grey;
+
+Color lightGrey = HexColor("#F5F5F5");

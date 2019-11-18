@@ -11,8 +11,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<GraphQLClient> _graphQlClient = getClient();
-    // FlutterStatusbarcolor.setStatusBarColor(Colors.white);
-    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+    // FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     return GraphQLProvider(
       client: _graphQlClient,
       child: CacheProvider(

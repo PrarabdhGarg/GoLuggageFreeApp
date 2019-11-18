@@ -24,7 +24,7 @@ class _StoreInfoScreenState extends State<StoreInfoScreen> {
       builder: (BuildContext context) => StoreInfoScreenController(widget.storeId),
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Cloakroom"),
+          title: Text("Cloakroom", style: Theme.of(context).textTheme.title,),
           leading :IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black,),
             onPressed:() => Navigator.pop(context, false)
@@ -45,7 +45,7 @@ class StoreInfoPage extends StatelessWidget {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Colors.grey[400],
+        color: Theme.of(context).backgroundColor,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
@@ -60,7 +60,12 @@ class StoreInfoPage extends StatelessWidget {
                     builder: (BuildContext context) {
                       return Container(
                         width: MediaQuery.of(context).size.width,
-                        child: Image.network(imageBaseUrl+image),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(imageBaseUrl+image),
+                            fit: BoxFit.fitWidth
+                          ),
+                        ),
                       );
                     },
                   );
@@ -72,7 +77,7 @@ class StoreInfoPage extends StatelessWidget {
               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                color: Colors.white,
+                color: Theme.of(context).backgroundColor,
                 boxShadow: [
                   BoxShadow(
                     color: HexColor("#DDDDDD"),
@@ -90,10 +95,10 @@ class StoreInfoPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(_controller.storageSpace.name, style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text(_controller.storageSpace.displayLocation),
+                            Text(_controller.storageSpace.name, style: Theme.of(context).textTheme.headline),
+                            Text(_controller.storageSpace.displayLocation, style: Theme.of(context).textTheme.body1,),
                             Container(height: 10,),
-                            Container(child: Text(_controller.storageSpace.ownerDetail),)
+                            Container(child: Text(_controller.storageSpace.ownerDetail,style: Theme.of(context).textTheme.body1,),)
                           ],
                         ),
                       ),
@@ -111,7 +116,7 @@ class StoreInfoPage extends StatelessWidget {
                                   )
                                 ),
                               ),
-                              Text(_controller.storageSpace.ownerName)
+                              Text(_controller.storageSpace.ownerName, style: Theme.of(context).textTheme.body1,)
                             ],
                           ),
                         ),
@@ -119,16 +124,15 @@ class StoreInfoPage extends StatelessWidget {
                     ],
                   ),
                   Divider(color: Colors.grey[300],),
-                  Text(_controller.storageSpace.address),
+                  Text(_controller.storageSpace.address, style: Theme.of(context).textTheme.body1,),
                   Divider(color: Colors.grey[300],),
-                  infoRow("Has CCTV", _controller.storageSpace.hasCCTV ? "Yes" : "No"),
+                  infoRow("Has CCTV", _controller.storageSpace.hasCCTV ? "Yes" : "No", Theme.of(context).textTheme.headline),
                   Divider(color: Colors.grey[300],),
-                  // TODO cdhange row from CCTV to isOpen
-                  infoRow("Current Status", _controller.storageSpace.open ? "Open" : "Closed"),
+                  infoRow("Current Status", _controller.storageSpace.open ? "Open" : "Closed", Theme.of(context).textTheme.headline),
                   Divider(color: Colors.grey[300],),
-                  infoRow("Store Tmings", _controller.storageSpace.timings),
+                  infoRow("Store Tmings", _controller.storageSpace.timings, Theme.of(context).textTheme.headline),
                   Divider(color: Colors.grey[300],),
-                  infoRow("Price(per bag per day)", (_controller.storageSpace.costPerHour*24.round()).toString()),
+                  infoRow("Price(per bag per day)", ((_controller.storageSpace.costPerHour*24.0).round()).toString(), Theme.of(context).textTheme.headline),
                   Container(height: 20,)
                 ],
               ),
@@ -138,13 +142,13 @@ class StoreInfoPage extends StatelessWidget {
               margin: EdgeInsets.only(left: 24.0, right: 24.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                color: Colors.blue
+                color: Theme.of(context).buttonColor
               ),
               child: FlatButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => BookingFormScreen(_controller.storageSpace.costPerHour.round())));
                 },
-                child: Text("BOOK NOW", style: TextStyle(color: Colors.white),),
+                child: Text("Book Now", style: Theme.of(context).textTheme.button,),
               ),
             )
           ],
@@ -157,11 +161,11 @@ class StoreInfoPage extends StatelessWidget {
     return Center(child: Text(errorMessage),);
   }
 
-  Widget infoRow(String text1, String text2) {
+  Widget infoRow(String text1, String text2, TextStyle style) {
     return Row(
       children: <Widget>[
         Expanded(
-          child: Text(text1, style: TextStyle(fontWeight: FontWeight.w800),),
+          child: Text(text1, style: style,),
         ),
         Text(text2)
       ],

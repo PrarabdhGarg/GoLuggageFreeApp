@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 
 typedef void CounterChangeCallback(num value);
 
@@ -63,12 +64,7 @@ class CustomCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    color = color ?? themeData.accentColor;
-    textStyle = textStyle ?? new TextStyle(
-      fontSize: 20.0,
-    );
-
+    this.color = buttonColor;
     return new Container(
       padding: new EdgeInsets.all(4.0),
       child: new Row(

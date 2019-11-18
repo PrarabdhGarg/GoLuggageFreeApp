@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/PastBookingsList.dart';
 import 'package:go_luggage_free/mainScreen/view/StoreListingsPage.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
             isLoading ? Center(child: CircularProgressIndicator(),) : Flexible(
               flex: 1,
               child: Container(
-                color: Colors.white,
+                color: Theme.of(context).backgroundColor,
                 child: getCurrentPage(),
               ),
             ),
@@ -52,19 +53,14 @@ class _HomePageState extends State<HomePage> {
             child: SizedBox.expand(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: HexColor("#DDDDDD"),
-                      spreadRadius: 1.0,
-                      blurRadius: 1.0
-                    )
-                  ]
+                  color: Theme.of(context).backgroundColor,
+                  border: Border(
+                    top: BorderSide(color: lightGrey)
+                  )
                 ),
-                // color: Colors.white,
                 child: Center(
                   child: FlatButton(
-                    child: Icon(Icons.home, color: Colors.blue[900],),
+                    child: Icon(Icons.home, color: this.currentPageId == 0 ? buttonColor : Colors.grey,),
                     onPressed: () {
                       setState(() {
                        currentPageId = 0; 
@@ -80,19 +76,14 @@ class _HomePageState extends State<HomePage> {
             child: SizedBox.expand(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: HexColor("#DDDDDD"),
-                      spreadRadius: 1.0,
-                      blurRadius: 1.0,
-                    )
-                  ]
+                  color: Theme.of(context).backgroundColor,
+                  border: Border(
+                    top: BorderSide(color: lightGrey)
+                  )
                 ),
-                // color: Colors.white,
                 child: Center(
                   child: FlatButton(
-                    child: Icon(Icons.print, color: Colors.blue[900],),
+                    child: Icon(Icons.card_travel, color: this.currentPageId == 1 ? buttonColor : Colors.grey,),
                     onPressed: () {
                       setState(() {
                        currentPageId = 1; 

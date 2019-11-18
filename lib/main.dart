@@ -26,14 +26,13 @@ class MyApp extends StatelessWidget {
               color: Colors.white,
               elevation: 0.0,
             ),
-            fontFamily: 'Roboto',
             buttonColor: buttonColor,
             textTheme: TextTheme(
-              title: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Roberto'),
-              button: TextStyle(color: Colors.white),
-              overline: TextStyle(color: buttonColor, fontFamily: 'Roberto', fontSize: 10.0),
-              headline: TextStyle(color: Colors.black, fontSize: 16, fontFamily: 'Roberto', fontWeight: FontWeight.bold), 
-              body1: TextStyle(color: Colors.grey, fontFamily: 'Roberto', fontSize: 12)
+              title: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold,),
+              button: TextStyle(color: Colors.white,),
+              overline: TextStyle(color: buttonColor, fontSize: 10.0),
+              headline: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold), 
+              body1: TextStyle(color: Colors.grey, fontSize: 12)
             )
           ),
           home: LoginPage()

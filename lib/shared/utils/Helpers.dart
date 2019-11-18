@@ -60,4 +60,22 @@ class SharedPrefsHelper {
       return "";
     }
   }
+
+  static Future<bool> checkUserLoginStatus() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var id = _prefs.getString(USER_ID);
+    if(id != null && id.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
+
+  static Future<String> getUserId() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var id = _prefs.getString(USER_ID);
+    if(id != null && id.isNotEmpty) {
+      return id;
+    }
+    return "";
+  }
 }

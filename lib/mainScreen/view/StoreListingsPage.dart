@@ -25,6 +25,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
       hasCCTV
       address
       longAddress
+      location
       rating
       costPerHour
       timings

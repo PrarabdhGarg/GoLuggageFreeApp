@@ -16,7 +16,7 @@ class BookingFormScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: Colors.black,),
           onPressed:() => Navigator.pop(context, false)
         ),
-        title: Text("Booking"),
+        title: Text("Booking", style: Theme.of(context).textTheme.title,),
       ),
       body: SingleChildScrollView(
         child: Container(

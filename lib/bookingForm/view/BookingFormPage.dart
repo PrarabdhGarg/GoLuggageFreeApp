@@ -32,210 +32,224 @@ class _BookingFormPageState extends State<BookingFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          CustomWidgets.customEditText(label: "Name", hint: "Please enter your name", validator: Validators.nameValidator,controller:  _nameController, context: context),
-          CustomWidgets.customEditText(label: "Govt. ID(Aadhar, DL or Passport)", hint: "Enter a valid Govt. Id", validator: Validators.govtIdValidator, controller: _govtIdNumberController, context: context),
-          Container(
-            margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-            child: Row(
-              children: <Widget>[
-                Container(width: 24.0,),
-                Container(
-                  child: Text("Number of Bags", style: Theme.of(context).textTheme.headline,),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 24.0),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
+        border: Border(
+          top: BorderSide(color: lightGrey,)
+        )
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            Flexible(
+              flex: 1,
+              child: CustomWidgets.customEditText(label: "Name", hint: "Please enter your name", validator: Validators.nameValidator,controller:  _nameController, context: context),
+            ),
+            Flexible(
+              flex: 1,
+              child: CustomWidgets.customEditText(label: "Govt. ID(Aadhar, DL or Passport)", hint: "Enter a valid Govt. Id", validator: Validators.govtIdValidator, controller: _govtIdNumberController, context: context),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 24.0,),
+                  Container(
+                    child: Text("Number of Bags", style: Theme.of(context).textTheme.headline,),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 24.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: CustomCounter(
+                          initialValue: _numberOfBags,
+                          decimalPlaces: 0,
+                          minValue: 1,
+                          maxValue: 10,
+                          step: 1,
+                          color: Colors.blue,
+                          onChanged: (value) {
+                            setState(() {
+                              print("Entered Set State with value = ${value}");
+                              _numberOfBags = value;
+                            });
+                          },
+                        ),
+                      ),
+                    )
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 24.0,),
+                  Container(child: Text("Check-In Time", style: Theme.of(context).textTheme.headline,),),
+                  Container(width: 40.0,),
+                  Expanded(
+                    flex: 1,
+                    child: DateTimeField(
+                      format: format,
+                      controller: _checkInController,
+                      decoration: InputDecoration(
+                        hintText: "Check In"
+                      ),
+                      onShowPicker: (context, currentValue) async {
+                        final date = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime(1900),
+                            initialDate: currentValue ?? DateTime.now(),
+                            lastDate: DateTime(2100));
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime:
+                                TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                          );
+                          setState(() {
+                            print("Entered set State Checkin");
+                            _checkIn = DateTimeField.combine(date, time);
+                            _checkInController.text = currentValue.toString();
+                            try {
+                              _numberOfDays = _checkOut.difference(_checkIn).inDays;
+                            } catch(e) {
+                              print(e.toString());
+                              _numberOfDays = _numberOfDays;
+                            }
+                            print("Number Of days = ${_numberOfDays}");
+                          });
+                          return DateTimeField.combine(date, time);
+                        } else {
+                          return currentValue;
+                        }
+                      },
+                    )
+                  ),
+                  Container(width: 24.0,)
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 24.0,),
+                  Container(child: Text("Check-out Time", style: Theme.of(context).textTheme.headline,),),
+                  Container(width: 40.0,),
+                  Expanded(
+                    flex: 1,
+                    child: DateTimeField(
+                      format: format,
+                      controller: _checkOutController,
+                      decoration: InputDecoration(
+                        hintText: "Check Out"
+                      ),
+                      onShowPicker: (context, currentValue) async {
+                        final date = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime(1900),
+                            initialDate: currentValue ?? DateTime.now(),
+                            lastDate: DateTime(2100));
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime:
+                                TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                          );
+                          setState(() {
+                            print("Entered set State Checkout");
+                            _checkOut = DateTimeField.combine(date, time);
+                            _checkOutController.text = currentValue.toString();
+                            try {
+                              _numberOfDays = _checkOut.difference(_checkIn).inDays;
+                            } catch(e) {
+                              print(e.toString());
+                              _numberOfDays = _numberOfDays;
+                            }
+                            print("Number Of days = ${_numberOfDays}");
+                          });
+                          return DateTimeField.combine(date, time);
+                        } else {
+                          return currentValue;
+                        }
+                      },
+                    ),
+                  ),
+                  Container(width: 24.0,)
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 24.0),
+              child: Divider(
+                color: Colors.grey,
+                thickness: 1,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 24.0),
+                    child: Text("Number of Days", style: Theme.of(context).textTheme.headline,),
+                  ),
+                  Expanded(
+                    flex: 1,
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: CustomCounter(
-                        initialValue: _numberOfBags,
-                        decimalPlaces: 0,
-                        minValue: 1,
-                        maxValue: 10,
-                        step: 1,
-                        color: Colors.blue,
-                        onChanged: (value) {
-                          setState(() {
-                            print("Entered Set State with value = ${value}");
-                            _numberOfBags = value;
-                          });
-                        },
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 24.0),
+                        child: Text("${_numberOfDays}"),
                       ),
                     ),
                   )
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-            child: Row(
-              children: <Widget>[
-                Container(width: 24.0,),
-                Container(child: Text("Check-In Time", style: Theme.of(context).textTheme.headline,),),
-                Container(width: 40.0,),
-                Expanded(
-                  flex: 1,
-                  child: DateTimeField(
-                    format: format,
-                    controller: _checkInController,
-                    decoration: InputDecoration(
-                      hintText: "Check In"
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 24.0),
+                    child: Text("Total Amount", style: Theme.of(context).textTheme.headline,),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: EdgeInsets.only(right: 24.0),
+                        child: Text("${_numberOfBags*_numberOfDays*24*widget.price}"),
+                      ),
                     ),
-                    onShowPicker: (context, currentValue) async {
-                      final date = await showDatePicker(
-                          context: context,
-                          firstDate: DateTime(1900),
-                          initialDate: currentValue ?? DateTime.now(),
-                          lastDate: DateTime(2100));
-                      if (date != null) {
-                        final time = await showTimePicker(
-                          context: context,
-                          initialTime:
-                              TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                        );
-                        setState(() {
-                          print("Entered set State Checkin");
-                          _checkIn = DateTimeField.combine(date, time);
-                          _checkInController.text = currentValue.toString();
-                          try {
-                            _numberOfDays = _checkOut.difference(_checkIn).inDays;
-                          } catch(e) {
-                            print(e.toString());
-                            _numberOfDays = _numberOfDays;
-                          }
-                          print("Number Of days = ${_numberOfDays}");
-                        });
-                        return DateTimeField.combine(date, time);
-                      } else {
-                        return currentValue;
-                      }
-                    },
                   )
-                ),
-                Container(width: 24.0,)
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-            child: Row(
-              children: <Widget>[
-                Container(width: 24.0,),
-                Container(child: Text("Check-out Time", style: Theme.of(context).textTheme.headline,),),
-                Container(width: 40.0,),
-                Expanded(
-                  flex: 1,
-                  child: DateTimeField(
-                    format: format,
-                    controller: _checkOutController,
-                    decoration: InputDecoration(
-                      hintText: "Check Out"
-                    ),
-                    onShowPicker: (context, currentValue) async {
-                      final date = await showDatePicker(
-                          context: context,
-                          firstDate: DateTime(1900),
-                          initialDate: currentValue ?? DateTime.now(),
-                          lastDate: DateTime(2100));
-                      if (date != null) {
-                        final time = await showTimePicker(
-                          context: context,
-                          initialTime:
-                              TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                        );
-                        setState(() {
-                          print("Entered set State Checkout");
-                          _checkOut = DateTimeField.combine(date, time);
-                          _checkOutController.text = currentValue.toString();
-                          try {
-                            _numberOfDays = _checkOut.difference(_checkIn).inDays;
-                          } catch(e) {
-                            print(e.toString());
-                            _numberOfDays = _numberOfDays;
-                          }
-                          print("Number Of days = ${_numberOfDays}");
-                        });
-                        return DateTimeField.combine(date, time);
-                      } else {
-                        return currentValue;
-                      }
-                    },
-                  ),
-                ),
-                Container(width: 24.0,)
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 24.0),
-            child: Divider(
-              color: Colors.grey,
-              thickness: 1,
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 24.0),
-                  child: Text("Number of Days", style: Theme.of(context).textTheme.headline,),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 24.0),
-                      child: Text("${_numberOfDays}"),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 24.0),
-                  child: Text("Total Amount", style: Theme.of(context).textTheme.headline,),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: EdgeInsets.only(right: 24.0),
-                      child: Text("${_numberOfBags*_numberOfDays*24*widget.price}"),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              margin: EdgeInsets.only(top: 16.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).buttonColor,
-                borderRadius: BorderRadius.all(Radius.circular(25.0))
-              ),
-              child: FlatButton(
-                child: Text("Book Now", style: Theme.of(context).textTheme.button,),
-                onPressed: onBookingButtonPressed
+                ],
               ),
             ),
-          )
-        ],
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: EdgeInsets.only(top: 16.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).buttonColor,
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))
+                ),
+                child: FlatButton(
+                  child: Text("Book Now", style: Theme.of(context).textTheme.button,),
+                  onPressed: onBookingButtonPressed
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

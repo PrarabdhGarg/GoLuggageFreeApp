@@ -47,6 +47,12 @@ class _BookingTicketInfoPageState extends State<BookingTicketInfoPage> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: Theme.of(context).backgroundColor,
+            border: Border(
+              top: BorderSide(color: lightGrey,)
+            )
+          ),
           child: Column(
             children: <Widget>[
               Container(

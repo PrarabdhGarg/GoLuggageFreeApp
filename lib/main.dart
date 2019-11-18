@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<GraphQLClient> _graphQlClient = getClient();
-    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
     // FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     return GraphQLProvider(
       client: _graphQlClient,
@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
               button: TextStyle(color: Colors.white,),
               overline: TextStyle(color: buttonColor, fontSize: 10.0),
               headline: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold), 
-              body1: TextStyle(color: Colors.grey, fontSize: 12)
+              body1: TextStyle(color: Colors.grey, fontSize: 12),
+              body2: TextStyle(color: Colors.grey, fontSize: 16)
             )
           ),
           home: LoginPage()

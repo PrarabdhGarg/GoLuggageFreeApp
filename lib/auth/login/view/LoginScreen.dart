@@ -40,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _LoginScreenState() {
     this.isLoading = false;
+    checkLoginStatus();
   }
 
   @override
@@ -86,6 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       );
+    }
+  }
+
+  Future<Null> checkLoginStatus() async {
+    bool isLoggedIn = await SharedPrefsHelper.checkUserLoginStatus();
+    if(isLoggedIn) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
     }
   }
 

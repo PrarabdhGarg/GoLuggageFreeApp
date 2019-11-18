@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
@@ -39,34 +41,42 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
-      child: Query(
-        options: QueryOptions(
-          document: getStrorageSpaces,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).backgroundColor,
+          border: Border(
+            top: BorderSide(color: lightGrey,)
+          )
         ),
-        builder: (QueryResult result, { VoidCallback refetch, FetchMore fetchMore }) {
-          if(result.errors != null) {
-            print("Error occoured = ${result.errors.toList().toString()}");
-            return Center(child: Text("Error in loading Data. Please try after some time"),);
-          }
-          if(result.loading) {
-            print("Loading the result");
-            return Center(child: CircularProgressIndicator(),);
-          }
-          print("Result = ${result.data.toString()}");
-          List<StorageSpace> storageSpaces = StorageSpaces.fronMap(result.data['storageSpaces']).list;
-          StorageSpacesDAO.insertStorageSpaces(storageSpaces);
-          return ListView.builder(
-            itemCount: storageSpaces.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                child: StorageWidget(storageSpaces[index]),
-                onTap: () async {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id)));
-                },
-              );
-            },
-          );
-        },
+        child: Query(
+          options: QueryOptions(
+            document: getStrorageSpaces,
+          ),
+          builder: (QueryResult result, { VoidCallback refetch, FetchMore fetchMore }) {
+            if(result.errors != null) {
+              print("Error occoured = ${result.errors.toList().toString()}");
+              return Center(child: Text("Error in loading Data. Please try after some time"),);
+            }
+            if(result.loading) {
+              print("Loading the result");
+              return Center(child: CircularProgressIndicator(),);
+            }
+            print("Result = ${result.data.toString()}");
+            List<StorageSpace> storageSpaces = StorageSpaces.fronMap(result.data['storageSpaces']).list;
+            StorageSpacesDAO.insertStorageSpaces(storageSpaces);
+            return ListView.builder(
+              itemCount: storageSpaces.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  child: StorageWidget(storageSpaces[index]),
+                  onTap: () async {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id)));
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -74,10 +84,11 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   Widget StorageWidget(StorageSpace storageSpace) {
     return Container(
       margin: EdgeInsets.only(left: 8.0, top: 6.0, right: 8.0, bottom: 6.0),
+      height: 120,
       padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        color: Colors.white,
+        color: Theme.of(context).backgroundColor,
         boxShadow: [
           BoxShadow(
             color: HexColor("#DDDDDD"),
@@ -92,10 +103,36 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
           Expanded(
             flex: 3,
             child: Container(
-              child: Image.network(
-                imageBaseUrl + storageSpace.storeImages[0],
-                fit: BoxFit.scaleDown,
-                gaplessPlayback: true,                
+              margin: EdgeInsets.only(right: 16.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: Stack(
+                children: <Widget>[
+                  AspectRatio(
+                    aspectRatio: 1/1.3,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      child: Image.network(
+                        imageBaseUrl + storageSpace.storeImages[0],
+                        fit: BoxFit.fill,
+                        gaplessPlayback: true,                
+                      ),
+                    ),
+                  ),
+                  AspectRatio(
+                    aspectRatio: 1/1.3,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      child: Image.network(
+                        imageBaseUrl + storageSpace.storeImages[0],
+                        fit: BoxFit.fill,
+                        color: Color.fromARGB(80, 00, 120, 255),
+                        gaplessPlayback: true,                
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
@@ -108,12 +145,12 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    child: Text(storageSpace.name, style: TextStyle(fontWeight: FontWeight.bold),),
+                    child: Text(storageSpace.displayLocation, style: Theme.of(context).textTheme.headline),
                   ),
                   Container(
-                    child: Text(storageSpace.displayLocation,),
+                    child: Text(storageSpace.name, style: Theme.of(context).textTheme.body1,),
                   ),
-                  Container(height: 20,),
+                  Container(height: 25,),
                   Container(
                     child: Align(
                       alignment: Alignment.bottomLeft,
@@ -124,7 +161,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                           Icons.star,
                           color: Colors.amber,
                         ),
-                        itemSize: 20,
+                        itemSize: 15,
                       ),
                     ),
                   )
@@ -133,13 +170,24 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
             ),
           ),
           Container(
+            padding: EdgeInsets.only(right: 8.0),
             child: Column(
               children: <Widget>[
-                Icon(Icons.videocam, color: storageSpace.hasCCTV ? Colors.green: Colors.transparent),
+                Container(height: 25,),
+                Container(
+                  height: 30,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(storageSpace.hasCCTV ? "assets/images/cctv.png" : "assets/images/no_cctv.png"),
+                      fit: BoxFit.scaleDown
+                    )
+                  ),
+                ),
                 Container(child: Text("CCTV", style: TextStyle(fontSize: 8,color: storageSpace.hasCCTV ? Colors.black : Colors.transparent),),),
-                Container(height: 15,),
-                Container(child: Text("\u20B9${storageSpace.costPerHour*24}", style: TextStyle(fontWeight: FontWeight.bold),),),
-                Container(child: Text("Per Day", style: TextStyle(fontSize: 12),),),
+                Container(height: 10,),
+                Container(child: Text("\u20B9${(storageSpace.costPerHour*24).round()}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),),
+                // Container(child: Text("Per Day", style: TextStyle(fontSize: 10),),),
               ],
             ),
           )

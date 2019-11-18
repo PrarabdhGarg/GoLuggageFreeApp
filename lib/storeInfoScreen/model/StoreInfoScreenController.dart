@@ -24,6 +24,7 @@ class StoreInfoScreenController with ChangeNotifier {
     } catch (e) {
       displayMessage = "Exception Occoured. ${e.toString()}";
     }
+    print("Recived Storage Space ***********************************************************\n ${storageSpace.location.toString()}");
     isLoading = false;
     notifyListeners();
   }

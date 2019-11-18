@@ -5,6 +5,7 @@ import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/storeInfoScreen/model/StoreInfoScreenController.dart';
 import 'package:provider/provider.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StoreInfoScreen extends StatefulWidget {
   String storeId;
@@ -43,17 +44,21 @@ class StoreInfoPage extends StatelessWidget {
     return _controller.isLoading ? Center(child: CircularProgressIndicator(),) : 
     _controller.displayMessage.isNotEmpty ? showErrorMessage(_controller.displayMessage) : SingleChildScrollView(
       child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).backgroundColor,
+          border: Border(
+            top: BorderSide(color: lightGrey,)
+          )
+        ),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Theme.of(context).backgroundColor,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Container(height: 20,),
             Container(
               width: MediaQuery.of(context).size.width,
               child: CarouselSlider(
-                autoPlay: true,
+                autoPlay: false,
                 scrollDirection: Axis.horizontal,
                 items: _controller.storageSpace.storeImages.map((image) {
                   return Builder(
@@ -74,7 +79,7 @@ class StoreInfoPage extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.all(24.0),
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 color: Theme.of(context).backgroundColor,
@@ -95,8 +100,14 @@ class StoreInfoPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(_controller.storageSpace.name, style: Theme.of(context).textTheme.headline),
-                            Text(_controller.storageSpace.displayLocation, style: Theme.of(context).textTheme.body1,),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 8.0),
+                              child: Text(_controller.storageSpace.displayLocation, style: Theme.of(context).textTheme.headline)
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 8.0),
+                              child: Text(_controller.storageSpace.name, style: Theme.of(context).textTheme.body2,)
+                            ),
                             Container(height: 10,),
                             Container(child: Text(_controller.storageSpace.ownerDetail,style: Theme.of(context).textTheme.body1,),)
                           ],
@@ -105,18 +116,37 @@ class StoreInfoPage extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Container(
+                          margin: EdgeInsets.only(left: 8.0),
                           child: Column(
                             children: <Widget>[
                               Container(
+                                margin: EdgeInsets.all(8.0),
                                 decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      spreadRadius: 3.0,
+                                      blurRadius: 3.0,
+                                      color: lightGrey
+                                    )
+                                  ],
                                   shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.none,
-                                    image: NetworkImage(imageBaseUrl + _controller.storageSpace.ownerImage)
-                                  )
+                                  /* border: Border(
+                                    bottom: BorderSide(color: Colors.black),
+                                    left: BorderSide(color: Colors.black),
+                                    right: BorderSide(color: Colors.black),
+                                    top: BorderSide(color: Colors.black),
+                                  ), */
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  child: FadeInImage(
+                                    fit: BoxFit.cover,
+                                    placeholder: AssetImage("assets/images/profile.jpg"),
+                                    image: NetworkImage(imageBaseUrl + _controller.storageSpace.ownerImage),
+                                  ),
                                 ),
                               ),
-                              Text(_controller.storageSpace.ownerName, style: Theme.of(context).textTheme.body1,)
+                              Text(_controller.storageSpace.ownerName, style: Theme.of(context).textTheme.body1, textAlign: TextAlign.center,)
                             ],
                           ),
                         ),
@@ -124,7 +154,33 @@ class StoreInfoPage extends StatelessWidget {
                     ],
                   ),
                   Divider(color: Colors.grey[300],),
-                  Text(_controller.storageSpace.address, style: Theme.of(context).textTheme.body1,),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(right: 8.0),
+                          width: 24,
+                          height: 24,
+                          child: Icon(Icons.map, color: Theme.of(context).buttonColor,),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            onPressed: () async {
+                              print("Map URL = ${_controller.storageSpace.location}");
+                              if(await canLaunch(_controller.storageSpace.location)) {
+                                print("Opening google maps");
+                                await launch(_controller.storageSpace.location);
+                              } else {
+                                print("Cannot open google maps");
+                              }
+                            },
+                            child: Text(_controller.storageSpace.address, style: Theme.of(context).textTheme.body1,),
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
                   Divider(color: Colors.grey[300],),
                   infoRow("Has CCTV", _controller.storageSpace.hasCCTV ? "Yes" : "No", Theme.of(context).textTheme.headline),
                   Divider(color: Colors.grey[300],),

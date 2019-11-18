@@ -11,6 +11,7 @@ class StorageSpacesDAO {
         for(String image in space.storeImages) {
           await _database.insert('Media', {"id": space.id, "storageId": image}, conflictAlgorithm: ConflictAlgorithm.replace);
         }
+        print("Inserting in to database = ${map["location"].toString()}");
         var result = await _database.insert('Storages', map, conflictAlgorithm: ConflictAlgorithm.replace);
         print("Result for id = ${space.id} = ${result}");
       } catch (e) {

@@ -63,7 +63,8 @@ class StorageSpace {
     storeImages: extractListFromJson(response["storeImages"]),
     displayLocation: response["area"]["name"].toString() + " Cloakroom",
     ownerDetail: response["ownerDetail"].toString(),
-    open: response["open"]
+    open: response["open"],
+    location: response["location"],
   );
 
   factory StorageSpace.fromResponseForBookings(Map<String, dynamic> response) => new StorageSpace(
@@ -91,7 +92,8 @@ class StorageSpace {
     storeImages: extractListFromJson(images),
     displayLocation: response["displayLocation"],
     ownerDetail: response["ownerDetail"].toString(),
-    open: response["open"] == 1 
+    open: response["open"] == 1,
+    location: response["location"]
   );
 
   Map<String, dynamic> toMap() => {

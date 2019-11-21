@@ -87,7 +87,8 @@ class _PastBookingsState extends State<PastBookings> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () async {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(bookings[index]["_id"])));
+                          Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => BookingTicketInfoScreen(bookings[index]["_id"])));
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(bookings[index]["_id"])));
                         },
                         child: BookingWidget(BookingTicket.fromJson(bookings[index])),
                       );

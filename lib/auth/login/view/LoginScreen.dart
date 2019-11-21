@@ -105,13 +105,14 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Response Status = ${response.statusCode}");
       if(response.statusCode == 200) {
         var map = jsonDecode(response.body)["user"];
+        String jwt = "Bearer" + jsonDecode(response.body)["token"];
         print("Map = ${map}");
         var userId = map["_id"];
         var name = map["name"];
         var email = map["email"];
         var mobileNumber = map["mobile_number"].toString();
         print("REcivedData = $userId\t$name\t$email\t$mobileNumber");
-        await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber);
+        await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber, jwt: jwt);
         Navigator.pop(context);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
       }
@@ -119,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   onSignUpPressed() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MobileVerificationScreen()));
+    Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => MobileVerificationScreen()));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => MobileVerificationScreen()));
   }
 }

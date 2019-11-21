@@ -169,7 +169,8 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         this.isLoading = false;
         this.isOtpVerification = false;
       });
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber)));
+      Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => SignUpScreen(phoneNumber)));
+      // Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber)));
     } catch(e) {
       print("${e.toString()}");
       if(e is PlatformException) {

@@ -17,8 +17,7 @@ class StoreInfoScreen extends StatefulWidget {
 }
 
 class _StoreInfoScreenState extends State<StoreInfoScreen> {
-  
-  
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<StoreInfoScreenController>(
@@ -31,13 +30,17 @@ class _StoreInfoScreenState extends State<StoreInfoScreen> {
             onPressed:() => Navigator.pop(context, false)
           )
         ),
-        body: StoreInfoPage(),
+        body: StoreInfoPage(widget.storeId),
       ),
     );
   }  
 }
 
 class StoreInfoPage extends StatelessWidget {
+  String storeId;
+
+  StoreInfoPage(this.storeId);
+
   @override
   Widget build(BuildContext context) {
    final StoreInfoScreenController _controller = Provider.of<StoreInfoScreenController>(context);
@@ -202,7 +205,8 @@ class StoreInfoPage extends StatelessWidget {
               ),
               child: FlatButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => BookingFormScreen(_controller.storageSpace.costPerHour.round())));
+                  Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => BookingFormScreen(_controller.storageSpace.costPerHour, storeId)));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => BookingFormScreen(_controller.storageSpace.costPerHour, storeId)));
                 },
                 child: Text("Book Now", style: Theme.of(context).textTheme.button,),
               ),

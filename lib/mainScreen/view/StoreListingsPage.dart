@@ -15,6 +15,7 @@ class StoreListingsPage extends StatefulWidget {
 }
 
 class _StoreListingsPageState extends State<StoreListingsPage> {
+  List<StorageSpace> storageSpaces;
   String getStrorageSpaces = """
   query {
       storageSpaces {
@@ -41,6 +42,15 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   """;
   @override
   Widget build(BuildContext context) {
+    print("Entered Build For Store Listings");
+    if(storageSpaces == null) {
+      print("Entered if");
+      return buildPage();
+    } 
+    return buildList(storageSpaces);
+  }
+
+  Widget buildPage() {
     return SizedBox.expand(
       child: Container(
         decoration: BoxDecoration(
@@ -63,26 +73,32 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
               return Center(child: CircularProgressIndicator(),);
             }
             print("Result = ${result.data.toString()}");
-            List<StorageSpace> storageSpaces = StorageSpaces.fronMap(result.data['storageSpaces']).list;
+            storageSpaces = StorageSpaces.fronMap(result.data['storageSpaces']).list;
             StorageSpacesDAO.insertStorageSpaces(storageSpaces);
-            return ListView.builder(
-              itemCount: storageSpaces.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  child: StorageWidget(storageSpaces[index]),
-                  onTap: () async {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id)));
-                  },
-                );
-              },
-            );
+            return buildList(storageSpaces);
           },
         ),
       ),
     );
   }
 
-  Widget StorageWidget(StorageSpace storageSpace) {
+  Widget buildList(List<StorageSpace> storageSpaces) {
+    print("Recived List = ${storageSpaces.toList()}");
+    return ListView.builder(
+      itemCount: storageSpaces.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: StorageWidget(storageSpaces[index], index),
+          onTap: () async {
+            Navigator.of(context).push(PageRouteBuilder(opaque: false, maintainState: true, pageBuilder: (BuildContext context,_,__) => StoreInfoScreen(storageSpaces[index].id)));
+            // Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id), maintainState: false));
+          },
+        );
+      },
+    );
+  }
+
+  Widget StorageWidget(StorageSpace storageSpace, int index) {
     return Container(
       margin: EdgeInsets.only(left: 8.0, top: 6.0, right: 8.0, bottom: 6.0),
       height: 120,
@@ -132,7 +148,17 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                         gaplessPlayback: true,                
                       ),
                     ),
-                  )
+                  ),
+                  AspectRatio(
+                    aspectRatio: 1/1.3,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      child: Opacity(
+                        opacity: 0.90,
+                        child: selectOverlayIcon(index)
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -195,5 +221,15 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
         ],
       )
     );
+  }
+
+  Widget selectOverlayIcon(int index) {
+    if(index == 1 || index == 2 || index == 3) {
+      return Icon(Icons.train, color: Colors.white,size: 34.0,);
+    } else if(index == 4) {
+      return Icon(Icons.local_airport, color: Colors.white,size: 34.0,);
+    } else {
+      return Icon(Icons.store, color: Colors.white,size: 34.0,);
+    }
   }
 }

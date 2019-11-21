@@ -11,12 +11,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<GraphQLClient> _graphQlClient = getClient();
-    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-    // FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    // FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     return GraphQLProvider(
       client: _graphQlClient,
       child: CacheProvider(
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
             primarySwatch: Colors.blue,
@@ -26,14 +27,15 @@ class MyApp extends StatelessWidget {
               color: Colors.white,
               elevation: 0.0,
             ),
+            fontFamily: 'Roboto',
             buttonColor: buttonColor,
             textTheme: TextTheme(
-              title: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold,),
-              button: TextStyle(color: Colors.white,),
-              overline: TextStyle(color: buttonColor, fontSize: 10.0),
-              headline: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold), 
-              body1: TextStyle(color: Colors.grey, fontSize: 12),
-              body2: TextStyle(color: Colors.grey, fontSize: 16)
+              title: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
+              button: TextStyle(color: Colors.white, fontFamily: 'Roboto'),
+              overline: TextStyle(color: buttonColor, fontSize: 10.0, fontFamily: 'Roboto'),
+              headline: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Roboto'), 
+              body1: TextStyle(color: Colors.grey, fontSize: 12, fontFamily: 'Roboto'),
+              body2: TextStyle(color: Colors.grey, fontSize: 16, fontFamily: 'Roboto'),
             )
           ),
           home: LoginPage()

@@ -1,7 +1,9 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
 import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
 import 'package:go_luggage_free/mainScreen/view/PastBookingsList.dart';
+import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
 
 class MainScreen extends StatefulWidget {
   int currentPage;
@@ -15,8 +17,13 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedCallback {
   int currentPage;
   int _selectedDrawerIndex = 0;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  Widget activePage;
+  String title = "Home";
 
-  _MainScreenState(this.currentPage);
+  _MainScreenState(this.currentPage) {
+    enableFirebaseCloudMessagingListeners();
+  }
 
   List<Widget> _drawerWidgets;
 
@@ -25,29 +32,34 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
     switch(index) {
       case 0: {
         print("Entered Case 0");
-        return HomePage();
+        if(activePage == null || !(activePage is HomePage)) {
+          activePage = HomePage();
+          title = "Home";
+        }
+        break;
       }
       case 1: {
         print("Entered Case 1");
-        return PastBookings();
+        if(activePage == null || !(activePage is ProfileScreen)) {
+          activePage = ProfileScreen();
+          title = "Profile";
+        }
+        break;
       }
       default: {
         print("Entered Case default");
-        return Container(child: Text("Error!!!"));
+        activePage = Container(child: Text("Error!!!"));
       }
     }
+    return activePage;
   }
 
   @override
   Widget build(BuildContext context) {
     print("Entered Build");
-    _selectedDrawerIndex = currentPage;
-    _drawerWidgets = [
-      
-    ];
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home", style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
+        title: Text(title, style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
         iconTheme: IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
@@ -69,5 +81,24 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
      _selectedDrawerIndex = index; 
     });
     Navigator.of(context).pop();
+  }
+
+  void enableFirebaseCloudMessagingListeners() {
+    // TODO Add permissions in IOS for notifications
+    _firebaseMessaging.getToken().then((token) {
+      print("Recived Firebase Token = ${token.toString()}");
+    });
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('on message $message');
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume $message');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch $message');
+      },
+    );
   }
 }

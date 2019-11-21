@@ -25,8 +25,9 @@ class SharedPrefsHelper {
   static final  String EMAIL = "EMAIL";
   static final  String MOBILE_NUMBER = "MOBILE_NUMBER";
   static final  String NAME = "NAME";
+  static final String JWT = "JWT_TOKEN";
 
-  static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber}) async {
+  static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber, @required String jwt}) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     if(userId != null) {
       await _prefs.setString(USER_ID, userId);
@@ -37,8 +38,10 @@ class SharedPrefsHelper {
     if(mobileNumber != null) {
       await _prefs.setString(MOBILE_NUMBER, mobileNumber);
     }
-    if(name != null) {}
-    await _prefs.setString(NAME, name);
+    if(name != null) {
+      await _prefs.setString(NAME, name);
+    }
+    await _prefs.setString(JWT, jwt);
   }
 
   static Future<String> getUserNumber() async {
@@ -63,7 +66,7 @@ class SharedPrefsHelper {
 
   static Future<bool> checkUserLoginStatus() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    var id = _prefs.getString(USER_ID);
+    var id = _prefs.getString(JWT);
     if(id != null && id.isNotEmpty) {
       return true;
     }
@@ -75,6 +78,24 @@ class SharedPrefsHelper {
     var id = _prefs.getString(USER_ID);
     if(id != null && id.isNotEmpty) {
       return id;
+    }
+    return "";
+  }
+
+  static Future<String> getJWT() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var id = _prefs.getString(JWT);
+    if(id != null && id.isNotEmpty) {
+      return id;
+    }
+    throw Exception("User not logged in");
+  }
+
+  static Future<String> getUserName() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var name = _prefs.getString(NAME);
+    if(name != null && name.isNotEmpty) {
+      return name;
     }
     return "";
   }

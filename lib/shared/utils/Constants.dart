@@ -12,7 +12,14 @@ String razorPayCallbackUrl = "api/confirmPayment/KLkajafj3434jaf";
 
 String signUpUrl = baseUrl + "users";
 
+String getTokensForBooking = baseUrl + "api/getApplicableCoupons";
+
+// While making an api call to this end-point, you will have to add /{storageSpace.id}/book
+String makeBooking = baseUrl + "api/bookings";
+
 Color buttonColor = HexColor("#0078FF");
+
+Color disabledButtonColor = Colors.grey;
 
 Color cursorColor = Colors.grey;
 

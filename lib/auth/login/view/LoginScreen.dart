@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   onSignUpPressed() async {
-    Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => MobileVerificationScreen()));
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => MobileVerificationScreen()));
+    // Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => MobileVerificationScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MobileVerificationScreen(), settings: RouteSettings(name: "MobileVerificationScreen")));
   }
 }

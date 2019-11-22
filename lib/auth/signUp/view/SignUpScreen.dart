@@ -104,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         var body = jsonDecode(result.body)["user"];
         await SharedPrefsHelper.saveUserData(name: body["name"].toString(), mobileNumber: body["mobile_number"].toString(), email: body["email"].toString(), userId: body["_id"].toString(), jwt: body["token"].toString());
         Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomePage")));
       }
     }
   }

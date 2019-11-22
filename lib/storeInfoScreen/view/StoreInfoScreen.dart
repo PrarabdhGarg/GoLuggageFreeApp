@@ -206,7 +206,7 @@ class StoreInfoPage extends StatelessWidget {
               child: FlatButton(
                 onPressed: () {
                   // Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => BookingFormScreen(_controller.storageSpace.costPerHour, storeId)));
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => BookingFormScreen(_controller.storageSpace.costPerHour, storeId)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => BookingFormScreen(_controller.storageSpace.costPerHour, storeId), settings: RouteSettings(name: "BookingFormScreen${_controller.storageSpace.name}")));
                 },
                 child: Text("Book Now", style: Theme.of(context).textTheme.button,),
               ),

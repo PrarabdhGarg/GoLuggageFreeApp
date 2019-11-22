@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:go_luggage_free/auth/login/view/LoginScreen.dart';
@@ -8,6 +10,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  FirebaseAnalytics _analytics = new FirebaseAnalytics();
   @override
   Widget build(BuildContext context) {
     ValueNotifier<GraphQLClient> _graphQlClient = getClient();
@@ -19,6 +22,9 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: _analytics),
+          ],
           theme: ThemeData(
             primarySwatch: Colors.blue,
             primaryColor: Colors.blue,

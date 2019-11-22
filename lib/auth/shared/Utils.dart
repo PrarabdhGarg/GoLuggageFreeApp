@@ -5,10 +5,12 @@ class Validators {
     if(password == null) return "Enter non-null Password";
     if(password.isEmpty) return "Password cannot be empty";
     if(password.length < 7) return "Password should be of atlest 8 characters";
+    if(password.contains(' ')) return "Spaces not allowed";
     return null;
   }
 
   static String phoneValidator(String phone) {
+    phone = phone.trim();
     if(phone == null) return "Enter non-null Phone number";
     if(phone.isEmpty) return "Phone number is required";
     if(phone.length != 10) return "Enter 10 digit number";
@@ -17,6 +19,7 @@ class Validators {
   }
 
   static String emailValidator(String email) {
+    email = email.trim();
     if(email == null) return "Enter non-null Email";
     if(email.isEmpty) return "Email is Required";
     if(email.length<=3) return "Enter a valid Email";
@@ -27,6 +30,7 @@ class Validators {
   }
 
   static String nameValidator(String name) {
+    name = name.trim();
     if(name == null) return "Enter non-null name";
     if(name.isEmpty) return "Name cannot be blank";
     if(name.length == 1) return "Enter a valid name";
@@ -36,6 +40,7 @@ class Validators {
   }
 
   static String govtIdValidator(String govtId) {
+    govtId = govtId.trim();
     if(govtId == null) return "Enter non-empty Id";
     if(govtId.isEmpty) return "Enter non-empty Id";
     return null;

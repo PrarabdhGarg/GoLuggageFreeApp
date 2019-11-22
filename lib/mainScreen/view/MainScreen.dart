@@ -25,9 +25,12 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
     enableFirebaseCloudMessagingListeners();
   }
 
-  List<Widget> _drawerWidgets;
+  List<MaterialPageRoute> _drawerRoutes = [
+    MaterialPageRoute(builder: (context) => HomePage(), settings: RouteSettings(name: "HomePage")),
+    MaterialPageRoute(builder: (context) => ProfileScreen(), settings: RouteSettings(name: "Profile"))
+  ];
 
-  Widget getPageForSelectedDrawerItem(int index) {
+  /* Widget getPageForSelectedDrawerItem(int index) {
     print("Entered Page Selector");
     switch(index) {
       case 0: {
@@ -52,7 +55,7 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
       }
     }
     return activePage;
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +75,30 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
           ],
         ),
       ),
-      body: getPageForSelectedDrawerItem(_selectedDrawerIndex),
+      body: HomePage(),
     );
   }
 
   void onDrawerItemClicked(int index) {
+    // This is to close the drawer as soon as the user makes a choice
+    Navigator.of(context).pop();
+
+    // If the user is currently not on the HomePage, and he doesn't want to go to the
+    // home page, simply replace the current page  with the page he wants to visit
+    // If the user wants to go to the HomePage, just pop the topmost widget from the stack
+    // If the user is currently at the HomePage, and wants to go somewhere else, jsut add that page to the stack 
+    if(_selectedDrawerIndex != index) {
+      if(_selectedDrawerIndex != 0 && index != 0) {
+        Navigator.pushReplacement(context, _drawerRoutes[index]); 
+      } else if(index == 0) {
+        Navigator.of(context).pop();
+      } else {
+        Navigator.push(context, _drawerRoutes[index]);
+      }
+    }
     setState(() {
      _selectedDrawerIndex = index; 
     });
-    Navigator.of(context).pop();
   }
 
   void enableFirebaseCloudMessagingListeners() {

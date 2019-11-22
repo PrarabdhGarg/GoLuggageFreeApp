@@ -11,42 +11,38 @@ class MainScreen extends StatefulWidget {
   MainScreen(this.currentPage);
 
   @override
-  _MainScreenState createState() => _MainScreenState(currentPage);
+  MainScreenState createState() => MainScreenState(currentPage);
 }
 
-class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedCallback {
+class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedCallback {
   int currentPage;
   int _selectedDrawerIndex = 0;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   Widget activePage;
-  String title = "Home";
+  List<MaterialPageRoute> _drawerRoutes;
 
-  _MainScreenState(this.currentPage) {
+  List<String> titles = ["Home", "Profile"];
+
+  MainScreenState(this.currentPage) {
     enableFirebaseCloudMessagingListeners();
+    
+    _drawerRoutes = [
+      MaterialPageRoute(builder: (context) => HomePage(), settings: RouteSettings(name: "HomePage")),
+      MaterialPageRoute(builder: (context) => ProfileScreen(), settings: RouteSettings(name: "Profile"))
+    ];
   }
 
-  List<MaterialPageRoute> _drawerRoutes = [
-    MaterialPageRoute(builder: (context) => HomePage(), settings: RouteSettings(name: "HomePage")),
-    MaterialPageRoute(builder: (context) => ProfileScreen(), settings: RouteSettings(name: "Profile"))
-  ];
-
-  /* Widget getPageForSelectedDrawerItem(int index) {
+  Widget getPageForSelectedDrawerItem(int index) {
     print("Entered Page Selector");
     switch(index) {
       case 0: {
         print("Entered Case 0");
-        if(activePage == null || !(activePage is HomePage)) {
-          activePage = HomePage();
-          title = "Home";
-        }
+        activePage = HomePage();
         break;
       }
       case 1: {
         print("Entered Case 1");
-        if(activePage == null || !(activePage is ProfileScreen)) {
-          activePage = ProfileScreen();
-          title = "Profile";
-        }
+        activePage = ProfileScreen();
         break;
       }
       default: {
@@ -55,14 +51,14 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
       }
     }
     return activePage;
-  } */
+  }
 
   @override
   Widget build(BuildContext context) {
     print("Entered Build");
     return Scaffold(
       appBar: AppBar(
-        title: Text(title, style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
+        title: Text(titles[_selectedDrawerIndex], style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
         iconTheme: IconThemeData(color: Colors.black),
       ),
       drawer: Drawer(
@@ -75,30 +71,35 @@ class _MainScreenState extends State<MainScreen>  implements OnDrawerItemClicked
           ],
         ),
       ),
-      body: HomePage(),
+      body: getPageForSelectedDrawerItem(_selectedDrawerIndex),
     );
   }
 
   void onDrawerItemClicked(int index) {
+    /* print("Index = ${index}\n${_selectedDrawerIndex}");
     // This is to close the drawer as soon as the user makes a choice
     Navigator.of(context).pop();
-
+    int previousIndex = _selectedDrawerIndex;
+    setState(() {
+     _selectedDrawerIndex = index; 
+    });
     // If the user is currently not on the HomePage, and he doesn't want to go to the
     // home page, simply replace the current page  with the page he wants to visit
     // If the user wants to go to the HomePage, just pop the topmost widget from the stack
     // If the user is currently at the HomePage, and wants to go somewhere else, jsut add that page to the stack 
-    if(_selectedDrawerIndex != index) {
-      if(_selectedDrawerIndex != 0 && index != 0) {
+    if(previousIndex != index) {
+      if(previousIndex != 0 && index != 0) {
         Navigator.pushReplacement(context, _drawerRoutes[index]); 
       } else if(index == 0) {
         Navigator.of(context).pop();
       } else {
         Navigator.push(context, _drawerRoutes[index]);
       }
-    }
+    } */
     setState(() {
-     _selectedDrawerIndex = index; 
+      _selectedDrawerIndex = index;
     });
+    Navigator.of(context).pop();
   }
 
   void enableFirebaseCloudMessagingListeners() {

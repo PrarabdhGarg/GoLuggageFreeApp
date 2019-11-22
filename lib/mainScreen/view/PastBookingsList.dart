@@ -14,13 +14,13 @@ class PastBookings extends StatefulWidget {
 class _PastBookingsState extends State<PastBookings> {
   // TODO Change capital or small capital D to small D
   // TODO Change Hard-coded userId
+  // Add fields for storeImages, and ownerImage
   // String userId = "5dc73841aff11c0017963b5b";
   String getBookings = """
   query GetBookings(\$userId: String!) {
     bookings(consumer: \$userId) {
       _id
       bookingID
-      _id
       storageSpace {
         _id
         name

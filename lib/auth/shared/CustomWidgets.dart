@@ -34,6 +34,7 @@ class CustomWidgets {
       margin: EdgeInsets.only(right: 30.0, left: 30.0),
       child: TextFormField(
         keyboardType: inputType,
+        autovalidate: true,
         cursorColor: cursorColor,
         obscureText: obscureText,
         decoration: InputDecoration(

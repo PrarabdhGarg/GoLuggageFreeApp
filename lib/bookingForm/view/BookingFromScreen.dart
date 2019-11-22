@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_luggage_free/bookingForm/view/BookingFormPage.dart';
 
 class BookingFormScreen extends StatelessWidget {
-  int price;
+  double price;
   GlobalKey<ScaffoldState> _key = new GlobalKey();
+  String storeId;
 
-  BookingFormScreen(this.price);
+  BookingFormScreen(this.price, this.storeId);
 
   @override
   Widget build(BuildContext context) {

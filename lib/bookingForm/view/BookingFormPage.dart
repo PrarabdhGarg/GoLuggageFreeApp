@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 
 class BookingFormPage extends StatefulWidget {
-  int price;
+  double price;
 
   BookingFormPage(this.price);
 

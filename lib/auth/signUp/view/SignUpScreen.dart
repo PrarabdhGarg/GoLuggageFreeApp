@@ -102,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if(result.statusCode == 201) {
         print("Sign-Up sucessful");
         var body = jsonDecode(result.body)["user"];
-        await SharedPrefsHelper.saveUserData(name: body["name"].toString(), mobileNumber: body["mobile_number"].toString(), email: body["email"].toString(), userId: body["_id"].toString());
+        await SharedPrefsHelper.saveUserData(name: body["name"].toString(), mobileNumber: body["mobile_number"].toString(), email: body["email"].toString(), userId: body["_id"].toString(), jwt: body["token"].toString());
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
       }

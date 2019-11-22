@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("Entered Lowest build");
+    print("Entered Lowest build with ${currentPageId.toString()}");
     return displayMessage.isNotEmpty ? 
         showDialog(
           context: context
@@ -47,62 +47,60 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget customBottomNav() {
-    if(bottomNav == null) {
-      bottomNav = SizedBox(
-        width: double.infinity,
-        height: 60,
-        child: Row(
-          children: <Widget>[
-            Flexible(
-              flex: 1,
-              child: SizedBox.expand(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).backgroundColor,
-                    border: Border(
-                      top: BorderSide(color: lightGrey)
-                    )
-                  ),
-                  child: Center(
-                    child: FlatButton(
-                      child: Icon(Icons.home, color: this.currentPageId == 0 ? buttonColor : Colors.grey,),
-                      onPressed: () {
-                        setState(() {
-                        currentPageId = 0; 
-                        });
-                      },
-                    ),
+    return SizedBox(
+      width: double.infinity,
+      height: 60,
+      child: Row(
+        children: <Widget>[
+          Flexible(
+            flex: 1,
+            child: SizedBox.expand(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).backgroundColor,
+                  border: Border(
+                    top: BorderSide(color: lightGrey)
+                  )
+                ),
+                child: Center(
+                  child: FlatButton(
+                    child: Icon(Icons.home, color: this.currentPageId == 0 ? buttonColor : Colors.grey,),
+                    onPressed: () {
+                      setState(() {
+                      currentPageId = 0; 
+                      });
+                    },
                   ),
                 ),
               ),
             ),
-            Flexible(
-              flex: 1,
-              child: SizedBox.expand(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).backgroundColor,
-                    border: Border(
-                      top: BorderSide(color: lightGrey)
-                    )
-                  ),
-                  child: Center(
-                    child: FlatButton(
-                      child: Icon(Icons.card_travel, color: this.currentPageId == 1 ? buttonColor : Colors.grey,),
-                      onPressed: () {
-                        setState(() {
+          ),
+          Flexible(
+            flex: 1,
+            child: SizedBox.expand(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).backgroundColor,
+                  border: Border(
+                    top: BorderSide(color: lightGrey)
+                  )
+                ),
+                child: Center(
+                  child: FlatButton(
+                    child: Icon(Icons.card_travel, color: this.currentPageId == 1 ? buttonColor : Colors.grey,),
+                    onPressed: () {
+                      setState(() {
+                        print("Entered set state for 1");
                         currentPageId = 1; 
-                        });
-                      },
-                    ),
+                      });
+                    },
                   ),
                 ),
               ),
-            )
-          ],
-        ),
-      );
-    }
-    return bottomNav;
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

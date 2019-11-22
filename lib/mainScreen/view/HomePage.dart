@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage> {
   int currentPageId = 0;
   bool isLoading = false;
   String displayMessage = "";
-  Widget currentPage;
   Widget bottomNav;
 
   @override
@@ -40,14 +39,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget getCurrentPage() {
-    if(currentPage == null) {
-      if(currentPageId == 0) {
-        currentPage = SizedBox.expand(child: StoreListingsPage(),);      
-      } else {
-        currentPage = SizedBox.expand(child: PastBookings(),);
-      }
+    if(currentPageId == 0) {
+      return SizedBox.expand(child: StoreListingsPage(),);      
+    } else {
+      return SizedBox.expand(child: PastBookings(),);
     }
-    return currentPage;
   }
 
   Widget customBottomNav() {

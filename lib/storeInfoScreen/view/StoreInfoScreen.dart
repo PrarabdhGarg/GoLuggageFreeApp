@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/bookingForm/view/BookingFromScreen.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:go_luggage_free/shared/views/InfoRow.dart';
 import 'package:go_luggage_free/storeInfoScreen/model/StoreInfoScreenController.dart';
 import 'package:provider/provider.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
@@ -219,16 +220,5 @@ class StoreInfoPage extends StatelessWidget {
 
   Widget showErrorMessage(String errorMessage) {
     return Center(child: Text(errorMessage),);
-  }
-
-  Widget infoRow(String text1, String text2, TextStyle style) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Text(text1, style: style,),
-        ),
-        Text(text2)
-      ],
-    );
   }
 }

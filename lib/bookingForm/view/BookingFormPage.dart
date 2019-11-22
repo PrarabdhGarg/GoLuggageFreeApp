@@ -40,12 +40,12 @@ class _BookingFormPageState extends State<BookingFormPage> {
         )
       ),
       child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           children: <Widget>[
             Flexible(
               flex: 1,
-              child: CustomWidgets.customEditText(label: "Name", hint: "Please enter your name", validator: Validators.nameValidator,controller:  _nameController, context: context),
+              child: CustomWidgets.customEditText(label: "Name", hint: "Please enter your name", validator: Validators.nameValidator,controller: _nameController, context: context),
             ),
             Flexible(
               flex: 1,

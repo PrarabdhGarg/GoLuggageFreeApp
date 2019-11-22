@@ -24,3 +24,7 @@ Color disabledButtonColor = Colors.grey;
 Color cursorColor = Colors.grey;
 
 Color lightGrey = HexColor("#F5F5F5");
+
+// Please don't remove this form key. This is here to solve a major bug faced in the booking form page
+//  Will shift it to its right place as soon as I find out where this is supposed to be :)
+final GlobalKey<FormState> formKey = new GlobalKey();

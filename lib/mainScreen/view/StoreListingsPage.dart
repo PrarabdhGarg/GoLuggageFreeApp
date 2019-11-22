@@ -90,8 +90,8 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
         return GestureDetector(
           child: StorageWidget(storageSpaces[index], index),
           onTap: () async {
-            Navigator.of(context).push(PageRouteBuilder(opaque: false, maintainState: true, pageBuilder: (BuildContext context,_,__) => StoreInfoScreen(storageSpaces[index].id)));
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id), maintainState: false));
+            // Navigator.of(context).push(PageRouteBuilder(opaque: false, maintainState: true, pageBuilder: (BuildContext context,_,__) => StoreInfoScreen(storageSpaces[index].id)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id), maintainState: false));
           },
         );
       },

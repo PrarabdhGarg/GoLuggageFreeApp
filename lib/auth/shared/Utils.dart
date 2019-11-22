@@ -1,4 +1,6 @@
 class Validators {
+  static DateTime checkInTime;
+
   static String passwordValidator(String password) {
     if(password == null) return "Enter non-null Password";
     if(password.isEmpty) return "Password cannot be empty";
@@ -9,8 +11,8 @@ class Validators {
   static String phoneValidator(String phone) {
     if(phone == null) return "Enter non-null Phone number";
     if(phone.isEmpty) return "Phone number is required";
-    // if(phone.length != 10) return "Enter 10 digit number";
-    // if(!(RegExp(r'^-?[0-9]+$').hasMatch(phone))) return "Invalid";
+    if(phone.length != 10) return "Enter 10 digit number";
+    if(!(RegExp(r'^-?[0-9]+$').hasMatch(phone))) return "Invalid";
     return null;
   }
 
@@ -34,6 +36,8 @@ class Validators {
   }
 
   static String govtIdValidator(String govtId) {
+    if(govtId == null) return "Enter non-empty Id";
+    if(govtId.isEmpty) return "Enter non-empty Id";
     return null;
   }
 
@@ -42,6 +46,27 @@ class Validators {
     if(otp.isEmpty) return "Enter a non-empty otp";
     if(otp.length != 6) return "Invalid";
     if(!(RegExp(r'^-?[0-9]+$').hasMatch(otp))) return "OTP is numeric only";
+    return null;
+  }
+
+  static String checkInValidator(DateTime checkIn) {
+    checkInTime = checkIn;
+    if(checkIn == null) return "Enter non-null checkIn Time";
+    try {
+      if(checkIn.toIso8601String().isEmpty) return "Enter non-empty checkIn Time";
+    } catch(e) {
+      return "Invalid";
+    }
+    if(!(checkIn.isAfter(DateTime.now()))) return "You cannot checkIn before Today";
+    return null;
+  }
+
+  static String checkOutValidator(DateTime checkOut) {
+    if(checkInTime == null) return "Select checkIn Time first";
+    if(checkOut == null) return "Enter non-empty checkOut Time";
+    if(checkOut.toIso8601String().isEmpty) return "CheckOut Time cannot be null";
+    if(checkOut.isBefore(checkInTime)) return "CheckOut cannot be before checkIn";
+    if(checkOut.isBefore(DateTime.now())) return "CheckOut cannot be before today";
     return null;
   }
 }

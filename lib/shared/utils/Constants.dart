@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
-String baseUrl = "https://api.goluggagefree.com/";
+String baseUrl = "http://testtemp.goluggagefree.com/";
 
-String imageBaseUrl = baseUrl + "media/image/";
+String imageBaseUrl = baseUrl;
 
 String logInUrl = baseUrl + "users/login";
 

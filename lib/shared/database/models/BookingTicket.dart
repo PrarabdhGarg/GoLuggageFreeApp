@@ -9,10 +9,12 @@ class BookingTickets {
 
   factory BookingTickets.fromMap(List<dynamic> listOfDynamic) {
     List<BookingTicket> newList = new List();
-    listOfDynamic.forEach((item) {
-      // print("Converting item = ${item.toString()}");
-      newList.add(BookingTicket.fromJson(item));
-    });
+    if(listOfDynamic.isNotEmpty) {
+      listOfDynamic.forEach((item) {
+        print("Converting item = ${item.toString()}");
+        newList.add(BookingTicket.fromJson(item));
+      });
+    }
     return new BookingTickets(newList);
   }
 }
@@ -47,31 +49,31 @@ class BookingTicket {
 // TODO Change capital or small capital D to small D
 // TODO Change hard-coded booking id
     factory BookingTicket.fromJson(Map<String, dynamic> json) => BookingTicket(
-        id: json["_id"].toString(),
-        bookingId: "123456", // json["bookingID"].toString(),
+        id: json["_id"].toString() ?? "",
+        bookingId: json["bookingId"].toString() ?? "",
         storageSpace: StorageSpace.fromResponseForBookings(json["storageSpace"]),
-        netStorageCost: double.parse(json["netStorageCost"].toString()),
-        checkInTime: json["checkInTime"].toString(),
-        checkOutTime: json["checkOutTime"].toString(),
-        bookingPersonName: json["bookingPersonName"].toString(),
-        numberOfBags: int.parse(json["numberOfBags"].toString()),
-        numberOfDays: int.parse(json["numberOfDays"].toString()),
-        userGovtId: json["userGovtId"].toString(),
+        netStorageCost: double.parse(json["netStorageCost"].toString()) ?? 0.0,
+        checkInTime: json["checkInTime"].toString() ?? "",
+        checkOutTime: json["checkOutTime"].toString() ?? "",
+        bookingPersonName: json["bookingPersonName"].toString() ?? "",
+        numberOfBags: int.parse(json["numberOfBags"].toString()) ?? "",
+        numberOfDays: int.parse(json["numberOfDays"].toString()) ?? "",
+        userGovtId: json["userGovtId"].toString() ?? "",
     );
 
 // TODO Change capital or small capital D to small D
 // TODO Change hard-coded booking id
     factory BookingTicket.fromDatabaseResult(Map<String, dynamic> json, StorageSpace storageSpace) => BookingTicket(
-        id: json["_id"].toString(),
-        bookingId: "123456", //json["bookingID"].toString(),
+        id: json["_id"].toString() ?? "",
+        bookingId: json["bookingId"].toString() ?? "",
         storageSpace: storageSpace,
-        netStorageCost: double.parse(json["netStorageCost"].toString()),
-        checkInTime: json["checkInTime"].toString(),
-        checkOutTime: json["checkOutTime"].toString(),
-        bookingPersonName: json["bookingPersonName"].toString(),
-        numberOfBags: int.parse(json["numberOfBags"].toString()),
-        numberOfDays: int.parse(json["numberOfDays"].toString()),
-        userGovtId: json["userGovtId"].toString(),
+        netStorageCost: double.parse(json["netStorageCost"].toString()) ?? 0.0,
+        checkInTime: json["checkInTime"].toString() ?? "",
+        checkOutTime: json["checkOutTime"].toString() ?? "",
+        bookingPersonName: json["bookingPersonName"].toString() ?? "",
+        numberOfBags: int.parse(json["numberOfBags"].toString()) ?? '',
+        numberOfDays: int.parse(json["numberOfDays"].toString()) ?? "",
+        userGovtId: json["userGovtId"].toString() ?? "",
     );
 
     Map<String, dynamic> toMap() => {

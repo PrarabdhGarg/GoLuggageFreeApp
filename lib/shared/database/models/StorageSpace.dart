@@ -7,8 +7,9 @@ class StorageSpaces {
 
   factory StorageSpaces.fronMap(List<dynamic> listOfDynamic) {
     List<StorageSpace> newList = new List();
-    listOfDynamic.forEach((item) => {
-      newList.add(StorageSpace.fromResponse(item))
+    listOfDynamic.forEach((item)  {
+      print("Adding new item" + item.toString());
+      newList.add(StorageSpace.fromResponse(item));
     });
     return new StorageSpaces(newList);
   }
@@ -50,50 +51,51 @@ class StorageSpace {
   });
 
   factory StorageSpace.fromResponse(Map<String, dynamic> response) => new StorageSpace(
-    id: response["_id"].toString(),
-    name: response["name"].toString(),
-    ownerImage: response["ownerImage"].toString(),
-    address: response["address"].toString(),
-    longAddress: response["longAddress"].toString(),
-    rating: double.parse(response["rating"].toString()),
-    costPerHour: double.parse(response["costPerHour"].toString()),
-    hasCCTV: response["hasCCTV"],
-    ownerName: response["ownerName"].toString(),
-    timings: response["timings"].toString(),
+    id: response["_id"].toString() ?? "",
+    name: response["name"].toString() ?? "",
+    ownerImage: response["ownerImage"].toString() ?? "",
+    address: response["address"].toString() ?? "",
+    longAddress: response["longAddress"].toString() ?? "",
+    rating: double.parse(response["rating"].toString()) ?? 0.0,
+    costPerHour: double.parse(response["costPerHour"].toString()) ?? 0.0,
+    hasCCTV: response["hasCCTV"] ?? true,
+    ownerName: response["ownerName"].toString() ?? "",
+    timings: response["timings"].toString() ?? "",
     storeImages: extractListFromJson(response["storeImages"]),
     displayLocation: response["area"]["name"].toString() + " Cloakroom",
-    ownerDetail: response["ownerDetail"].toString(),
-    open: response["open"],
-    location: response["location"],
+    ownerDetail: response["ownerDetail"].toString() ?? "",
+    open: response["open"] ?? false,
+    location: response["location"] ?? "",
   );
 
   factory StorageSpace.fromResponseForBookings(Map<String, dynamic> response) => new StorageSpace(
-    id: response["_id"].toString(),
-    name: response["name"].toString(),
-    ownerImage: response["ownerImage"].toString(),
-    address: response["address"].toString(),
-    longAddress: response["longAddress"].toString(),
-    location: response["location"].toString(),
-    ownerDetail: response["ownerDetail"].toString(),
-    open: response["open"]
+    id: response["_id"].toString() ?? "",
+    name: response["name"].toString() ?? "",
+    ownerImage: response["ownerImage"].toString() ?? "",
+    address: response["address"].toString() ?? "",
+    longAddress: response["longAddress"].toString() ?? "",
+    location: response["location"].toString() ?? "",
+    ownerDetail: response["ownerDetail"].toString() ?? "",
+    open: response["open"] ?? false,
+    ownerName: response["ownerName"].toString() ?? ""
   );
 
   factory StorageSpace.fromDatabaseResponse(Map<String, dynamic> response, List<String> images) => new StorageSpace(
-    id: response["_id"].toString(),
-    name: response["name"].toString(),
-    ownerImage: response["ownerImage"].toString(),
-    address: response["address"].toString(),
-    longAddress: response["longAddress"].toString(),
-    rating: double.parse(response["rating"].toString()),
-    costPerHour: double.parse(response["costPerHour"].toString()),
+    id: response["_id"].toString() ?? "",
+    name: response["name"].toString() ?? "",
+    ownerImage: response["ownerImage"].toString() ?? "",
+    address: response["address"].toString() ?? "",
+    longAddress: response["longAddress"].toString() ?? "",
+    rating: double.parse(response["rating"].toString()) ?? 0.0,
+    costPerHour: double.parse(response["costPerHour"].toString()) ?? 0.0,
     hasCCTV: response["hasCCTV"] == 1,
-    ownerName: response["ownerName"].toString(),
-    timings: response["timings"].toString(),
+    ownerName: response["ownerName"].toString() ?? "",
+    timings: response["timings"].toString() ?? "",
     storeImages: extractListFromJson(images),
-    displayLocation: response["displayLocation"],
-    ownerDetail: response["ownerDetail"].toString(),
+    displayLocation: response["displayLocation"] ?? "",
+    ownerDetail: response["ownerDetail"].toString() ?? "",
     open: response["open"] == 1,
-    location: response["location"]
+    location: response["location"] ?? ""
   );
 
   Map<String, dynamic> toMap() => {

@@ -158,31 +158,31 @@ class StoreInfoPage extends StatelessWidget {
                     ],
                   ),
                   Divider(color: Colors.grey[300],),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(right: 8.0),
-                          width: 24,
-                          height: 24,
-                          child: Icon(Icons.map, color: Theme.of(context).buttonColor,),
-                        ),
-                        Expanded(
-                          child: FlatButton(
-                            onPressed: () async {
-                              print("Map URL = ${_controller.storageSpace.location}");
-                              if(await canLaunch(_controller.storageSpace.location)) {
-                                print("Opening google maps");
-                                await launch(_controller.storageSpace.location);
-                              } else {
-                                print("Cannot open google maps");
-                              }
-                            },
+                  FlatButton(
+                    onPressed: () async {
+                      print("Map URL = ${_controller.storageSpace.location}");
+                      if(await canLaunch(_controller.storageSpace.location)) {
+                        print("Opening google maps");
+                        await launch(_controller.storageSpace.location);
+                      } else {
+                        print("Cannot open google maps");
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(right: 8.0),
+                            width: 24,
+                            height: 24,
+                            child: Icon(Icons.location_on, color: Theme.of(context).buttonColor,),
+                          ),
+                          Expanded(
                             child: Text(_controller.storageSpace.address, style: Theme.of(context).textTheme.body1,),
-                          )
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Divider(color: Colors.grey[300],),

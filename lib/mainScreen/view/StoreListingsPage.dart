@@ -1,13 +1,16 @@
 import 'dart:ui';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
 import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/CustomAnalyticsHelper.dart';
 import 'package:go_luggage_free/storeInfoScreen/view/StoreInfoScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:provider/provider.dart';
 
 class StoreListingsPage extends StatefulWidget {
   @override
@@ -91,6 +94,13 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
           child: StorageWidget(storageSpaces[index], index),
           onTap: () async {
             // Navigator.of(context).push(PageRouteBuilder(opaque: false, maintainState: true, pageBuilder: (BuildContext context,_,__) => StoreInfoScreen(storageSpaces[index].id)));
+            FirebaseAnalytics _analytics = CustomAnalyticsHelper.getAnalyticsInstance();
+            await _analytics.logViewItem(
+              itemId: storageSpaces[index].id,
+              itemName: storageSpaces[index].name,
+              startDate: DateTime.now().toString(),
+              itemCategory: "Storage Space"
+            );
             Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id), maintainState: false));
           },
         );
@@ -99,6 +109,10 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   }
 
   Widget StorageWidget(StorageSpace storageSpace, int index) {
+    String imageUrl = "";
+    if(storageSpace.storeImages.isNotEmpty) {
+      imageUrl = imageBaseUrl + storageSpace.storeImages[0];
+    }
     return Container(
       margin: EdgeInsets.only(left: 8.0, top: 6.0, right: 8.0, bottom: 6.0),
       height: 120,
@@ -131,7 +145,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       child: Image.network(
-                        imageBaseUrl + storageSpace.storeImages[0],
+                        imageUrl,
                         fit: BoxFit.fill,
                         gaplessPlayback: true,                
                       ),
@@ -142,7 +156,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       child: Image.network(
-                        imageBaseUrl + storageSpace.storeImages[0],
+                        imageUrl,
                         fit: BoxFit.fill,
                         color: Color.fromARGB(80, 00, 120, 255),
                         gaplessPlayback: true,                

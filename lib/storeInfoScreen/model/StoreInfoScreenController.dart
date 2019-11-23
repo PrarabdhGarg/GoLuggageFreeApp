@@ -15,6 +15,7 @@ class StoreInfoScreenController with ChangeNotifier {
   }
 
   Future<Null> getStoreInfo() async {
+    print("Recived Store Id = $storeId");
     try {
       storageSpace = await StorageSpacesDAO.getStorageSpace(storeId);
       if(storageSpace == null) {

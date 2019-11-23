@@ -27,6 +27,9 @@ class StorageSpacesDAO {
     List<Map<String, dynamic>> result = await _database.rawQuery("""
       SELECT * FROM Storages JOIN Media ON Storages.id=Media.id WHERE Storages.id = ?
     """, [id]);
+    if(result.isEmpty) {
+      result = await _database.rawQuery("""SELECT * FROM Storages WHERE Storages.id = ?""", [id]);
+    }
     print("Result of query = " + result.toString());
     StorageSpace storageSpace;
     if(result != null) {

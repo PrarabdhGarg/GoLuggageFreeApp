@@ -21,6 +21,7 @@ class BookingTicketDAO {
   }
 
   static Future<BookingTicket> getBookingTicket(String ticketId) async {
+    print("Recived Ticet id = $ticketId");
     final Database _database = await AppDatabase.databaseProvider.getDatabase();
     List<Map<String, dynamic>> result = await _database.rawQuery("""
       SELECT * FROM BookingTickets JOIN Storages ON BookingTickets.storageSpaceId=Storages.id WHERE BookingTickets.id = ?

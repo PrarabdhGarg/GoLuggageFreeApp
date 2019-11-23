@@ -3,9 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 List<String> extractListFromJson(List<dynamic> list) {
   List<String> finalList = new List();
-  list.forEach((item) => {
-    finalList.add(item.toString())
-  });
+  if(list.isNotEmpty) {
+    list.forEach((item) => {
+      finalList.add(item.toString())
+    });
+  }
   return finalList;
 }
 class HexColor extends Color {

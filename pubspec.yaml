@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -41,6 +41,7 @@ dependencies:
   razorpay_flutter: ^1.1.0
   flutter_statusbarcolor: ^0.2.3
   url_launcher: ^5.2.5
+  country_code_picker: ^1.1.7
 
 dev_dependencies:
   flutter_test:

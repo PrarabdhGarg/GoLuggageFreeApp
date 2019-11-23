@@ -5,6 +5,7 @@ import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 
 class MobileVerificationScreen extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
   AuthCredential _authCredential;
   AuthResult _user;
   String phoneNumber;
+  CountryCode _selectedCountryCode = CountryCode(name: "India", dialCode: "+91", code: "IN");
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +91,26 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
                 child: Image.asset("assets/images/logo.png"),
               ),
             ),
-            Flexible(
-              flex: 1,
-              child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Phone Number", hint: "Please Enter Phone Number", validator: Validators.phoneValidator, inputType: TextInputType.phone)
+            Row(
+              children: <Widget>[
+                Container(
+                  child: CountryCodePicker(
+                    initialSelection: 'IN',
+                    showFlag: true,
+                    showOnlyCountryWhenClosed: false,
+                    textStyle: Theme.of(context).textTheme.body1,
+                    onChanged: (CountryCode code) {
+                      setState(() {
+                        _selectedCountryCode = code;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Phone Number", hint: "Please Enter Phone Number", validator: Validators.phoneValidator, inputType: TextInputType.phone)
+                ),
+              ],
             ),
             Container(height: 30,),
             CustomWidgets.customLoginButton(text: "Submit", onPressed: onMobileVerificationPressed)
@@ -103,7 +122,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
 
   onMobileVerificationPressed() async {
     if(_formKey.currentState.validate()) {
-      phoneNumber = "+91"+phoneController.text;
+      phoneNumber = _selectedCountryCode.dialCode + phoneController.text;
       setState(() {
         this.isLoading = true;
         phoneController.text = "";

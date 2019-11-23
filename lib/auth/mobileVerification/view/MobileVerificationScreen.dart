@@ -103,7 +103,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
 
   onMobileVerificationPressed() async {
     if(_formKey.currentState.validate()) {
-      phoneNumber = phoneController.text;
+      phoneNumber = "+91"+phoneController.text;
       setState(() {
         this.isLoading = true;
         phoneController.text = "";

@@ -41,18 +41,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget signUpPage(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: lightGrey,
-          )
+    return SingleChildScrollView(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: lightGrey,
+            )
+          ),
+          color: Theme.of(context).backgroundColor
         ),
-        color: Theme.of(context).backgroundColor
-      ),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: SingleChildScrollView(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         child: Form(
           key: _formKey,
           child: Column(

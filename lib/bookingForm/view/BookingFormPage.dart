@@ -44,273 +44,271 @@ class _BookingFormPageState extends State<BookingFormPage> {
           top: BorderSide(color: lightGrey,)
         )
       ),
-      child: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: <Widget>[
-              Flexible(
-                flex: 1,
-                child: CustomWidgets.customEditText(label: "Name", hint: "Please enter your name", validator: Validators.nameValidator,controller: nameController, context: context),
-              ),
-              Flexible(
-                flex: 1,
-                child: CustomWidgets.customEditText(label: "Govt. ID(Aadhar, DL or Passport)", hint: "Enter a valid Govt. Id", validator: Validators.govtIdValidator, controller: govtIdNumber, context: context),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(width: 24.0,),
-                    Container(child: Text("Check-In Time", style: Theme.of(context).textTheme.headline,),),
-                    Container(width: 50.0,),
-                    Expanded(
-                      flex: 1,
-                      child: DateTimeField(
-                        format: format,
-                        controller: _checkInController,
-                        validator: Validators.checkInValidator,
-                        decoration: InputDecoration(
-                          hintText: "Check In"
-                        ),
-                        onShowPicker: (context, currentValue) async {
-                          final date = await showDatePicker(
-                              context: context,
-                              firstDate: DateTime.now(),
-                              initialDate: currentValue ?? DateTime.now(),
-                              lastDate: DateTime(2100));
-                          if (date != null) {
-                            final time = await showTimePicker(
-                              context: context,
-                              initialTime:
-                                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                            );
-                            setState(() {
-                              print("Entered set State Checkin");
-                              _checkIn = DateTimeField.combine(date, time);
-                              _checkInController.text = currentValue.toString();
-                              try {
-                                _numberOfDays = _checkOut.difference(_checkIn).inDays;
-                              } catch(e) {
-                                print(e.toString());
-                                _numberOfDays = _numberOfDays;
-                              }
-                              print("Number Of days = ${_numberOfDays}");
-                            });
-                            return DateTimeField.combine(date, time);
-                          } else {
-                            return currentValue;
-                          }
-                        },
-                      )
-                    ),
-                    Container(width: 24.0,)
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(width: 24.0,),
-                    Container(child: Text("Check-out Time", style: Theme.of(context).textTheme.headline,),),
-                    Container(width: 40.0,),
-                    Expanded(
-                      flex: 1,
-                      child: DateTimeField(
-                        format: format,
-                        controller: _checkOutController,
-                        decoration: InputDecoration(
-                          hintText: "Check Out"
-                        ),
-                        onShowPicker: (context, currentValue) async {
-                          final date = await showDatePicker(
-                              context: context,
-                              firstDate: _checkIn ?? DateTime.now(),
-                              initialDate: _checkIn ?? DateTime.now(),
-                              lastDate: DateTime(2100));
-                          if (date != null) {
-                            final time = await showTimePicker(
-                              context: context,
-                              initialTime:
-                                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                            );
-                            setState(() {
-                              print("Entered set State Checkout");
-                              _checkOut = DateTimeField.combine(date, time);
-                              _checkOutController.text = currentValue.toString();
-                              try {
-                                _numberOfDays = _checkOut.difference(_checkIn).inDays;
-                              } catch(e) {
-                                print(e.toString());
-                                _numberOfDays = _numberOfDays;
-                              }
-                              print("Number Of days = ${_numberOfDays}");
-                            });
-                            return DateTimeField.combine(date, time);
-                          } else {
-                            return currentValue;
-                          }
-                        },
-                      ),
-                    ),
-                    Container(width: 24.0,)
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 16.0, bottom: 48.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(width: 24.0,),
-                    Container(
-                      child: Text("Number of Bags", style: Theme.of(context).textTheme.headline,),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 24.0),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: CustomCounter(
-                            initialValue: _numberOfBags,
-                            decimalPlaces: 0,
-                            minValue: 1,
-                            maxValue: 10,
-                            step: 1,
-                            color: Colors.blue,
-                            textStyle: TextStyle(fontSize: 18),
-                            onChanged: (value) {
-                              setState(() {
-                                print("Entered Set State with value = ${value}");
-                                _numberOfBags = value;
-                              });
-                            },
-                          ),
-                        ),
-                      )
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 24.0),
-                child: Divider(
-                  color: Colors.grey[300],
-                  thickness: 1,
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(left: 24.0),
-                      child: Text("Number of Days", style: Theme.of(context).textTheme.headline,),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 24.0),
-                          child: Text("${_numberOfDays}"),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(left: 24.0),
-                      child: Text("Total Amount", style: Theme.of(context).textTheme.headline,),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          padding: EdgeInsets.only(right: 24.0),
-                          child: Text("${_numberOfBags*_numberOfDays*24*widget.price}"),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Row(
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: <Widget>[
+            Flexible(
+              flex: 1,
+              child: CustomWidgets.customEditText(label: "Name", hint: "Please enter your name", validator: Validators.nameValidator,controller: nameController, context: context),
+            ),
+            Flexible(
+              flex: 1,
+              child: CustomWidgets.customEditText(label: "Govt. ID(Aadhar, DL or Passport)", hint: "Enter a valid Govt. Id", validator: Validators.govtIdValidator, controller: govtIdNumber, context: context),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 8.0),
-                    child: Checkbox(
-                      value: _termsAndConditionsAccepted,
-                      onChanged: (value) {
-                        setState(() {
-                          _termsAndConditionsAccepted = value;
-                        });
+                  Container(width: 24.0,),
+                  Container(child: Text("Check-In Time", style: Theme.of(context).textTheme.headline,),),
+                  Container(width: 50.0,),
+                  Expanded(
+                    flex: 1,
+                    child: DateTimeField(
+                      format: format,
+                      controller: _checkInController,
+                      validator: Validators.checkInValidator,
+                      decoration: InputDecoration(
+                        hintText: "Check In"
+                      ),
+                      onShowPicker: (context, currentValue) async {
+                        final date = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime.now(),
+                            initialDate: currentValue ?? DateTime.now(),
+                            lastDate: DateTime(2100));
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime:
+                                TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                          );
+                          setState(() {
+                            print("Entered set State Checkin");
+                            _checkIn = DateTimeField.combine(date, time);
+                            _checkInController.text = currentValue.toString();
+                            try {
+                              _numberOfDays = _checkOut.difference(_checkIn).inDays;
+                            } catch(e) {
+                              print(e.toString());
+                              _numberOfDays = _numberOfDays;
+                            }
+                            print("Number Of days = ${_numberOfDays}");
+                          });
+                          return DateTimeField.combine(date, time);
+                        } else {
+                          return currentValue;
+                        }
                       },
-                      activeColor: buttonColor,
+                    )
+                  ),
+                  Container(width: 24.0,)
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 24.0,),
+                  Container(child: Text("Check-out Time", style: Theme.of(context).textTheme.headline,),),
+                  Container(width: 40.0,),
+                  Expanded(
+                    flex: 1,
+                    child: DateTimeField(
+                      format: format,
+                      controller: _checkOutController,
+                      decoration: InputDecoration(
+                        hintText: "Check Out"
+                      ),
+                      onShowPicker: (context, currentValue) async {
+                        final date = await showDatePicker(
+                            context: context,
+                            firstDate: _checkIn ?? DateTime.now(),
+                            initialDate: _checkIn ?? DateTime.now(),
+                            lastDate: DateTime(2100));
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime:
+                                TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                          );
+                          setState(() {
+                            print("Entered set State Checkout");
+                            _checkOut = DateTimeField.combine(date, time);
+                            _checkOutController.text = currentValue.toString();
+                            try {
+                              _numberOfDays = _checkOut.difference(_checkIn).inDays;
+                            } catch(e) {
+                              print(e.toString());
+                              _numberOfDays = _numberOfDays;
+                            }
+                            print("Number Of days = ${_numberOfDays}");
+                          });
+                          return DateTimeField.combine(date, time);
+                        } else {
+                          return currentValue;
+                        }
+                      },
                     ),
+                  ),
+                  Container(width: 24.0,)
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 48.0),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 24.0,),
+                  Container(
+                    child: Text("Number of Bags", style: Theme.of(context).textTheme.headline,),
                   ),
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      margin: EdgeInsets.only(right: 8.0),
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "Please select this to indicate that you accept our\n",
-                              style: Theme.of(context).textTheme.body1
-                            ),
-                            TextSpan(
-                              text: "Terms and Conditions",
-                              style: Theme.of(context).textTheme.body1.copyWith(color: buttonColor),
-                              recognizer: TapGestureRecognizer()..onTap = () async {
-                                await launch("https://goluggagefree.com/terms");
-                              }
-                            )
-                          ]
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 24.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: CustomCounter(
+                          initialValue: _numberOfBags,
+                          decimalPlaces: 0,
+                          minValue: 1,
+                          maxValue: 10,
+                          step: 1,
+                          color: Colors.blue,
+                          textStyle: TextStyle(fontSize: 18),
+                          onChanged: (value) {
+                            setState(() {
+                              print("Entered Set State with value = ${value}");
+                              _numberOfBags = value;
+                            });
+                          },
                         ),
+                      ),
+                    )
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 24.0),
+              child: Divider(
+                color: Colors.grey[300],
+                thickness: 1,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 24.0),
+                    child: Text("Number of Days", style: Theme.of(context).textTheme.headline,),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 24.0),
+                        child: Text("${_numberOfDays}"),
                       ),
                     ),
                   )
                 ],
               ),
-              Align(
-                alignment: Alignment.center,
-                child: Container(
-                  margin: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).buttonColor,
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 24.0),
+                    child: Text("Total Amount", style: Theme.of(context).textTheme.headline,),
                   ),
-                  child: FlatButton(
-                    child: Text("Add Coupons", style: Theme.of(context).textTheme.button,),
-                    onPressed: onAddCouponsButtonPressed,
+                  Expanded(
+                    flex: 1,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: EdgeInsets.only(right: 24.0),
+                        child: Text("${_numberOfBags*_numberOfDays*24*widget.price}"),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(left: 8.0),
+                  child: Checkbox(
+                    value: _termsAndConditionsAccepted,
+                    onChanged: (value) {
+                      setState(() {
+                        _termsAndConditionsAccepted = value;
+                      });
+                    },
+                    activeColor: buttonColor,
                   ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.only(right: 8.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Please select this to indicate that you accept our\n",
+                            style: Theme.of(context).textTheme.body1
+                          ),
+                          TextSpan(
+                            text: "Terms and Conditions",
+                            style: Theme.of(context).textTheme.body1.copyWith(color: buttonColor),
+                            recognizer: TapGestureRecognizer()..onTap = () async {
+                              await launch("https://goluggagefree.com/terms");
+                            }
+                          )
+                        ]
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).buttonColor,
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))
+                ),
+                child: FlatButton(
+                  child: Text("Add Coupons", style: Theme.of(context).textTheme.button,),
+                  onPressed: onAddCouponsButtonPressed,
                 ),
               ),
-              Align(
-                alignment: Alignment.center,
-                child: Container(
-                  margin: EdgeInsets.only(top: 16.0),
-                  decoration: BoxDecoration(
-                    color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1"),
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))
-                  ),
-                  child: FlatButton(
-                    child: Text("Book Now", style: Theme.of(context).textTheme.button,),
-                    onPressed: _termsAndConditionsAccepted ? onBookingButtonPressed : null
-                  ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: EdgeInsets.only(top: 16.0),
+                decoration: BoxDecoration(
+                  color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1"),
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))
                 ),
-              )
-            ],
-          ),
+                child: FlatButton(
+                  child: Text("Book Now", style: Theme.of(context).textTheme.button,),
+                  onPressed: _termsAndConditionsAccepted ? onBookingButtonPressed : null
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

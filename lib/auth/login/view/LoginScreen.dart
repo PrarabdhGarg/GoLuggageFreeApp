@@ -48,16 +48,16 @@ class _LoginScreenState extends State<LoginScreen> {
     if(isLoading) {
       return Center(child: CircularProgressIndicator(),);
     } else {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).backgroundColor,
-          border: Border(
-            top: BorderSide(color: lightGrey,)
-          )
-        ),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
+      return SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).backgroundColor,
+            border: Border(
+              top: BorderSide(color: lightGrey,)
+            )
+          ),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
           child: Form(
             key: _formKey,
             child: Column(

@@ -22,6 +22,16 @@ class HexColor extends Color {
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
 
+
+String getHumanReadableDate(DateTime dateTime) {
+  return dateTime.day.toString() + "-" + dateTime.month.toString() + "-" + dateTime.year.toString();
+}
+
+
+String getUserReadableTime(DateTime dateTime) {
+  return dateTime.hour.toString() + ":" + dateTime.minute.toString();
+}
+
 class SharedPrefsHelper {
   static final  String USER_ID = "USER_ID";
   static final  String EMAIL = "EMAIL";

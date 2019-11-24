@@ -73,6 +73,7 @@ class AppDatabase {
         numberOfBags INTEGER,
         numberOfDays INTEGER,
         userGovtId TEXT,
+        createdAt TEXT NULL,
         FOREIGN KEY(storageSpaceId) REFERENCES Storages(id)
       )''');
     });

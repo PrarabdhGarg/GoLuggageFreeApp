@@ -32,6 +32,7 @@ class BookingTicket {
     int numberOfBags;
     int numberOfDays;
     String userGovtId;
+    String createdAt;
 
     BookingTicket({
         this.id,
@@ -44,6 +45,7 @@ class BookingTicket {
         this.numberOfBags,
         this.numberOfDays,
         this.userGovtId,
+        this.createdAt,
     });
 
 // TODO Change capital or small capital D to small D
@@ -59,6 +61,7 @@ class BookingTicket {
         numberOfBags: int.parse(json["numberOfBags"].toString()) ?? "",
         numberOfDays: int.parse(json["numberOfDays"].toString()) ?? "",
         userGovtId: json["userGovtId"].toString() ?? "",
+        createdAt: json["createdAt"].toString() ?? "",
     );
 
 // TODO Change capital or small capital D to small D
@@ -74,6 +77,7 @@ class BookingTicket {
         numberOfBags: int.parse(json["numberOfBags"].toString()) ?? '',
         numberOfDays: int.parse(json["numberOfDays"].toString()) ?? "",
         userGovtId: json["userGovtId"].toString() ?? "",
+        createdAt: json["createdAt"].toString() ?? "",
     );
 
     Map<String, dynamic> toMap() => {
@@ -86,6 +90,7 @@ class BookingTicket {
       "numberOfDays": numberOfDays,
       "numberOfBags": numberOfBags,
       "userGovtId": userGovtId,
-      "storageSpaceId": storageSpace.id
+      "storageSpaceId": storageSpace.id,
+      "createdAt": createdAt,
     };
 }

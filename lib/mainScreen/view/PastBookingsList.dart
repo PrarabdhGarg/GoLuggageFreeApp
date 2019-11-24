@@ -20,7 +20,7 @@ class _PastBookingsState extends State<PastBookings> {
   query GetBookings(\$userId: String!) {
     bookings(consumer: \$userId) {
       _id
-      bookingID
+      bookingId
       storageSpace {
         _id
         name
@@ -33,6 +33,7 @@ class _PastBookingsState extends State<PastBookings> {
         longAddress
         ownerName
         ownerImage
+        ownerDetail
       }
       netStorageCost
       checkInTime
@@ -41,6 +42,7 @@ class _PastBookingsState extends State<PastBookings> {
       numberOfBags
       numberOfDays
       userGovtId
+      createdAt
     }
   }
   """;
@@ -51,7 +53,7 @@ class _PastBookingsState extends State<PastBookings> {
         future: getUserId(),
         builder: (context, snapShot) {
           if(snapShot.connectionState == ConnectionState.done) {
-            print("Snapshot Status = Done");
+            print("Snapshot Status = Done with id = ${snapShot.data.toString()}");
             return Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).backgroundColor,
@@ -78,7 +80,8 @@ class _PastBookingsState extends State<PastBookings> {
                   // print("Result = ${result.data.toString()}");
                   List<dynamic> bookings = result.data['bookings'];
                   print("Recived Bookings = ${bookings.toString()}");
-                  BookingTicketDAO.insertBookingTickets(BookingTickets.fromMap(bookings).list);
+                  var list = BookingTickets.fromMap(bookings).list;
+                  BookingTicketDAO.insertBookingTickets(list);
                   if(bookings.length == 0) {
                     return Center(child: Text("No Bookings Made Yet. Please Try again later", style: Theme.of(context).textTheme.headline,),);
                   }
@@ -134,18 +137,48 @@ class _PastBookingsState extends State<PastBookings> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("Booking Id: " + bookingTicket.bookingId, style: Theme.of(context).textTheme.body1,),
-                      Text(bookingTicket.storageSpace.displayLocation, style: Theme.of(context).textTheme.headline,),
-                      Text(bookingTicket.storageSpace.longAddress, style: Theme.of(context).textTheme.body1,),
+                      Container(
+                        child: Text("Booking Id: " + bookingTicket.bookingId ?? "", style: Theme.of(context).textTheme.body1,),
+                        padding: EdgeInsets.only(bottom: 4.0),
+                      ),
+                      Container(
+                        child: Text(bookingTicket.storageSpace.displayLocation + " Cloakroom" ?? "", style: Theme.of(context).textTheme.headline,),
+                        padding: EdgeInsets.only(bottom: 4.0),
+                      ),
+                      Container(
+                        child: Text(bookingTicket.storageSpace.name ?? "", style: Theme.of(context).textTheme.body1,),
+                        padding: EdgeInsets.only(bottom: 4.0),
+                      ),
+                      Container(
+                        child: Text(getHumanReadableDate(DateTime.fromMicrosecondsSinceEpoch(int.parse(bookingTicket.createdAt) * 1000)) ?? "", style: Theme.of(context).textTheme.body1,),
+                      ),
                     ],
                   ),
                 ),
-                Container(
+                Column(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.topCenter,
+                      margin: EdgeInsets.all(4.0),
+                      padding: EdgeInsets.all(4.0),
+                      child: Text("Completed", style: TextStyle(color: Colors.lightGreen),),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        margin: EdgeInsets.all(4.0),
+                        padding: EdgeInsets.all(4.0),
+                        child: Text("\u20B9 "+bookingTicket.netStorageCost.round().toString(), style: Theme.of(context).textTheme.headline,),
+                      ),
+                    ),
+                  ],
+                )
+                /*Container(
                   child: Align(
                     alignment: Alignment.center,
                     child: Image.network(imageBaseUrl+bookingTicket.storageSpace.ownerImage),
                   ),
-                )
+                )*/
               ],
             ), 
           )

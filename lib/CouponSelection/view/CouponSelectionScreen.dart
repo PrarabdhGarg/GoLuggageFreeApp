@@ -55,9 +55,7 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> {
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.done) {
               print("Connection Status = Done");
-              return ListView.builder(
-
-              );
+              return Container(child: Text("Done"),);
             } else if(snapshot.connectionState == ConnectionState.waiting) {
               print("Entered Waiting state");
               return Center(child: CircularProgressIndicator(),);
@@ -72,6 +70,7 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> {
   }
 
   Future<List<Coupon>> getApplicableCoupons() async {
+    print("Entered Future");
     var body = {
       "booking": {
         "bookingPersonName": widget.name,
@@ -82,8 +81,14 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> {
         "storageSpace": widget.storageSpaceId
       }
     };
+    print("Body = ${body.toString()}");
     String jwt = await SharedPrefsHelper.getJWT();
-    var response = await http.post(getTokensForBooking, body: body, headers: {HttpHeaders.authorizationHeader: jwt});
-    
+    print("Recived user jwt = $jwt");
+    await http.post(getTokensForBooking, body: body, headers: {HttpHeaders.authorizationHeader: jwt}).then((http.Response response) {
+      print("Response recived");
+      print("Reived response code = ${response.statusCode.toString()}");
+      print("Recived Body = ${response.body.toString()}");
+    });
+    // return new List<Coupon>();
   }
 }

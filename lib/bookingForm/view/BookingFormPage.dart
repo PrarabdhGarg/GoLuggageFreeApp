@@ -1,6 +1,7 @@
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/CouponSelection/view/CouponSelectionScreen.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/bookingForm/view/CustomCounter.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
@@ -13,8 +14,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class BookingFormPage extends StatefulWidget {
   double price;
+  String storageSpaceId;
 
-  BookingFormPage(this.price);
+  BookingFormPage(this.price, this.storageSpaceId);
 
   @override
   _BookingFormPageState createState() => _BookingFormPageState();
@@ -26,8 +28,8 @@ class _BookingFormPageState extends State<BookingFormPage> {
   TextEditingController _govtIdNumberController = new TextEditingController(text: "");
   TextEditingController _checkInController = new TextEditingController(text: "");
   TextEditingController _checkOutController = new TextEditingController(text: "");
-  DateTime _checkIn;
-  DateTime _checkOut;
+  DateTime _checkIn = DateTime.now();
+  DateTime _checkOut = DateTime.now();
   int _numberOfBags = 1;
   int _numberOfDays = 0;
   bool _termsAndConditionsAccepted = false;
@@ -267,8 +269,8 @@ class _BookingFormPageState extends State<BookingFormPage> {
                           TextSpan(
                             text: "Terms and Conditions",
                             style: Theme.of(context).textTheme.body1.copyWith(color: buttonColor),
-                            recognizer: TapGestureRecognizer()..onTap = () {
-                              launch("https://goluggagefree.com/terms");
+                            recognizer: TapGestureRecognizer()..onTap = () async {
+                              await launch("https://goluggagefree.com/terms");
                             }
                           )
                         ]
@@ -277,6 +279,20 @@ class _BookingFormPageState extends State<BookingFormPage> {
                   ),
                 )
               ],
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).buttonColor,
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))
+                ),
+                child: FlatButton(
+                  child: Text("Add Coupons", style: Theme.of(context).textTheme.button,),
+                  onPressed: onAddCouponsButtonPressed,
+                ),
+              ),
             ),
             Align(
               alignment: Alignment.center,
@@ -320,6 +336,17 @@ class _BookingFormPageState extends State<BookingFormPage> {
       };
       _razorPay.open(_options);
     }
+  }
+
+  onAddCouponsButtonPressed() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CouponSelectionScreen(
+      checkInTime: _checkIn.toIso8601String(),
+      checkOutTime: _checkOut.toIso8601String(),
+      name: nameController.text.toString(),
+      numberOfBags: _numberOfBags,
+      storageSpaceId: widget.storageSpaceId,
+      userGovtId: govtIdNumber.text.toString(),
+    ), settings: RouteSettings(name: "Coupons Selection ")));
   }
 
   void _handlePaymentSucess(PaymentSuccessResponse response) async {

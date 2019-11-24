@@ -23,7 +23,7 @@ class BookingFormScreen extends StatelessWidget {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: BookingFormPage(price),
+          child: BookingFormPage(price, storeId),
         ),
       ),
     );

@@ -46,16 +46,16 @@ class StoreInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
    final StoreInfoScreenController _controller = Provider.of<StoreInfoScreenController>(context);
     return _controller.isLoading ? Center(child: CircularProgressIndicator(),) : 
-    _controller.displayMessage.isNotEmpty ? showErrorMessage(_controller.displayMessage) : SingleChildScrollView(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).backgroundColor,
-          border: Border(
-            top: BorderSide(color: lightGrey,)
-          )
-        ),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+    _controller.displayMessage.isNotEmpty ? showErrorMessage(_controller.displayMessage) : Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
+        border: Border(
+          top: BorderSide(color: lightGrey,)
+        )
+      ),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
@@ -211,7 +211,8 @@ class StoreInfoPage extends StatelessWidget {
                 },
                 child: Text("Book Now", style: Theme.of(context).textTheme.button,),
               ),
-            )
+            ),
+            Container(height: 20,)
           ],
         ),
       ),

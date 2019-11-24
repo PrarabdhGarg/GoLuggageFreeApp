@@ -4,9 +4,9 @@ Widget infoRow(String text1, String text2, TextStyle style) {
   return Row(
     children: <Widget>[
       Expanded(
-        child: Text(text1, style: style,),
+        child: Container(child: Text(text1, style: style,), padding: EdgeInsets.only(left: 8.0),),
       ),
-      Text(text2)
+      Container(child: Text(text2), padding: EdgeInsets.only(right: 8.0),)
     ],
   );
 }

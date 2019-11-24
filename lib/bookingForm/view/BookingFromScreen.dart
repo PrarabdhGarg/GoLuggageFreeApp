@@ -19,12 +19,10 @@ class BookingFormScreen extends StatelessWidget {
         ),
         title: Text("Booking", style: Theme.of(context).textTheme.title,),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: BookingFormPage(price, storeId),
-        ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: BookingFormPage(price, storeId),
       ),
     );
   }

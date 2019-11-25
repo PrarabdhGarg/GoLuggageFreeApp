@@ -332,7 +332,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
         "prefill": {
           "contact": number,
           "email": email
-        }
+        },
       };
       _razorPay.open(_options);
     }

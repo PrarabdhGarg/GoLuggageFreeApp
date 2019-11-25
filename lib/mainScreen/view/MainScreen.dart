@@ -1,9 +1,12 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
 import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
 import 'package:go_luggage_free/mainScreen/view/PastBookingsList.dart';
 import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
   int currentPage;
@@ -68,6 +71,18 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
             DrawerTile(text: "Profile", onPressed: this, index: 1,),
             DrawerTile(text: "FAQ", onPressed: this, index: 2,),
             DrawerTile(text: "Contact", onPressed: this, index: 3,),
+            Container(
+              margin: EdgeInsets.only(left: 8.0, top: (MediaQuery.of(context).size.height * 0.5)),
+              child: RichText(
+                text: TextSpan(
+                    text: "Privacy Policy",
+                    style: Theme.of(context).textTheme.body1.copyWith(color: buttonColor),
+                    recognizer: TapGestureRecognizer()..onTap = () async {
+                      await launch("https://goluggagefree.com/privacy");
+                    }
+                ),
+              ),
+            )
           ],
         ),
       ),

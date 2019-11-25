@@ -13,7 +13,7 @@ class Validators {
     phone = phone.trim();
     if(phone == null) return "Enter non-null Phone number";
     if(phone.isEmpty) return "Phone number is required";
-    if(phone.length != 10) return "Enter 10 digit number";
+    // if(phone.length != 10) return "Enter 10 digit number";
     if(!(RegExp(r'^-?[0-9]+$').hasMatch(phone))) return "Invalid";
     return null;
   }

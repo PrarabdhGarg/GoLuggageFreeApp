@@ -3,7 +3,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
 import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
-import 'package:go_luggage_free/mainScreen/view/PastBookingsList.dart';
 import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -63,6 +62,27 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
       appBar: AppBar(
         title: Text(titles[_selectedDrawerIndex], style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
         iconTheme: IconThemeData(color: Colors.black),
+        actions: <Widget>[
+          Container(
+            margin: EdgeInsets.only(left: 8.0),
+            child: Center(
+              child: Text("Need Help?", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.black),)
+            )
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 8.0),
+            child: GestureDetector(
+              child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
+              onTap: () async {
+                print("Entered onTap");
+                String phoneNumber = "+918249489314";
+                String url = "whatsapp://send?phone=$phoneNumber";
+                !(await canLaunch(url)) ? launch(url) : launch("tel://$phoneNumber");
+                // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+              },
+            ),
+          )
+        ],
       ),
       drawer: Drawer(
         child: ListView(

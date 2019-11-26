@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +9,7 @@ import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/bookingForm/view/CustomCounter.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -32,8 +36,15 @@ class _BookingFormPageState extends State<BookingFormPage> {
   DateTime _checkOut = DateTime.now();
   int _numberOfBags = 1;
   int _numberOfDays = 0;
+  String selectedUserGovtIdType = "AADHAR";
   bool _termsAndConditionsAccepted = false;
   final format = DateFormat("yyyy-MM-dd HH:mm");
+  bool isLoading;
+
+  @override
+  void initState() {
+    isLoading = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +63,62 @@ class _BookingFormPageState extends State<BookingFormPage> {
               flex: 1,
               child: CustomWidgets.customEditText(label: "Name", hint: "Please enter your name", validator: Validators.nameValidator,controller: nameController, context: context),
             ),
-            Flexible(
+            /*Flexible(
               flex: 1,
               child: CustomWidgets.customEditText(label: "Govt. ID(Aadhar, DL or Passport)", hint: "Enter a valid Govt. Id", validator: Validators.govtIdValidator, controller: govtIdNumber, context: context),
+            ),*/
+            Container(
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 12.0, left: 32.0),
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      children: <Widget>[
+                        Text("Govt. Id Type", style: Theme.of(context).textTheme.overline.copyWith(fontSize: 8), textAlign: TextAlign.left,),
+                        DropdownButton<String>(
+                          value: "AADHAR",
+                          icon: Icon(Icons.arrow_drop_down),
+                          items: completeListOfUserGovtIdTypes.map((item) {
+                            return DropdownMenuItem(
+                              child: Text(item),
+                              value: item,
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedUserGovtIdType = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: CustomWidgets.customEditText(label: "ID No.", hint: "Enter a valid Govt. Id", validator: Validators.govtIdValidator, controller: govtIdNumber, context: context),
+                  ),
+                ],
+              ),
             ),
+            /*Container(
+              margin: EdgeInsets.all(8.0),
+              child: DropdownButton<String>(
+                value: "AADHAR",
+                icon: Icon(Icons.arrow_drop_down),
+                items: completeListOfUserGovtIdTypes.map((item) {
+                  return DropdownMenuItem(
+                    child: Text(item),
+                    value: item,
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedUserGovtIdType = value;
+                  });
+                },
+              ),
+            ),*/
             Container(
               margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
               child: Row(
@@ -67,7 +130,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                     flex: 1,
                     child: DateTimeField(
                       format: format,
-                      controller: _checkInController,
+                      controller: checkInController,
                       validator: Validators.checkInValidator,
                       decoration: InputDecoration(
                         hintText: "Check In"
@@ -87,9 +150,9 @@ class _BookingFormPageState extends State<BookingFormPage> {
                           setState(() {
                             print("Entered set State Checkin");
                             _checkIn = DateTimeField.combine(date, time);
-                            _checkInController.text = currentValue.toString();
+                            checkInController.text = currentValue.toString();
                             try {
-                              _numberOfDays = _checkOut.difference(_checkIn).inDays;
+                              _numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
                             } catch(e) {
                               print(e.toString());
                               _numberOfDays = _numberOfDays;
@@ -118,7 +181,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                     flex: 1,
                     child: DateTimeField(
                       format: format,
-                      controller: _checkOutController,
+                      controller: checkOutController,
                       decoration: InputDecoration(
                         hintText: "Check Out"
                       ),
@@ -137,9 +200,9 @@ class _BookingFormPageState extends State<BookingFormPage> {
                           setState(() {
                             print("Entered set State Checkout");
                             _checkOut = DateTimeField.combine(date, time);
-                            _checkOutController.text = currentValue.toString();
+                            checkOutController.text = currentValue.toString();
                             try {
-                              _numberOfDays = _checkOut.difference(_checkIn).inDays;
+                              _numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
                             } catch(e) {
                               print(e.toString());
                               _numberOfDays = _numberOfDays;
@@ -234,7 +297,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       alignment: Alignment.centerRight,
                       child: Container(
                         padding: EdgeInsets.only(right: 24.0),
-                        child: Text("${_numberOfBags*_numberOfDays*24*widget.price}"),
+                        child: Text("${(_numberOfBags*_numberOfDays*24*widget.price).round()}"),
                       ),
                     ),
                   )
@@ -315,7 +378,32 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 
   onBookingButtonPressed() async {
+    setState(() {
+      isLoading = true;
+    });
     if(formKey.currentState.validate()) {
+      String jwt = await SharedPrefsHelper.getJWT();
+      String coupon = await SharedPrefsHelper.getActiveCouponId();
+      var responde = await http.post(makeBooking+"${widget.storageSpaceId}/book", body: json.encode({
+        "numberOfBags": _numberOfBags,
+        "checkInTime": _checkIn.toIso8601String(),
+        "checkOutTime": _checkOut.toIso8601String(),
+        "userGovtIdType": "Aadhaar",
+        "userGovtId": govtIdNumber.text,
+        "bookingPersonName": nameController.text,
+        "couponId": coupon
+      }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
+      print("Response Code = ${responde.statusCode}");
+      print("Response Body = ${responde.body}");
+      String bookingId = await json.decode(responde.body)["_id"];
+      // await SharedPrefsHelper.addTransactionId(bookingId);
+      var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
+      print(responseForPayment.statusCode);
+      print("Response = ${responseForPayment.body}");
+      String orderId = jsonDecode(responseForPayment.body)["order_id"];
+      String razorpayKey = jsonDecode(responseForPayment.body)["key_id"];
+      print("Added Transaction id = ${json.decode(responde.body)["transaction"]}");
+      print("Recived Receipt id = ${orderId}");
       var _razorPay = Razorpay();
       _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
       _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -324,15 +412,22 @@ class _BookingFormPageState extends State<BookingFormPage> {
       String number = await SharedPrefsHelper.getUserNumber();
       String email = await SharedPrefsHelper.getUserEmail();
 
+      // rzp_test_FrEjSYTC6hMJvn
+      // rzp_live_Cod208QgiAuDMf
+      // ${(_numberOfBags*_numberOfDays*24*widget.price).round()*100}
       var _options = {
-        "key": "rzp_live_Cod208QgiAuDMf",
-        "amount": "${(_numberOfBags*_numberOfDays*24*widget.price)*100}",
+        "key": razorpayKey,
+        "amount": "100",
         "name": "GoLuggageFree",
-        "description": "Cloakrooms in Delhi",
+        "order_id": orderId,
+        "description": "Cloakrooms near you",
         "prefill": {
           "contact": number,
           "email": email
         },
+        "theme": {
+          "color": "#0078FF"
+        }
       };
       _razorPay.open(_options);
     }
@@ -346,16 +441,26 @@ class _BookingFormPageState extends State<BookingFormPage> {
       numberOfBags: _numberOfBags,
       storageSpaceId: widget.storageSpaceId,
       userGovtId: govtIdNumber.text.toString(),
+      netStorageCost: (_numberOfBags*_numberOfDays*24*widget.price).round(),
     ), settings: RouteSettings(name: "Coupons Selection ")));
   }
 
   void _handlePaymentSucess(PaymentSuccessResponse response) async {
     print("Payment Sucessfull");
-    var paymentConfirmationResponse = await http.post(razorPayCallbackUrl, body: {
+    String trxnId = await SharedPrefsHelper.getTransactionId();
+    String jwt = await SharedPrefsHelper.getJWT();
+    print(json.encode({
       "razorpay_payment_id": response.paymentId,
       "razorpay_order_id": response.orderId,
-      "razorpay_signature": response.signature
-    });
+      "razorpay_signature": response.signature,
+      "transaction_id": trxnId
+    }));
+    var paymentConfirmationResponse = await http.post(razorPayCallbackUrl, body: json.encode({
+      "razorpay_payment_id": response.paymentId,
+      "razorpay_order_id": response.orderId,
+      "razorpay_signature": response.signature,
+      "transaction_id": trxnId
+    }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
     if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
       print("Payment Validation Recived");
       // TODO handle backstack operations

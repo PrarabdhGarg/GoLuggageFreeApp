@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/profile/view/ProfilePage.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override

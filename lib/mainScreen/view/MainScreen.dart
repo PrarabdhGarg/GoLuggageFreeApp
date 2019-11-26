@@ -49,7 +49,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
       }
       default: {
         print("Entered Case default");
-        activePage = Container(child: Text("Error!!!"));
+        activePage = activePage;
       }
     }
     return activePage;
@@ -75,9 +75,9 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
               child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
               onTap: () async {
                 print("Entered onTap");
-                String phoneNumber = "+918249489314";
+                String phoneNumber = "+917854866007";
                 String url = "whatsapp://send?phone=$phoneNumber";
-                !(await canLaunch(url)) ? launch(url) : launch("tel://$phoneNumber");
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
                 // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
               },
             ),
@@ -132,7 +132,9 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
       }
     } */
     setState(() {
-      _selectedDrawerIndex = index;
+      if(index == 0 || index == 1) {
+        _selectedDrawerIndex = index;
+      }
     });
     Navigator.of(context).pop();
   }

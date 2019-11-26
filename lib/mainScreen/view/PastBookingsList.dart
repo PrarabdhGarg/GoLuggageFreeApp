@@ -4,6 +4,7 @@ import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class PastBookings extends StatefulWidget {

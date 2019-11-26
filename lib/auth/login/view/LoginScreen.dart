@@ -8,6 +8,7 @@ import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Response Status = ${response.statusCode}");
       if(response.statusCode == 200) {
         var map = jsonDecode(response.body)["user"];
-        String jwt = "Bearer" + jsonDecode(response.body)["token"];
+        String jwt = "Bearer " + jsonDecode(response.body)["token"];
         print("Map = ${map}");
         var userId = map["_id"];
         var name = map["name"];

@@ -6,6 +6,7 @@ import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MobileVerificationScreen extends StatefulWidget {
   @override
@@ -34,6 +35,27 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
           icon: Icon(Icons.arrow_back, color: Colors.black,),
           onPressed:() => Navigator.pop(context, false)
         ),
+        actions: <Widget>[
+          Container(
+              margin: EdgeInsets.only(left: 8.0),
+              child: Center(
+                  child: Text("Need Help?", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.black),)
+              )
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 8.0),
+            child: GestureDetector(
+              child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
+              onTap: () async {
+                print("Entered onTap");
+                String phoneNumber = "+917854866007";
+                String url = "whatsapp://send?phone=$phoneNumber";
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+              },
+            ),
+          )
+        ],
       ),
       body: isLoading ? Center(child: CircularProgressIndicator(),) : isOtpVerification ? otpVerificationWidget(context) : phoneNumberWidget(context),
     );

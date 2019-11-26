@@ -11,6 +11,7 @@ import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -19,6 +20,27 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Login', style: Theme.of(context).textTheme.title),
         leading: Container(child: Image.asset("assets/images/logo.png"),padding: EdgeInsets.all(8.0),),
+        actions: <Widget>[
+          Container(
+              margin: EdgeInsets.only(left: 8.0),
+              child: Center(
+                  child: Text("Need Help?", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.black),)
+              )
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 8.0),
+            child: GestureDetector(
+              child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
+              onTap: () async {
+                print("Entered onTap");
+                String phoneNumber = "+917854866007";
+                String url = "whatsapp://send?phone=$phoneNumber";
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+              },
+            ),
+          )
+        ],
       ),
       body: LoginScreen(),
     );

@@ -31,7 +31,10 @@ Color lightGrey = HexColor("#F5F5F5");
 Coupon selectedCoupon = null;
 
 List<String> completeListOfUserGovtIdTypes = [
-  "AADHAR"
+  "AADHAR",
+  "Driving License",
+  "Passport",
+  "VoterId"
 ];
 
 // Please don't remove this form key. This is here to solve a major bug faced in the booking form page
@@ -41,3 +44,6 @@ final TextEditingController nameController = new TextEditingController(text: "Pr
 final TextEditingController govtIdNumber = new TextEditingController(text: "Helilajfaj");
 final TextEditingController checkInController = new TextEditingController(text: "");
 final TextEditingController checkOutController = new TextEditingController(text: "");
+int numberOfBags = 1;
+int numberOfDays = 0;
+int price = 0;

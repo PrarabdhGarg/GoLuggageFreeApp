@@ -44,7 +44,7 @@ class BookingFormScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          height: (MediaQuery.of(context).size.height * 1.5),
           child: BookingFormPage(price, storeId),
         ),
       ),

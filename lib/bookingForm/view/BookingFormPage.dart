@@ -11,6 +11,7 @@ import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/bookingTicketInfoScreen/view/BookingTicketInfoScreen.dart';
 import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:intl/intl.dart';
@@ -37,13 +38,10 @@ class _BookingFormPageState extends State<BookingFormPage> {
   TextEditingController _checkOutController = new TextEditingController(text: "");
   DateTime _checkIn = DateTime.now();
   DateTime _checkOut = DateTime.now();
-  int _numberOfBags = 1;
-  int _numberOfDays = 0;
   String selectedUserGovtIdType = "AADHAR";
   bool _termsAndConditionsAccepted = false;
   final format = DateFormat("yyyy-MM-dd HH:mm");
   bool isLoading;
-  int price = 0;
   bool couponSelected = false;
 
   @override
@@ -158,13 +156,13 @@ class _BookingFormPageState extends State<BookingFormPage> {
                             checkInController.text = currentValue.toString();
                             calculateStorageCost();
                             try {
-                              _numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
+                              numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
                             } catch(e) {
                               print(e.toString());
-                              _numberOfDays = _numberOfDays;
+                              numberOfDays = numberOfDays;
                               calculateStorageCost();
                             }
-                            print("Number Of days = ${_numberOfDays}");
+                            print("Number Of days = ${numberOfDays}");
                           });
                           return DateTimeField.combine(date, time);
                         } else {
@@ -209,14 +207,14 @@ class _BookingFormPageState extends State<BookingFormPage> {
                             _checkOut = DateTimeField.combine(date, time);
                             checkOutController.text = currentValue.toString();
                             try {
-                              _numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
+                              numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
                               calculateStorageCost();
                             } catch(e) {
                               print(e.toString());
-                              _numberOfDays = _numberOfDays;
+                              numberOfDays = numberOfDays;
                               calculateStorageCost();
                             }
-                            print("Number Of days = ${_numberOfDays}");
+                            print("Number Of days = ${numberOfDays}");
                           });
                           return DateTimeField.combine(date, time);
                         } else {
@@ -244,7 +242,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: CustomCounter(
-                          initialValue: _numberOfBags,
+                          initialValue: numberOfBags,
                           decimalPlaces: 0,
                           minValue: 1,
                           maxValue: 10,
@@ -254,7 +252,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                           onChanged: (value) {
                             setState(() {
                               print("Entered Set State with value = ${value}");
-                              _numberOfBags = value;
+                              numberOfBags = value;
                               calculateStorageCost();
                             });
                           },
@@ -286,10 +284,52 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       alignment: Alignment.centerRight,
                       child: Padding(
                         padding: EdgeInsets.only(right: 24.0),
-                        child: Text("${_numberOfDays}"),
+                        child: Text("${numberOfDays}"),
                       ),
                     ),
                   )
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 24.0),
+                    child: Text("Sub Total", style: Theme.of(context).textTheme.headline,),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: EdgeInsets.only(right: 24.0),
+                        child: Text("${(numberOfDays * numberOfBags * 24 * widget.price).round()}"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 24.0),
+                    child: Text(prefix0.selectedCoupon != null ? "Discount" : "", style: Theme.of(context).textTheme.headline,),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: EdgeInsets.only(right: 24.0),
+                        child: Text(selectedCoupon != null ? "${(numberOfDays * numberOfBags * 24 * widget.price).round() - price}" : "", style: TextStyle(color: Colors.green),),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -389,6 +429,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 
   onBookingButtonPressed() async {
+    print("Entered Booking Button Presed");
     setState(() {
       isLoading = true;
     });
@@ -396,7 +437,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       String jwt = await SharedPrefsHelper.getJWT();
       String coupon = await SharedPrefsHelper.getActiveCouponId();
       var responde = await http.post(makeBooking+"${widget.storageSpaceId}/book", body: json.encode({
-        "numberOfBags": _numberOfBags,
+        "numberOfBags": numberOfBags,
         "checkInTime": _checkIn.toIso8601String(),
         "checkOutTime": _checkOut.toIso8601String(),
         "userGovtIdType": "Aadhaar",
@@ -431,7 +472,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       // ${(_numberOfBags*_numberOfDays*24*widget.price).round()*100}
       var _options = {
         "key": razorpayKey,
-        "amount": (calculateStorageCost() * 100),
+        "amount": price * 100,
         "name": "GoLuggageFree",
         "order_id": orderId,
         "description": "Cloakrooms near you",
@@ -443,9 +484,9 @@ class _BookingFormPageState extends State<BookingFormPage> {
           "color": "#0078FF"
         }
       };
+      _razorPay.open(_options);
       Navigator.of(context).popUntil((route) => route.isFirst);
       Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(bookingId), settings: RouteSettings(name: "Ticket${bookingId}")));
-      _razorPay.open(_options);
     }
   }
 
@@ -489,10 +530,10 @@ class _BookingFormPageState extends State<BookingFormPage> {
       checkInTime: _checkIn.toIso8601String(),
       checkOutTime: _checkOut.toIso8601String(),
       name: nameController.text.toString(),
-      numberOfBags: _numberOfBags,
+      numberOfBags: numberOfBags,
       storageSpaceId: widget.storageSpaceId,
       userGovtId: govtIdNumber.text.toString(),
-      netStorageCost: (_numberOfBags*_numberOfDays*24*widget.price).round(),
+      netStorageCost: price,
     ), settings: RouteSettings(name: "Coupons Selection ")));
     print("Boolean recived from pop = $isCouponSelected");
     if(isCouponSelected) {
@@ -530,7 +571,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 
   int calculateStorageCost() {
-    int orignalPrice = (_numberOfBags*_numberOfDays*24*widget.price).round();
+    int orignalPrice = (numberOfBags*numberOfDays*24*widget.price).round();
     if(selectedCoupon != null) {
       if(selectedCoupon.type == "DISCOUNT") {
         int discount = (orignalPrice * (1 - selectedCoupon.value*0.01)).round();

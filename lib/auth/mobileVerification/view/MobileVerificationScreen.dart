@@ -1,3 +1,5 @@
+import 'package:country_pickers/country.dart';
+import 'package:country_pickers/country_pickers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,7 +7,6 @@ import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MobileVerificationScreen extends StatefulWidget {
@@ -23,12 +24,12 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
   AuthCredential _authCredential;
   AuthResult _user;
   String phoneNumber;
-  CountryCode _selectedCountryCode = CountryCode(name: "India", dialCode: "+91", code: "IN");
+  Country _selectedCountryCode;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text("Sign Up", style: Theme.of(context).textTheme.title,),
         leading: IconButton(
@@ -116,18 +117,40 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
             Row(
               children: <Widget>[
                 Container(
-                  child: CountryCodePicker(
-                    initialSelection: 'IN',
-                    showFlag: true,
-                    showOnlyCountryWhenClosed: false,
-                    textStyle: Theme.of(context).textTheme.body1,
-                    onChanged: (CountryCode code) {
+                  margin: EdgeInsets.only(left: 16.0, top: 16.0),
+                  child: CountryPickerDropdown(
+                    initialValue: 'IN',
+                    itemBuilder: (Country country) {
+                      return Container(
+                        child: Row(
+                          children: <Widget>[
+                            CountryPickerUtils.getDefaultFlagImage(country),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                            Text("+${country.phoneCode}(${country.isoCode})"),
+                          ],
+                        ),
+                      );
+                    },
+                    onValuePicked: (Country code) {
                       setState(() {
                         _selectedCountryCode = code;
                       });
                     },
                   ),
                 ),
+                /* Container(
+                  margin: EdgeInsets.only(left: 16.0, top: 16.0),
+                  child: prefix0.CountryPicker(
+                    onChanged: (prefix0.Country country) {
+                      setState(() {
+                        _countrty = country;
+                      });
+                    },
+                    selectedCountry: _countrty,
+                  ),
+                ), */
                 Expanded(
                   flex: 1,
                   child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Phone Number", hint: "Please Enter Phone Number", validator: Validators.phoneValidator, inputType: TextInputType.phone)
@@ -180,7 +203,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
       };
 
       await _firebaseAuth.verifyPhoneNumber(
-        phoneNumber: _selectedCountryCode.dialCode + phoneNumber,
+        phoneNumber: _selectedCountryCode.phoneCode + phoneNumber,
         timeout: const Duration(seconds: 5),
         verificationCompleted: verificationCompleted,
         verificationFailed: verificaitonFailed,
@@ -211,7 +234,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         this.isOtpVerification = false;
       });
       // Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => SignUpScreen(phoneNumber)));
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber, _selectedCountryCode.dialCode), settings: RouteSettings(name: "SignUpScreen")));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber, _selectedCountryCode.phoneCode), settings: RouteSettings(name: "SignUpScreen")));
     } catch(e) {
       print("${e.toString()}");
       if(e is PlatformException) {

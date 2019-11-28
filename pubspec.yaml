@@ -41,8 +41,10 @@ dependencies:
   datetime_picker_formfield: ^0.4.3
   razorpay_flutter: ^1.1.0
   flutter_statusbarcolor: ^0.2.3
-  url_launcher: ^5.2.5
-  country_code_picker: ^1.1.7
+  url_launcher: ^5.2.5  
+  country_pickers: ^1.1.0
+  flutter_country_picker: ^0.1.4
+  # country_code_picker: ^1.1.7
 
 dev_dependencies:
   flutter_test:

@@ -15,6 +15,7 @@ class BookingTickets {
         newList.add(BookingTicket.fromJson(item));
       });
     }
+    newList.sort((a,b) => a.createdAt.compareTo(b.createdAt));
     return new BookingTickets(newList);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_luggage_free/CouponSelection/model/Coupon.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
 String baseUrl = "http://test.goluggagefree.com/";
@@ -26,6 +27,8 @@ Color disabledButtonColor = Colors.grey;
 Color cursorColor = Colors.grey;
 
 Color lightGrey = HexColor("#F5F5F5");
+
+Coupon selectedCoupon = null;
 
 List<String> completeListOfUserGovtIdTypes = [
   "AADHAR"

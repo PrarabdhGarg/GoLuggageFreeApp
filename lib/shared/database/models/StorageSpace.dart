@@ -9,7 +9,11 @@ class StorageSpaces {
     List<StorageSpace> newList = new List();
     listOfDynamic.forEach((item)  {
       print("Adding new item" + item.toString());
-      newList.add(StorageSpace.fromResponse(item));
+      try {
+        newList.add(StorageSpace.fromResponse(item));
+      } catch(e) {
+
+      }
     });
     return new StorageSpaces(newList);
   }

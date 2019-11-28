@@ -8,6 +8,9 @@ import 'package:go_luggage_free/CouponSelection/view/CouponSelectionScreen.dart'
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/bookingForm/view/CustomCounter.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
+import 'package:go_luggage_free/bookingTicketInfoScreen/view/BookingTicketInfoScreen.dart';
+import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
+import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:intl/intl.dart';
@@ -40,6 +43,8 @@ class _BookingFormPageState extends State<BookingFormPage> {
   bool _termsAndConditionsAccepted = false;
   final format = DateFormat("yyyy-MM-dd HH:mm");
   bool isLoading;
+  int price = 0;
+  bool couponSelected = false;
 
   @override
   void initState() {
@@ -48,7 +53,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return isLoading ? Center(child: CircularProgressIndicator(),) : Container(
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         border: Border(
@@ -151,11 +156,13 @@ class _BookingFormPageState extends State<BookingFormPage> {
                             print("Entered set State Checkin");
                             _checkIn = DateTimeField.combine(date, time);
                             checkInController.text = currentValue.toString();
+                            calculateStorageCost();
                             try {
                               _numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
                             } catch(e) {
                               print(e.toString());
                               _numberOfDays = _numberOfDays;
+                              calculateStorageCost();
                             }
                             print("Number Of days = ${_numberOfDays}");
                           });
@@ -203,9 +210,11 @@ class _BookingFormPageState extends State<BookingFormPage> {
                             checkOutController.text = currentValue.toString();
                             try {
                               _numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
+                              calculateStorageCost();
                             } catch(e) {
                               print(e.toString());
                               _numberOfDays = _numberOfDays;
+                              calculateStorageCost();
                             }
                             print("Number Of days = ${_numberOfDays}");
                           });
@@ -246,6 +255,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                             setState(() {
                               print("Entered Set State with value = ${value}");
                               _numberOfBags = value;
+                              calculateStorageCost();
                             });
                           },
                         ),
@@ -297,10 +307,10 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       alignment: Alignment.centerRight,
                       child: Container(
                         padding: EdgeInsets.only(right: 24.0),
-                        child: Text("${(_numberOfBags*_numberOfDays*24*widget.price).round()}"),
+                        child: Text("$price"),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -343,6 +353,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                 )
               ],
             ),
+            couponSelectedWidget(),
             Align(
               alignment: Alignment.center,
               child: Container(
@@ -395,13 +406,16 @@ class _BookingFormPageState extends State<BookingFormPage> {
       }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
       print("Response Code = ${responde.statusCode}");
       print("Response Body = ${responde.body}");
+      BookingTicket ticket = bookingTicketFromJson(responde.body.toString());
+      await BookingTicketDAO.insertBookingTickets([ticket]);
       String bookingId = await json.decode(responde.body)["_id"];
-      // await SharedPrefsHelper.addTransactionId(bookingId);
       var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
       print(responseForPayment.statusCode);
       print("Response = ${responseForPayment.body}");
       String orderId = jsonDecode(responseForPayment.body)["order_id"];
       String razorpayKey = jsonDecode(responseForPayment.body)["key_id"];
+      String transaction_id = jsonDecode(responseForPayment.body)["transaction_id"];
+      await SharedPrefsHelper.addTransactionId(transaction_id);
       print("Added Transaction id = ${json.decode(responde.body)["transaction"]}");
       print("Recived Receipt id = ${orderId}");
       var _razorPay = Razorpay();
@@ -417,7 +431,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       // ${(_numberOfBags*_numberOfDays*24*widget.price).round()*100}
       var _options = {
         "key": razorpayKey,
-        "amount": "100",
+        "amount": (calculateStorageCost() * 100),
         "name": "GoLuggageFree",
         "order_id": orderId,
         "description": "Cloakrooms near you",
@@ -429,12 +443,49 @@ class _BookingFormPageState extends State<BookingFormPage> {
           "color": "#0078FF"
         }
       };
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(bookingId), settings: RouteSettings(name: "Ticket${bookingId}")));
       _razorPay.open(_options);
     }
   }
 
+  Widget couponSelectedWidget() {
+    print("Entered Coupon Selected Widget");
+    if(couponSelected) {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          color: Theme.of(context).backgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: HexColor("#DDDDDD"),
+              spreadRadius: 1.0,
+              blurRadius: 1.0,
+            ),
+          ],
+        ),
+        child: Column(
+          children: <Widget>[
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Text(selectedCoupon.title, style: Theme.of(context).textTheme.headline.copyWith(color: selectedCoupon.isUseable ? Colors.black : Colors.grey))
+            ),
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Text(selectedCoupon.description, style: Theme.of(context).textTheme.body1.copyWith(color: selectedCoupon.isUseable ? Colors.black : Colors.grey))
+            ),
+
+          ],
+        ),
+      );
+    }
+    return Container();
+  }
+
   onAddCouponsButtonPressed() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CouponSelectionScreen(
+    bool isCouponSelected = await Navigator.push(context, MaterialPageRoute(builder: (context) => CouponSelectionScreen(
       checkInTime: _checkIn.toIso8601String(),
       checkOutTime: _checkOut.toIso8601String(),
       name: nameController.text.toString(),
@@ -443,6 +494,13 @@ class _BookingFormPageState extends State<BookingFormPage> {
       userGovtId: govtIdNumber.text.toString(),
       netStorageCost: (_numberOfBags*_numberOfDays*24*widget.price).round(),
     ), settings: RouteSettings(name: "Coupons Selection ")));
+    print("Boolean recived from pop = $isCouponSelected");
+    if(isCouponSelected) {
+      setState(() {
+        price = calculateStorageCost();
+        couponSelected = true;
+      });
+    }
   }
 
   void _handlePaymentSucess(PaymentSuccessResponse response) async {
@@ -463,8 +521,29 @@ class _BookingFormPageState extends State<BookingFormPage> {
     }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
     if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
       print("Payment Validation Recived");
+      /*setState(() {
+        isLoading = false;
+      });*/
+
       // TODO handle backstack operations
     }
+  }
+
+  int calculateStorageCost() {
+    int orignalPrice = (_numberOfBags*_numberOfDays*24*widget.price).round();
+    if(selectedCoupon != null) {
+      if(selectedCoupon.type == "DISCOUNT") {
+        int discount = (orignalPrice * (1 - selectedCoupon.value*0.01)).round();
+        setState(() {
+          price = discount;
+        });
+        return discount;
+      }
+    }
+    setState(() {
+      price = orignalPrice;
+    });
+    return orignalPrice;
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {

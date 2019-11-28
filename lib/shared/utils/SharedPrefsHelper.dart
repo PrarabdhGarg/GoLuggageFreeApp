@@ -9,8 +9,10 @@ class SharedPrefsHelper {
   static final String JWT = "JWT_TOKEN";
   static final String COUPON = "ACTIVE_COUPON";
   static final String TRXN = "TRANSACTION";
+  static final String CUST_ID = "CUST_ID";
+  static final String REFFERED_BY = "REFFERED_BY";
 
-  static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber, @required String jwt}) async {
+  static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber, @required String jwt, String customerId}) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     if(userId != null) {
       await _prefs.setString(USER_ID, userId);
@@ -24,7 +26,10 @@ class SharedPrefsHelper {
     if(name != null) {
       await _prefs.setString(NAME, name);
     }
-    await _prefs.setString(JWT, jwt);
+    if(customerId != null) {
+      await _prefs.setString(CUST_ID, customerId);
+    }
+    await _prefs.setString(JWT, "Bearer ${jwt}");
   }
 
   static Future<String> getUserNumber() async {
@@ -92,10 +97,36 @@ class SharedPrefsHelper {
     return "";
   }
 
+  static Future<String> getCustomerId() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var id = _prefs.getString(CUST_ID);
+    if(id != null && id.isNotEmpty) {
+      return id;
+    }
+    throw Exception("User not logged in");
+  }
+
   static Future<Null> addTransactionId(String id) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     bool result = await _prefs.setString(TRXN, id);
     print("Result for adding = $result");
+  }
+
+  static Future<Null> addInvidedById(String id) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    if(id != null && id.isNotEmpty) {
+      bool result = await _prefs.setString(REFFERED_BY, id);
+    }
+  }
+
+  static Future<String> getInvidedById() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String referredBy = await _prefs.getString(REFFERED_BY);
+    print("Recived trxn id = ${referredBy}");
+    if(referredBy != null && referredBy.isNotEmpty) {
+      return referredBy;
+    }
+    return "";
   }
 
   static Future<String> getTransactionId() async {

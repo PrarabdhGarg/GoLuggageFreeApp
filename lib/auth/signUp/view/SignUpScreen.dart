@@ -3,18 +3,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
-import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
-import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class SignUpScreen extends StatefulWidget {
   String phoneNumber;
+  String countryCode;
 
-  SignUpScreen(this.phoneNumber);
+  SignUpScreen(this.phoneNumber, this.countryCode);
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -116,16 +115,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<Null> onSignUpPressed() async {
     if(_formKey.currentState.validate() && passwordController.text == passwordConfirmationController.text) {
+      String referralCode = await SharedPrefsHelper.getInvidedById();
+      print("Referral Code recived while signUp = ${referralCode}");
       var result = await http.post(signUpUrl, body: {
           "name": nameController.text,
           "email": emailController.text,
           "password": passwordController.text,
-          "mobile_number": widget.phoneNumber
+          "mobile_number": widget.phoneNumber,
+          "mobile_number_countryCode": widget.countryCode,
+          "userType": "CUSTOMER",
+          "referralCode": referralCode,
       });
       if(result.statusCode == 201) {
         print("Sign-Up sucessful");
-        var body = jsonDecode(result.body)["user"];
-        await SharedPrefsHelper.saveUserData(name: body["name"].toString(), mobileNumber: body["mobile_number"].toString(), email: body["email"].toString(), userId: body["_id"].toString(), jwt: body["token"].toString());
+        var body = jsonDecode(result.body);
+        print("Body Recived = $body");
+        await SharedPrefsHelper.saveUserData(name: body["user"]["name"].toString(), mobileNumber: body["user"]["mobile_number"].toString(), email: body["user"]["email"].toString(), userId: body["user"]["_id"].toString(), jwt: body["token"].toString(), customerId: body["customer"]["_id"]);
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomePage")));
       }

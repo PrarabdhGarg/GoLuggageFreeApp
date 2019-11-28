@@ -144,7 +144,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
 
   onMobileVerificationPressed() async {
     if(_formKey.currentState.validate()) {
-      phoneNumber = _selectedCountryCode.dialCode + phoneController.text;
+      phoneNumber = phoneController.text;
       setState(() {
         this.isLoading = true;
         phoneController.text = "";
@@ -180,7 +180,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
       };
 
       await _firebaseAuth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
+        phoneNumber: _selectedCountryCode.dialCode + phoneNumber,
         timeout: const Duration(seconds: 5),
         verificationCompleted: verificationCompleted,
         verificationFailed: verificaitonFailed,
@@ -211,7 +211,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         this.isOtpVerification = false;
       });
       // Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => SignUpScreen(phoneNumber)));
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber), settings: RouteSettings(name: "SignUpScreen")));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber, _selectedCountryCode.dialCode), settings: RouteSettings(name: "SignUpScreen")));
     } catch(e) {
       print("${e.toString()}");
       if(e is PlatformException) {

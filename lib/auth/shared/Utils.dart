@@ -34,7 +34,7 @@ class Validators {
     if(name == null) return "Enter non-null name";
     if(name.isEmpty) return "Name cannot be blank";
     if(name.length == 1) return "Enter a valid name";
-    if(!(RegExp(r'^[a-zA-Z]+$').hasMatch(name))) return "Invalid";
+    if(!(RegExp(r'^[a-zA-Z ]+$').hasMatch(name))) return "Invalid";
     if(name.length > 30) return "Too long"; 
     return null;
   }

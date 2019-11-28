@@ -128,14 +128,15 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Response Status = ${response.statusCode}");
       if(response.statusCode == 200) {
         var map = jsonDecode(response.body)["user"];
-        String jwt = "Bearer " + jsonDecode(response.body)["token"];
+        String jwt = jsonDecode(response.body)["token"];
         print("Map = ${map}");
         var userId = map["_id"];
+        var coustomerId = jsonDecode(response.body)['customer']['_id'];
         var name = map["name"];
         var email = map["email"];
         var mobileNumber = map["mobile_number"].toString();
         print("REcivedData = $userId\t$name\t$email\t$mobileNumber");
-        await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber, jwt: jwt);
+        await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber, jwt: jwt, customerId: coustomerId);
         Navigator.pop(context);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
       }

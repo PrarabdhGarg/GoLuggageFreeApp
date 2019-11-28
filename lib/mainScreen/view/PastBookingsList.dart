@@ -65,6 +65,7 @@ class _PastBookingsState extends State<PastBookings> {
               child: Query(
                 options: QueryOptions(
                   document: getBookings,
+                  fetchPolicy: FetchPolicy.networkOnly,
                   variables: {
                     'userId': snapShot.data.toString(),
                   }
@@ -189,7 +190,7 @@ class _PastBookingsState extends State<PastBookings> {
   }
 
   Future<String> getUserId() async {
-    String id = await SharedPrefsHelper.getUserId();
+    String id = await SharedPrefsHelper.getCustomerId();
     print("Recived Id = $id");
     return id;
   }

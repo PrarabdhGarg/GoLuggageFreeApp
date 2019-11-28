@@ -140,14 +140,17 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
               ),
               child: Stack(
                 children: <Widget>[
-                  AspectRatio(
-                    aspectRatio: 1/1.3,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.fill,
-                        gaplessPlayback: true,                
+                  Hero(
+                    tag: "storeImage${storageSpaces[index].id}",
+                    child: AspectRatio(
+                      aspectRatio: 1/1.3,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.fill,
+                          gaplessPlayback: true,
+                        ),
                       ),
                     ),
                   ),

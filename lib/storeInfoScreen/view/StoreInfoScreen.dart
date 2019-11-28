@@ -80,26 +80,29 @@ class StoreInfoPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: CarouselSlider(
-                autoPlay: false,
-                scrollDirection: Axis.horizontal,
-                items: _controller.storageSpace.storeImages.map((image) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(imageBaseUrl+image),
-                            fit: BoxFit.fitWidth
+            Hero(
+              tag: "storeImage${storeId}",
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: CarouselSlider(
+                  autoPlay: false,
+                  scrollDirection: Axis.horizontal,
+                  items: _controller.storageSpace.storeImages.map((image) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(imageBaseUrl+image),
+                              fit: BoxFit.fitWidth
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                }).toList()
+                        );
+                      },
+                    );
+                  }).toList()
+                ),
               ),
             ),
             Container(

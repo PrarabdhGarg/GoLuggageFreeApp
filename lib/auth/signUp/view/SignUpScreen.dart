@@ -125,7 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           "mobile_number_countryCode": widget.countryCode,
           "userType": "CUSTOMER",
           "referralCode": referralCode,
-      });
+      }, headers: {"X-Version": "1.0.0"});
       if(result.statusCode == 201) {
         print("Sign-Up sucessful");
         var body = jsonDecode(result.body);

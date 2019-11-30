@@ -159,7 +159,7 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> {
         "storageSpace": widget.storageSpaceId,
         "netStorageCost": widget.netStorageCost
       }
-    }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
+    }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": "1.0.0"});
     print("Response recived");
     print("Reived response code = ${response.statusCode.toString()}");
     print("Recived Body = ${response.body.toString()}");

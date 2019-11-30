@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if(_formKey.currentState.validate()) {
       var response = await http.post(logInUrl, body: {
         "phone_number": phoneController.text,
-        "password": passwordController.text });
+        "password": passwordController.text }, headers: {"X-Version": "1.0.0"});
       print("Response Status = ${response.statusCode}");
       if(response.statusCode == 200) {
         var map = jsonDecode(response.body)["user"];

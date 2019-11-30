@@ -22,7 +22,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   Widget activePage;
   List<MaterialPageRoute> _drawerRoutes;
-
+ 
   List<String> titles = ["Home", "Profile"];
 
   MainScreenState(this.currentPage) {

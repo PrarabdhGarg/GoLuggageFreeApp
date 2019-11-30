@@ -444,13 +444,13 @@ class _BookingFormPageState extends State<BookingFormPage> {
         "userGovtId": govtIdNumber.text,
         "bookingPersonName": nameController.text,
         "couponId": coupon
-      }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
+      }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": "1.0.0"});
       print("Response Code = ${responde.statusCode}");
       print("Response Body = ${responde.body}");
       BookingTicket ticket = bookingTicketFromJson(responde.body.toString());
       await BookingTicketDAO.insertBookingTickets([ticket]);
       String bookingId = await json.decode(responde.body)["_id"];
-      var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
+      var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": "1.0.0"});
       print(responseForPayment.statusCode);
       print("Response = ${responseForPayment.body}");
       String orderId = jsonDecode(responseForPayment.body)["order_id"];
@@ -559,7 +559,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       "razorpay_order_id": response.orderId,
       "razorpay_signature": response.signature,
       "transaction_id": trxnId
-    }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json"});
+    }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": "1.0.0"});
     if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
       print("Payment Validation Recived");
       /*setState(() {

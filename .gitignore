@@ -72,3 +72,8 @@
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+# Secret files that are used for signing the apk
+android/key.properties
+android/app/goluggagefree.jks
+goluggagefree.jks

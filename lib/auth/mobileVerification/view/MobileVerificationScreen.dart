@@ -24,7 +24,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
   AuthCredential _authCredential;
   AuthResult _user;
   String phoneNumber;
-  Country _selectedCountryCode;
+  Country _selectedCountryCode = Country(name: "India", isoCode: "IN", phoneCode: "+91");
 
   @override
   Widget build(BuildContext context) {

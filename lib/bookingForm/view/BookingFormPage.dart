@@ -444,13 +444,13 @@ class _BookingFormPageState extends State<BookingFormPage> {
         "userGovtId": govtIdNumber.text,
         "bookingPersonName": nameController.text,
         "couponId": coupon
-      }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": "1.0.0"});
+      }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
       print("Response Code = ${responde.statusCode}");
       print("Response Body = ${responde.body}");
       BookingTicket ticket = bookingTicketFromJson(responde.body.toString());
       await BookingTicketDAO.insertBookingTickets([ticket]);
       String bookingId = await json.decode(responde.body)["_id"];
-      var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": "1.0.0"});
+      var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
       print(responseForPayment.statusCode);
       print("Response = ${responseForPayment.body}");
       String orderId = jsonDecode(responseForPayment.body)["order_id"];
@@ -470,6 +470,8 @@ class _BookingFormPageState extends State<BookingFormPage> {
       // rzp_test_FrEjSYTC6hMJvn
       // rzp_live_Cod208QgiAuDMf
       // ${(_numberOfBags*_numberOfDays*24*widget.price).round()*100}
+      print("Price = $price");
+      print("Storage Cost = ${calculateStorageCost()}");
       var _options = {
         "key": razorpayKey,
         "amount": price * 100,
@@ -482,8 +484,9 @@ class _BookingFormPageState extends State<BookingFormPage> {
         },
         "theme": {
           "color": "#0078FF"
-        }
+        } 
       };
+      print("Razor Pay Options = ${_options.toString()}");
       _razorPay.open(_options);
       Navigator.of(context).popUntil((route) => route.isFirst);
       Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(bookingId), settings: RouteSettings(name: "Ticket${bookingId}")));
@@ -559,7 +562,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       "razorpay_order_id": response.orderId,
       "razorpay_signature": response.signature,
       "transaction_id": trxnId
-    }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": "1.0.0"});
+    }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
     if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
       print("Payment Validation Recived");
       /*setState(() {
@@ -573,18 +576,19 @@ class _BookingFormPageState extends State<BookingFormPage> {
   int calculateStorageCost() {
     int orignalPrice = (numberOfBags*numberOfDays*24*widget.price).round();
     if(selectedCoupon != null) {
-      if(selectedCoupon.type == "DISCOUNT") {
+      if(selectedCoupon.type == "DISCOUNT" || selectedCoupon.type == "REFERRAL_DISCOUNT") {
         int discount = (orignalPrice * (1 - selectedCoupon.value*0.01)).round();
         setState(() {
           price = discount;
         });
         return discount;
       }
-    }
-    setState(() {
+    } else {
+      setState(() {
       price = orignalPrice;
     });
-    return orignalPrice;
+    return orignalPrice;  
+    }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {

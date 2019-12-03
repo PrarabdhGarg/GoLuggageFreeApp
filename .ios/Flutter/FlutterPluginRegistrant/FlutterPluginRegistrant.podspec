@@ -30,5 +30,6 @@ Depends on all your plugins, and provides a function to register them.
   s.dependency 'razorpay_flutter'
   s.dependency 'shared_preferences'
   s.dependency 'sqflite'
+  s.dependency 'statusbar'
   s.dependency 'url_launcher'
 end

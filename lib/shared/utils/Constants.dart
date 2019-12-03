@@ -34,8 +34,11 @@ List<String> completeListOfUserGovtIdTypes = [
   "AADHAR",
   "Driving License",
   "Passport",
-  "VoterId"
+  "Voter Id",
+  "Other"
 ];
+
+String versionCodeHeader = "1.0";
 
 // Please don't remove this form key. This is here to solve a major bug faced in the booking form page
 //  Will shift it to its right place as soon as I find out where this is supposed to be :)

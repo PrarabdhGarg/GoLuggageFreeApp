@@ -16,6 +16,7 @@
 #import <razorpay_flutter/RazorpayFlutterPlugin.h>
 #import <shared_preferences/SharedPreferencesPlugin.h>
 #import <sqflite/SqflitePlugin.h>
+#import <statusbar/StatusbarPlugin.h>
 #import <url_launcher/UrlLauncherPlugin.h>
 
 @implementation GeneratedPluginRegistrant
@@ -34,6 +35,7 @@
   [RazorpayFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"RazorpayFlutterPlugin"]];
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
+  [StatusbarPlugin registerWithRegistrar:[registry registrarForPlugin:@"StatusbarPlugin"]];
   [FLTUrlLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTUrlLauncherPlugin"]];
 }
 

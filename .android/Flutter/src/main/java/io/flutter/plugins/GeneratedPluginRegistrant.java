@@ -14,6 +14,7 @@ import io.flutter.plugins.pathprovider.PathProviderPlugin;
 import com.razorpay.razorpay_flutter.RazorpayFlutterPlugin;
 import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
 import com.tekartik.sqflite.SqflitePlugin;
+import mo.dyna.statusbar.StatusbarPlugin;
 import io.flutter.plugins.urllauncher.UrlLauncherPlugin;
 
 /**
@@ -37,6 +38,7 @@ public final class GeneratedPluginRegistrant {
     RazorpayFlutterPlugin.registerWith(registry.registrarFor("com.razorpay.razorpay_flutter.RazorpayFlutterPlugin"));
     SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
     SqflitePlugin.registerWith(registry.registrarFor("com.tekartik.sqflite.SqflitePlugin"));
+    StatusbarPlugin.registerWith(registry.registrarFor("mo.dyna.statusbar.StatusbarPlugin"));
     UrlLauncherPlugin.registerWith(registry.registrarFor("io.flutter.plugins.urllauncher.UrlLauncherPlugin"));
   }
 

@@ -89,10 +89,11 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
           children: <Widget>[
             DrawerTile(text: "Home", onPressed: this, index: 0,),
             DrawerTile(text: "Profile", onPressed: this, index: 1,),
-            DrawerTile(text: "FAQ", onPressed: this, index: 2,),
-            DrawerTile(text: "Contact", onPressed: this, index: 3,),
+            // DrawerTile(text: "FAQ", onPressed: this, index: 2,),
+            // DrawerTile(text: "Contact", onPressed: this, index: 3,),
             Container(
-              margin: EdgeInsets.only(left: 8.0, top: (MediaQuery.of(context).size.height * 0.5)),
+              alignment: Alignment.bottomLeft,
+              margin: EdgeInsets.only(left: 8.0, top: (MediaQuery.of(context).size.height * 0.75)),
               child: RichText(
                 text: TextSpan(
                     text: "Privacy Policy",

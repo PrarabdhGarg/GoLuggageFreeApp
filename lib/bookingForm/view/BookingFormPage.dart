@@ -31,11 +31,6 @@ class BookingFormPage extends StatefulWidget {
 }
 
 class _BookingFormPageState extends State<BookingFormPage> {
-  GlobalKey<FormState> _formKey = new GlobalKey();
-  TextEditingController _nameController = new TextEditingController(text: "");
-  TextEditingController _govtIdNumberController = new TextEditingController(text: "");
-  TextEditingController _checkInController = new TextEditingController(text: "");
-  TextEditingController _checkOutController = new TextEditingController(text: "");
   DateTime _checkIn = DateTime.now();
   DateTime _checkOut = DateTime.now();
   String selectedUserGovtIdType = "AADHAR";
@@ -43,6 +38,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
   final format = DateFormat("yyyy-MM-dd HH:mm");
   bool isLoading;
   bool couponSelected = false;
+  BookingTicket ticket;
 
   @override
   void initState() {
@@ -408,7 +404,19 @@ class _BookingFormPageState extends State<BookingFormPage> {
                 ),
               ),
             ),
-            Align(
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(left: 24.0, right: 24.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1")
+              ),
+              child: FlatButton(
+                onPressed: _termsAndConditionsAccepted ? onBookingButtonPressed : null,
+                child: Text("Book Now", style: Theme.of(context).textTheme.button,),
+              ),
+            ),
+            /* Align(
               alignment: Alignment.center,
               child: Container(
                 margin: EdgeInsets.only(top: 16.0),
@@ -421,7 +429,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                   onPressed: _termsAndConditionsAccepted ? onBookingButtonPressed : null
                 ),
               ),
-            )
+            ) */
           ],
         ),
       ),
@@ -447,8 +455,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
       print("Response Code = ${responde.statusCode}");
       print("Response Body = ${responde.body}");
-      BookingTicket ticket = bookingTicketFromJson(responde.body.toString());
-      await BookingTicketDAO.insertBookingTickets([ticket]);
+      ticket = bookingTicketFromJson(responde.body.toString());
       String bookingId = await json.decode(responde.body)["_id"];
       var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
       print(responseForPayment.statusCode);
@@ -488,8 +495,6 @@ class _BookingFormPageState extends State<BookingFormPage> {
       };
       print("Razor Pay Options = ${_options.toString()}");
       _razorPay.open(_options);
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(bookingId), settings: RouteSettings(name: "Ticket${bookingId}")));
     }
   }
 
@@ -565,10 +570,12 @@ class _BookingFormPageState extends State<BookingFormPage> {
     }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
     if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
       print("Payment Validation Recived");
-      /*setState(() {
+      await BookingTicketDAO.insertBookingTickets([ticket]);
+      setState(() {
         isLoading = false;
-      });*/
-
+      });
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(ticket.bookingId), settings: RouteSettings(name: "Ticket${ticket.bookingId}")));
       // TODO handle backstack operations
     }
   }

@@ -5,6 +5,7 @@ import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
 import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
 import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
@@ -16,11 +17,12 @@ class MainScreen extends StatefulWidget {
   MainScreenState createState() => MainScreenState(currentPage);
 }
 
-class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedCallback {
+class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedCallback, CustomBottomNavPageChangeListener {
   int currentPage;
   int _selectedDrawerIndex = 0;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   Widget activePage;
+  String appBarTitle = "Home";
   List<MaterialPageRoute> _drawerRoutes;
  
   List<String> titles = ["Home", "Profile"];
@@ -29,7 +31,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
     enableFirebaseCloudMessagingListeners();
     
     _drawerRoutes = [
-      MaterialPageRoute(builder: (context) => HomePage(), settings: RouteSettings(name: "HomePage")),
+      MaterialPageRoute(builder: (context) => HomePage(this), settings: RouteSettings(name: "HomePage")),
       MaterialPageRoute(builder: (context) => ProfileScreen(), settings: RouteSettings(name: "Profile"))
     ];
   }
@@ -39,12 +41,14 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
     switch(index) {
       case 0: {
         print("Entered Case 0");
-        activePage = HomePage();
+        activePage = HomePage(this);
+        appBarTitle = titles[0];
         break;
       }
       case 1: {
         print("Entered Case 1");
         activePage = ProfileScreen();
+        appBarTitle = titles[1];
         break;
       }
       default: {
@@ -60,7 +64,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
     print("Entered Build");
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_selectedDrawerIndex], style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
+        title: Text(appBarTitle, style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
         iconTheme: IconThemeData(color: Colors.black),
         actions: <Widget>[
           Container(
@@ -157,5 +161,19 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
         print('on launch $message');
       },
     );
+  }
+  
+  @override
+  void onBottomNavPageChanged(int index) {
+    if(index == 0) {
+      setState(() {
+        appBarTitle = "Home";
+      });
+    }
+    else {
+      setState(() {
+        appBarTitle = "Bookings";
+      });
+    }
   }
 }

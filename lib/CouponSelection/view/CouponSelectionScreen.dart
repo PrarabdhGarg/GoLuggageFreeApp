@@ -186,11 +186,16 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> implement
         couponsIn.add(Coupon.fromJSON(couponResponse, true));
         print("Returned from factory method");
       });*/
-      unuseableJSON.forEach((couponResponse) {
+      /* unuseableJSON.forEach((couponResponse) {
         print("Data = ${couponResponse.toString()}");
         print("Ading coupon = ${Coupon.fromJSON(couponResponse, false).toString()}");
         coupons.add(Coupon.fromJSON(couponResponse, false));
-      });
+      }); */
+      for(var couponResponse in unuseableJSON) {
+        print("Data = ${couponResponse.toString()}");
+        print("Ading coupon = ${Coupon.fromJSON(couponResponse, false).toString()}");
+        coupons.add(Coupon.fromJSON(couponResponse, false));
+      }
       coupons.sort((a,b) => a.compareTo(b));
       setState(() {
         print("Entered last print state");

@@ -39,3 +39,7 @@ int calculateNumberOfDays(DateTime start, DateTime end) {
   else
     return (diff.inDays + 1);
 }
+
+abstract class CustomBottomNavPageChangeListener{
+  void onBottomNavPageChanged(int index);
+}

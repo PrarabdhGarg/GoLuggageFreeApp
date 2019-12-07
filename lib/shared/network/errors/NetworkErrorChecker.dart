@@ -22,29 +22,31 @@ class NetworkErrorChecker {
       print("Recived message object = $messageObject");
       if(messageObject != null) {
         var message = jsonDecode(messageObject);
-        String title = message["title"].toString();
-        String messageBody = message["description"].toString();
-        String displayType = message["displayType"].toString();
-        switch(displayType) {
-          case "ALERT": {
-            print("Recived an alert error with body = $messageBody \n title = $title");
-            networkErrorListener.onAlertMessageRecived(title: title, message: messageBody);
-            break;
-          }
-          case "SNACKBAR": {
-            print("Recived an snackbar error with body = $messageBody \n title = $title");
-            networkErrorListener.onSnackbarMessageRecived(message: messageBody);
-            break;
-          }
-          case "TOAST": {
-            print("Recived an toast error with body = $messageBody \n title = $title");
-            networkErrorListener.onToastMessageRecived(message: messageBody);
-            break;
-          }
-          default: {
-            print("Recived an default error with body = $messageBody \n title = $title");
-            networkErrorListener.onAlertMessageRecived(message: "something went wrong. Please restart your app");
-            break;
+        if(message != null) {
+          String title = message["title"].toString();
+          String messageBody = message["description"].toString();
+          String displayType = message["displayType"].toString();
+          switch(displayType) {
+            case "ALERT": {
+              print("Recived an alert error with body = $messageBody \n title = $title");
+              networkErrorListener.onAlertMessageRecived(title: title, message: messageBody);
+              break;
+            }
+            case "SNACKBAR": {
+              print("Recived an snackbar error with body = $messageBody \n title = $title");
+              networkErrorListener.onSnackbarMessageRecived(message: messageBody);
+              break;
+            }
+            case "TOAST": {
+              print("Recived an toast error with body = $messageBody \n title = $title");
+              networkErrorListener.onToastMessageRecived(message: messageBody);
+              break;
+            }
+            default: {
+              print("Recived an default error with body = $messageBody \n title = $title");
+              networkErrorListener.onAlertMessageRecived(message: "something went wrong. Please restart your app");
+              break;
+            }
           }
         }
       }

@@ -7,6 +7,11 @@ import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
 class HomePage extends StatefulWidget {
+
+  CustomBottomNavPageChangeListener listener;
+
+  HomePage(this.listener);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -66,6 +71,7 @@ class _HomePageState extends State<HomePage> {
                   child: FlatButton(
                     child: Icon(Icons.home, color: this.currentPageId == 0 ? buttonColor : Colors.grey,),
                     onPressed: () {
+                      widget.listener.onBottomNavPageChanged(0);
                       setState(() {
                       currentPageId = 0; 
                       });
@@ -89,6 +95,7 @@ class _HomePageState extends State<HomePage> {
                   child: FlatButton(
                     child: Icon(Icons.card_travel, color: this.currentPageId == 1 ? buttonColor : Colors.grey,),
                     onPressed: () {
+                      widget.listener.onBottomNavPageChanged(1);
                       setState(() {
                         print("Entered set state for 1");
                         currentPageId = 1; 

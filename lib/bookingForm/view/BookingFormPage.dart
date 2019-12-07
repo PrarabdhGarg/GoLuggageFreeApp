@@ -448,6 +448,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
     if(formKey.currentState.validate()) {
       String jwt = await SharedPrefsHelper.getJWT();
       String coupon = await SharedPrefsHelper.getActiveCouponId();
+      print("Making a booking with coupon id = $coupon");
       var responde = await http.post(makeBooking+"${widget.storageSpaceId}/book", body: json.encode({
         "numberOfBags": numberOfBags,
         "checkInTime": _checkIn.toIso8601String(),

@@ -29,6 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
   TextEditingController emailController = new TextEditingController(text: "");
   TextEditingController passwordController = new TextEditingController(text: "");
   TextEditingController passwordConfirmationController = new TextEditingController(text: "");
+  TextEditingController referralController = new TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +108,10 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
                 flex: 1,
                 child: CustomWidgets.customEditText(context: context, controller: passwordConfirmationController, hint: "Please confirm your password", label: "Confirm Password", validator: Validators.passwordValidator, obscureText: true),
               ),
+              Flexible(
+                flex: 1,
+                child: CustomWidgets.customEditText(context: context, controller: referralController, label: "Referral Code", hint: "Please Enter referral Code if any", validator: Validators.referralValidator),
+              ),
               Container(height: 30,),
               CustomWidgets.customLoginButton(text: "Sign Up", onPressed: onSignUpPressed)
             ],
@@ -119,6 +124,7 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
 
   Future<Null> onSignUpPressed() async {
     if(_formKey.currentState.validate() && passwordController.text == passwordConfirmationController.text) {
+      await SharedPrefsHelper.addInvidedById(referralController.text);
       String referralCode = await SharedPrefsHelper.getInvidedById();
       print("Referral Code recived while signUp = ${referralCode}");
       var result = await http.post(signUpUrl, body: {

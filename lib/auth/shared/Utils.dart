@@ -74,4 +74,8 @@ class Validators {
     if(checkOut.isBefore(DateTime.now())) return "CheckOut cannot be before today";
     return null;
   }
+
+  static String referralValidator(String referral) {
+    return null;
+  }
 }

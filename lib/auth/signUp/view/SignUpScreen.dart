@@ -1,11 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
+import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,7 +23,7 @@ class SignUpScreen extends StatefulWidget {
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorListener {
   GlobalKey<FormState> _formKey = new GlobalKey();
   TextEditingController nameController = new TextEditingController(text: "");
   TextEditingController emailController = new TextEditingController(text: "");
@@ -126,6 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           "userType": "CUSTOMER",
           "referralCode": referralCode,
       }, headers: {"X-Version": versionCodeHeader});
+      NetworkErrorChecker(networkErrorListener: this, respoonseBody: result.body);
       if(result.statusCode == 201) {
         print("Sign-Up sucessful");
         var body = jsonDecode(result.body);
@@ -135,5 +140,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomePage")));
       }
     }
+  }
+
+  @override
+  void onAlertMessageRecived({String title = "Alert", String message}) {
+    print("Entered functtion for displaying alert Box");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StandardAlertBox(message: message, title: title,);
+      }
+    );
+  }
+
+  @override
+  void onSnackbarMessageRecived({String message}) {
+    print("Entered Function for displaying snackbar");
+    Scaffold.of(context).showSnackBar(SnackBar(
+       content: Text(message),
+       action: SnackBarAction(
+         label: "Ok",
+         onPressed: () {
+           Navigator.of(context).pop();
+         },
+       ),
+    ));
+  }
+
+  @override
+  void onToastMessageRecived({String message}) {
+    print("Entered Function for displaying toast");
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.BOTTOM,
+      toastLength: Toast.LENGTH_LONG
+    );
   }
 }

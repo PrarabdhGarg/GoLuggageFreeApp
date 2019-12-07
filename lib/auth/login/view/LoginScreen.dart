@@ -1,14 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/mobileVerification/view/MobileVerificationScreen.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
+import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -54,7 +58,7 @@ class LoginScreen extends StatefulWidget {
   
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListener {
 
   bool isLoading;
   TextEditingController phoneController = new TextEditingController(text: "");
@@ -122,11 +126,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   onLoginPressesed() async {
     if(_formKey.currentState.validate()) {
+      print("Entered onTap Listener for the login button");
       var response = await http.post(logInUrl, body: {
         "phone_number": phoneController.text,
         "password": passwordController.text }, headers: {"X-Version": versionCodeHeader});
       print("Response Status = ${response.statusCode}");
+      NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body);
       if(response.statusCode == 200) {
+        print("Response Body = ${response.body}");
         var map = jsonDecode(response.body)["user"];
         String jwt = jsonDecode(response.body)["token"];
         print("Map = ${map}");
@@ -146,5 +153,40 @@ class _LoginScreenState extends State<LoginScreen> {
   onSignUpPressed() async {
     // Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => MobileVerificationScreen()));
     Navigator.push(context, MaterialPageRoute(builder: (context) => MobileVerificationScreen(), settings: RouteSettings(name: "MobileVerificationScreen")));
+  }
+
+  @override
+  void onAlertMessageRecived({String title = "Alert", String message}) {
+    print("Entered functtion for displaying alert Box");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StandardAlertBox(message: message, title: title,);
+      }
+    );
+  }
+
+  @override
+  void onSnackbarMessageRecived({String message}) {
+    print("Entered Function for displaying snackbar");
+    Scaffold.of(context).showSnackBar(SnackBar(
+       content: Text(message),
+       action: SnackBarAction(
+         label: "Ok",
+         onPressed: () {
+           Navigator.of(context).pop();
+         },
+       ),
+    ));
+  }
+
+  @override
+  void onToastMessageRecived({String message}) {
+    print("Entered Function for displaying toast");
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.BOTTOM,
+      toastLength: Toast.LENGTH_LONG
+    );
   }
 }

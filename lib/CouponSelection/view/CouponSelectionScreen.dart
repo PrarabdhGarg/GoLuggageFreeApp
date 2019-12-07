@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/CouponSelection/model/Coupon.dart';
 import 'package:go_luggage_free/CouponSelection/model/Coupon.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
+import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
 import 'package:http/http.dart' as http;
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,7 +38,7 @@ class CouponSelectionScreen extends StatefulWidget {
   _CouponSelectionScreenState createState() => _CouponSelectionScreenState();
 }
 
-class _CouponSelectionScreenState extends State<CouponSelectionScreen> {
+class _CouponSelectionScreenState extends State<CouponSelectionScreen> implements NetworkErrorListener{
   List<Coupon> coupons;
   bool isLoading;
 
@@ -163,35 +166,39 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> {
     print("Response recived");
     print("Reived response code = ${response.statusCode.toString()}");
     print("Recived Body = ${response.body.toString()}");
-    List<dynamic> useableJSON = jsonDecode(response.body)["usableCoupons"];
-    print("Useable Coupons = ${useableJSON.toList()}");
-    List<dynamic> unuseableJSON = jsonDecode(response.body)["unusableCoupons"];
-    print("UnUseable Coupons = ${unuseableJSON.toList()}");
-    for(var couponResponse in useableJSON) {
-      print("Data = ${couponResponse.toString()}");
-      print("Ading coupon = ${Coupon.fromJSON(couponResponse, true).toString()}");
-      setState(() {
-        coupons.add(Coupon.fromJSON(couponResponse, true));
+    NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body.toString());
+    if(response.statusCode == 200) {
+      List<dynamic> useableJSON = jsonDecode(response.body)["usableCoupons"];
+      print("Useable Coupons = ${useableJSON.toList()}");
+      List<dynamic> unuseableJSON = jsonDecode(response.body)["unusableCoupons"];
+      print("UnUseable Coupons = ${unuseableJSON.toList()}");
+      for(var couponResponse in useableJSON) {
+        print("Data = ${couponResponse.toString()}");
+        print("Ading coupon = ${Coupon.fromJSON(couponResponse, true).toString()}");
+        setState(() {
+          coupons.add(Coupon.fromJSON(couponResponse, true));
+        });
+        print("Returned from factory method");
+      }
+      /*useableJSON.forEach((couponResponse) {
+        print("Data = ${couponResponse.toString()}");
+        print("Ading coupon = ${Coupon.fromJSON(couponResponse, true).toString()}");
+        couponsIn.add(Coupon.fromJSON(couponResponse, true));
+        print("Returned from factory method");
+      });*/
+      unuseableJSON.forEach((couponResponse) {
+        print("Data = ${couponResponse.toString()}");
+        print("Ading coupon = ${Coupon.fromJSON(couponResponse, false).toString()}");
+        coupons.add(Coupon.fromJSON(couponResponse, false));
       });
-      print("Returned from factory method");
+      coupons.sort((a,b) => a.compareTo(b));
+      setState(() {
+        print("Entered last print state");
+        this.coupons = coupons;
+        this.isLoading = false;
+      });
     }
-    /*useableJSON.forEach((couponResponse) {
-      print("Data = ${couponResponse.toString()}");
-      print("Ading coupon = ${Coupon.fromJSON(couponResponse, true).toString()}");
-      couponsIn.add(Coupon.fromJSON(couponResponse, true));
-      print("Returned from factory method");
-    });*/
-    unuseableJSON.forEach((couponResponse) {
-      print("Data = ${couponResponse.toString()}");
-      print("Ading coupon = ${Coupon.fromJSON(couponResponse, false).toString()}");
-      coupons.add(Coupon.fromJSON(couponResponse, false));
-    });
-    coupons.sort((a,b) => a.compareTo(b));
-    setState(() {
-      print("Entered last print state");
-      this.coupons = coupons;
-      this.isLoading = false;
-    });
+    // return new List();
     // return new List();
   }
 
@@ -201,6 +208,43 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> {
       Navigator.of(context).pop(true);
     } else {
       Fluttertoast.showToast(msg: "Not Applicable Right Now");
+      // TODO Remove this statement and handle this on back pressed
+      Navigator.of(context).pop(false);
     }
+  }
+
+  @override
+  void onAlertMessageRecived({String title = "Alert", String message}) {
+    print("Entered functtion for displaying alert Box");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StandardAlertBox(message: message, title: title,);
+      }
+    );
+  }
+
+  @override
+  void onSnackbarMessageRecived({String message}) {
+    print("Entered Function for displaying snackbar");
+    Scaffold.of(context).showSnackBar(SnackBar(
+       content: Text(message),
+       action: SnackBarAction(
+         label: "Ok",
+         onPressed: () {
+           Navigator.of(context).pop();
+         },
+       ),
+    ));
+  }
+
+  @override
+  void onToastMessageRecived({String message}) {
+    print("Entered Function for displaying toast");
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.BOTTOM,
+      toastLength: Toast.LENGTH_LONG
+    );
   }
 }

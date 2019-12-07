@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/CouponSelection/view/CouponSelectionScreen.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/bookingForm/view/CustomCounter.dart';
@@ -11,9 +12,12 @@ import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/bookingTicketInfoScreen/view/BookingTicketInfoScreen.dart';
 import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
+import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
+import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +34,7 @@ class BookingFormPage extends StatefulWidget {
   _BookingFormPageState createState() => _BookingFormPageState();
 }
 
-class _BookingFormPageState extends State<BookingFormPage> {
+class _BookingFormPageState extends State<BookingFormPage> implements NetworkErrorListener {
   DateTime _checkIn = DateTime.now();
   DateTime _checkOut = DateTime.now();
   String selectedUserGovtIdType = "AADHAR";
@@ -456,45 +460,51 @@ class _BookingFormPageState extends State<BookingFormPage> {
       print("Response Code = ${responde.statusCode}");
       print("Response Body = ${responde.body}");
       ticket = bookingTicketFromJson(responde.body.toString());
-      String bookingId = await json.decode(responde.body)["_id"];
-      var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
-      print(responseForPayment.statusCode);
-      print("Response = ${responseForPayment.body}");
-      String orderId = jsonDecode(responseForPayment.body)["order_id"];
-      String razorpayKey = jsonDecode(responseForPayment.body)["key_id"];
-      String transaction_id = jsonDecode(responseForPayment.body)["transaction_id"];
-      await SharedPrefsHelper.addTransactionId(transaction_id);
-      print("Added Transaction id = ${json.decode(responde.body)["transaction"]}");
-      print("Recived Receipt id = ${orderId}");
-      var _razorPay = Razorpay();
-      _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
-      _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-      _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalEvent);
+      NetworkErrorChecker(networkErrorListener: this, respoonseBody: responde.body);
+      if(responde.statusCode == 200 || responde.statusCode == 201) {
+        String bookingId = await json.decode(responde.body)["_id"];
+        var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
+        print(responseForPayment.statusCode);
+        print("Response = ${responseForPayment.body}");
+        NetworkErrorChecker(networkErrorListener: this, respoonseBody: responseForPayment.body);
+        if(responseForPayment.statusCode == 200 || responseForPayment.statusCode == 201) {
+          String orderId = jsonDecode(responseForPayment.body)["order_id"];
+          String razorpayKey = jsonDecode(responseForPayment.body)["key_id"];
+          String transaction_id = jsonDecode(responseForPayment.body)["transaction_id"];
+          await SharedPrefsHelper.addTransactionId(transaction_id);
+          print("Added Transaction id = ${json.decode(responde.body)["transaction"]}");
+          print("Recived Receipt id = ${orderId}");
 
-      String number = await SharedPrefsHelper.getUserNumber();
-      String email = await SharedPrefsHelper.getUserEmail();
+          String number = await SharedPrefsHelper.getUserNumber();
+          String email = await SharedPrefsHelper.getUserEmail();
 
-      // rzp_test_FrEjSYTC6hMJvn
-      // rzp_live_Cod208QgiAuDMf
-      // ${(_numberOfBags*_numberOfDays*24*widget.price).round()*100}
-      print("Price = $price");
-      print("Storage Cost = ${calculateStorageCost()}");
-      var _options = {
-        "key": razorpayKey,
-        "amount": price * 100,
-        "name": "GoLuggageFree",
-        "order_id": orderId,
-        "description": "Cloakrooms near you",
-        "prefill": {
-          "contact": number,
-          "email": email
-        },
-        "theme": {
-          "color": "#0078FF"
-        } 
-      };
-      print("Razor Pay Options = ${_options.toString()}");
-      _razorPay.open(_options);
+          // rzp_test_FrEjSYTC6hMJvn
+          // rzp_live_Cod208QgiAuDMf
+          // ${(_numberOfBags*_numberOfDays*24*widget.price).round()*100}
+          var _razorPay = Razorpay();
+          _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
+          _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+          _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalEvent);
+          print("Price = $price");
+          print("Storage Cost = ${calculateStorageCost()}");
+          var _options = {
+            "key": razorpayKey,
+            "amount": calculateStorageCost() * 100,
+            "name": "GoLuggageFree",
+            "order_id": orderId,
+            "description": "Cloakrooms near you",
+            "prefill": {
+              "contact": number,
+              "email": email
+            },
+            "theme": {
+              "color": "#0078FF"
+            } 
+          };
+          print("Razor Pay Options = ${_options.toString()}");
+          _razorPay.open(_options);
+        }
+      }  
     }
   }
 
@@ -578,6 +588,41 @@ class _BookingFormPageState extends State<BookingFormPage> {
       Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(ticket.bookingId), settings: RouteSettings(name: "Ticket${ticket.bookingId}")));
       // TODO handle backstack operations
     }
+  }
+
+  @override
+  void onAlertMessageRecived({String title = "Alert", String message}) {
+    print("Entered functtion for displaying alert Box");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StandardAlertBox(message: message, title: title,);
+      }
+    );
+  }
+
+  @override
+  void onSnackbarMessageRecived({String message}) {
+    print("Entered Function for displaying snackbar");
+    Scaffold.of(context).showSnackBar(SnackBar(
+       content: Text(message),
+       action: SnackBarAction(
+         label: "Ok",
+         onPressed: () {
+           Navigator.of(context).pop();
+         },
+       ),
+    ));
+  }
+
+  @override
+  void onToastMessageRecived({String message}) {
+    print("Entered Function for displaying toast");
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.BOTTOM,
+      toastLength: Toast.LENGTH_LONG
+    );
   }
 
   int calculateStorageCost() {

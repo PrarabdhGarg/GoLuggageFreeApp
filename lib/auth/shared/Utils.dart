@@ -1,3 +1,6 @@
+import 'package:flutter_launcher_icons/constants.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
+
 class Validators {
   static DateTime checkInTime;
 
@@ -55,6 +58,8 @@ class Validators {
   }
 
   static String checkInValidator(DateTime checkIn) {
+    print("Recived date time = ${checkIn}");
+    print("Text in controller = ${checkInController.text}");
     checkInTime = checkIn;
     if(checkIn == null) return "Enter non-null checkIn Time";
     try {

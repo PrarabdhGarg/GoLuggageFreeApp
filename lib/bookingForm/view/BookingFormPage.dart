@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
@@ -21,7 +21,6 @@ import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BookingFormPage extends StatefulWidget {
@@ -134,6 +133,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                     child: DateTimeField(
                       format: format,
                       controller: checkInController,
+                      initialValue: checkInController.text != "" ? DateTime.parse(checkInController.text) : DateTime.now(),
                       validator: Validators.checkInValidator,
                       decoration: InputDecoration(
                         hintText: "Check In"
@@ -158,15 +158,15 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                             try {
                               numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
                             } catch(e) {
-                              print(e.toString());
+                              print("Exception while calculating number of days" + e.toString());
                               numberOfDays = numberOfDays;
                               calculateStorageCost();
                             }
                             print("Number Of days = ${numberOfDays}");
                           });
-                          return DateTimeField.combine(date, time);
+                          return DateTimeField.combine(date, time) ?? DateTime.parse(checkInController.text);
                         } else {
-                          return currentValue;
+                          return currentValue ?? DateTime.parse(checkInController.text);
                         }
                       },
                     )
@@ -186,6 +186,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                     flex: 1,
                     child: DateTimeField(
                       format: format,
+                      initialValue: checkOutController.text != "" ? DateTime.parse(checkOutController.text) : DateTime.now(),
                       controller: checkOutController,
                       decoration: InputDecoration(
                         hintText: "Check Out"
@@ -318,7 +319,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.only(left: 24.0),
-                    child: Text(prefix0.selectedCoupon != null ? "Discount" : "", style: Theme.of(context).textTheme.headline,),
+                    child: Text(selectedCoupon != null ? "Discount" : "", style: Theme.of(context).textTheme.headline,),
                   ),
                   Expanded(
                     flex: 1,
@@ -416,7 +417,13 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                 color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1")
               ),
               child: FlatButton(
-                onPressed: _termsAndConditionsAccepted ? onBookingButtonPressed : null,
+                onPressed: _termsAndConditionsAccepted ? () {
+                  try {
+                    onBookingButtonPressed();
+                  } catch(e) {
+                    print("Ecxeption inside try for booking button, \n $e");
+                  }
+                } : null,
                 child: Text("Book Now", style: Theme.of(context).textTheme.button,),
               ),
             ),
@@ -441,14 +448,20 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
   }
 
   onBookingButtonPressed() async {
-    print("Entered Booking Button Presed");
-    setState(() {
-      isLoading = true;
-    });
     if(formKey.currentState.validate()) {
+      print("Entered Booking Button Presed");
+      setState(() {
+        isLoading = true;
+      });
       String jwt = await SharedPrefsHelper.getJWT();
-      String coupon = await SharedPrefsHelper.getActiveCouponId();
-      print("Making a booking with coupon id = $coupon");
+      String couponId = "";
+      try {
+        couponId = selectedCoupon.id;
+      } catch(e) {
+        print("Ecxeption in getting id for slected coupon");
+        couponId = "";
+      }
+      // print("Making a booking with coupon id = ${selectedCoupon.id}");
       var responde = await http.post(makeBooking+"${widget.storageSpaceId}/book", body: json.encode({
         "numberOfBags": numberOfBags,
         "checkInTime": _checkIn.toIso8601String(),
@@ -456,7 +469,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
         "userGovtIdType": "Aadhaar",
         "userGovtId": govtIdNumber.text,
         "bookingPersonName": nameController.text,
-        "couponId": coupon
+        "couponId": couponId
       }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
       print("Response Code = ${responde.statusCode}");
       print("Response Body = ${responde.body}");
@@ -573,20 +586,24 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
       "razorpay_signature": response.signature,
       "transaction_id": trxnId
     }));
+    print("Recived jwt = $jwt");
     var paymentConfirmationResponse = await http.post(razorPayCallbackUrl, body: json.encode({
       "razorpay_payment_id": response.paymentId,
       "razorpay_order_id": response.orderId,
       "razorpay_signature": response.signature,
       "transaction_id": trxnId
     }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
+    print(paymentConfirmationResponse.statusCode);
+    print(paymentConfirmationResponse.body.toString());
     if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
       print("Payment Validation Recived");
       await BookingTicketDAO.insertBookingTickets([ticket]);
       setState(() {
         isLoading = false;
       });
+      // Navigator.of(context).pop(true);
       Navigator.of(context).popUntil((route) => route.isFirst);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(ticket.bookingId), settings: RouteSettings(name: "Ticket${ticket.bookingId}")));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(ticket.id), settings: RouteSettings(name: "Ticket${ticket.bookingId}")));
       // TODO handle backstack operations
     }
   }
@@ -645,7 +662,12 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    print("Error in making payment ${response.message.toString()}");
+    print("Error in making payment ${response.code.toString()}");
+    if(response.code == 2) {
+      setState(() {
+        this.isLoading = false;
+      });
+    }
   }
 
   void _handleExternalEvent(ExternalWalletResponse response) {

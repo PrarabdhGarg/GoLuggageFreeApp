@@ -7,6 +7,7 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:go_luggage_free/auth/login/view/LoginScreen.dart';
 import 'package:go_luggage_free/shared/network/GraphQlProvider.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Sentry.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -18,10 +19,15 @@ void main() {
   }, 
     onError: (Object error , StackTrace trace) {
       try {
-        Sentry.getSentryClient().captureException(
-          exception: error,
-          stackTrace: trace
-        );
+        if(prefix0.isAppInTestingMode) {
+          print("Error occoured = $error");
+          print(trace);
+        } else {
+          Sentry.getSentryClient().captureException(
+            exception: error,
+            stackTrace: trace
+          );
+        }
       } catch(e) {
         print("Unable to report error to sentry with exception = $e");
       }

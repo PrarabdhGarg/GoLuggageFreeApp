@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_luggage_free/CouponSelection/model/Coupon.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
+String sentryDSN = "https://3c62b1ab40344f35803a04da958e7b6f@sentry.io/1851321";
+
 String baseUrl = "http://test.goluggagefree.com/";
 
 String imageBaseUrl = baseUrl;

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,21 +7,25 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:go_luggage_free/auth/login/view/LoginScreen.dart';
 import 'package:go_luggage_free/shared/network/GraphQlProvider.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/Sentry.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:statusbar/statusbar.dart';
 
 void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.white, //bottom bar color
-      )
-  );
-  SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
-      .then((_) => runApp(new MyApp()));
+  runZoned(() async{
+     runApp(new MyApp());
+  }, 
+    onError: (Object error , StackTrace trace) {
+      try {
+        Sentry.getSentryClient().captureException(
+          exception: error,
+          stackTrace: trace
+        );
+      } catch(e) {
+        print("Unable to report error to sentry with exception = $e");
+      }
+    });
 } 
 
 class MyApp extends StatelessWidget {

@@ -19,9 +19,9 @@ String getTokensForBooking = baseUrl + "api/getApplicableCoupons";
 
 String payForBooking = baseUrl + "api/payFor/";
 
-String forgotPasswordOtpGenerate = baseUrl + "/users/forgotPasswordOTP";
+String forgotPasswordOtpGenerate = baseUrl + "users/forgotPasswordOTP";
 
-String resetPassword = baseUrl + "/users/resetPassword";
+String resetPassword = baseUrl + "users/resetPassword";
 
 // While making an api call to this end-point, you will have to add /{storageSpace.id}/book
 String makeBooking = baseUrl + "api/bookings/";

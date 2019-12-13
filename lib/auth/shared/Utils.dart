@@ -52,7 +52,7 @@ class Validators {
   static String otpValidator(String otp) {
     if(otp == null) return "Enter non-null OTP";
     if(otp.isEmpty) return "Enter a non-empty otp";
-    if(otp.length != 6) return "Invalid";
+    if(otp.length != 6 && otp.length != 5) return "Invalid";
     if(!(RegExp(r'^-?[0-9]+$').hasMatch(otp))) return "OTP is numeric only";
     return null;
   }

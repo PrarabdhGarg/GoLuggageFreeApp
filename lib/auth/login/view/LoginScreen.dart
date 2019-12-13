@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/mobileVerification/view/MobileVerificationScreen.dart';
+import 'package:go_luggage_free/auth/resetPassword/ResetPasswordScreen.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
@@ -102,6 +103,17 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
                   flex: 1,
                   child: CustomWidgets.customEditText(context: context, controller: passwordController, hint: "Please Enter Password", label: "Password", validator: Validators.passwordValidator, obscureText: true),
                 ),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.only(right: 16.0),
+                    child: FlatButton(
+                      onPressed: onForgotPasswordPressed(),
+                      child: Text("Forgot Password?", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.lightBlue),),
+                    ),
+                  )
+                ),
                 Container(height: 24,),
                 CustomWidgets.customLoginButton(text: "Login", onPressed: onLoginPressesed),
                 Container(
@@ -121,6 +133,31 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
     bool isLoggedIn = await SharedPrefsHelper.checkUserLoginStatus();
     if(isLoggedIn) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
+    }
+  }
+
+  onForgotPasswordPressed() async {
+    if(phoneController.text.isEmpty) {
+      onToastMessageRecived(message: "Please Enter the phone Number");
+    } else if(Validators.phoneValidator(phoneController.text) !=  null) {
+      onToastMessageRecived(message: Validators.phoneValidator(phoneController.text));
+    } else {
+      setState(() {
+        isLoading = true;
+      });
+      await SharedPrefsHelper.saveUserData(mobileNumber: phoneController.text, jwt: "");
+      var response = await http.post(forgotPasswordOtpGenerate, body: {
+        "number": phoneController.text
+      }, headers: {"X-Version": versionCodeHeader});
+      print("Response Status Code = ${response.statusCode}");
+      print("Response Body = ${response.body}");
+      NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body);
+      if(response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          this.isLoading = false;
+        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResetPasswordScreen()));
+      }
     }
   }
 

@@ -29,10 +29,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String email = await SharedPrefsHelper.getUserEmail();
     String number = await SharedPrefsHelper.getUserNumber();
     String name = await SharedPrefsHelper.getUserName();
+    String userReferral = await SharedPrefsHelper.getUserReferralCode();
     return {
       "name": name,
       "email": email,
-      "number": number
+      "number": number,
+      "userReferral": userReferral
     };
   }
 }

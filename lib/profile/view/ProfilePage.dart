@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/views/InfoRow.dart';
+import 'package:wc_flutter_share/wc_flutter_share.dart';
 
 class ProfilePage extends StatelessWidget {
   Map<String, String> userMap;
@@ -65,6 +69,13 @@ class ProfilePage extends StatelessWidget {
                     Divider(color: Colors.grey[300],),
                     Container(height: 30,),
                     infoRow("Email Address", userMap["email"].toString(), Theme.of(context).textTheme.headline),
+                    Container(height: 30,),
+                    infoRow("Refferal Code", userMap["userReferral"], Theme.of(context).textTheme.headline),
+                    Container(height: 30,),
+                    CustomWidgets.customLoginButton(text: "Copy Refferal Code", onPressed: () {
+                      Clipboard.setData(ClipboardData(text: userMap["userReferralCode"].toString()));
+                      Fluttertoast.showToast(msg: "Copied Referral Code to clipboard");
+                    })
                   ],
                 ),
               ),

@@ -141,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
         print("Sign-Up sucessful");
         var body = jsonDecode(result.body);
         print("Body Recived = $body");
-        await SharedPrefsHelper.saveUserData(name: body["user"]["name"].toString(), mobileNumber: body["user"]["mobile_number"].toString(), email: body["user"]["email"].toString(), userId: body["user"]["_id"].toString(), jwt: body["token"].toString(), customerId: body["customer"]["_id"]);
+        await SharedPrefsHelper.saveUserData(name: body["user"]["name"].toString(), mobileNumber: body["user"]["mobile_number"].toString(), email: body["user"]["email"].toString(), userId: body["user"]["_id"].toString(), jwt: body["token"].toString(), customerId: body["customer"]["_id"], userReferralCode: body["referralCode"].toString());
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomePage")));
       }

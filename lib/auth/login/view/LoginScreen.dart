@@ -105,12 +105,14 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
                 ),
                 Flexible(
                   flex: 1,
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.only(right: 16.0),
-                    child: FlatButton(
-                      onPressed: onForgotPasswordPressed(),
-                      child: Text("Forgot Password?", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.lightBlue),),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: EdgeInsets.only(right: 16.0),
+                      child: FlatButton(
+                        onPressed: onForgotPasswordPressed,
+                        child: Text("Forgot Password?", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.lightBlue),),
+                      ),
                     ),
                   )
                 ),
@@ -179,6 +181,8 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
         var name = map["name"];
         var email = map["email"];
         var mobileNumber = map["mobile_number"].toString();
+        var userReferral = jsonDecode(response.body)["referralCode"].toString();
+        print("Recived Referral = $userReferral");
         print("REcivedData = $userId\t$name\t$email\t$mobileNumber");
         await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber, jwt: jwt, customerId: coustomerId);
         Navigator.pop(context);

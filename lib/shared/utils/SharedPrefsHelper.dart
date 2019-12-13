@@ -11,8 +11,9 @@ class SharedPrefsHelper {
   static final String TRXN = "TRANSACTION";
   static final String CUST_ID = "CUST_ID";
   static final String REFFERED_BY = "REFFERED_BY";
+  static final String USER_REFERRAL = "USER_REFERRAL";
 
-  static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber, @required String jwt, String customerId}) async {
+  static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber, @required String jwt, String customerId, String userReferralCode}) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     if(userId != null) {
       await _prefs.setString(USER_ID, userId);
@@ -28,6 +29,9 @@ class SharedPrefsHelper {
     }
     if(customerId != null) {
       await _prefs.setString(CUST_ID, customerId);
+    }
+    if(userReferralCode != null) {
+      await _prefs.setString(USER_REFERRAL, userReferralCode);
     }
     await _prefs.setString(JWT, "Bearer ${jwt}");
   }
@@ -55,7 +59,8 @@ class SharedPrefsHelper {
   static Future<bool> checkUserLoginStatus() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     var id = _prefs.getString(JWT);
-    if(id != null && id.isNotEmpty) {
+    print("Jwt = ${id}");
+    if(id != null && id.isNotEmpty && !(id == "Bearer ")) {
       return true;
     }
     return false;
@@ -135,6 +140,16 @@ class SharedPrefsHelper {
     print("Recived trxn id = ${txn}");
     if(txn != null && txn.isNotEmpty) {
       return txn;
+    }
+    return "";
+  }
+
+  static Future<String> getUserReferralCode() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String referral = await _prefs.getString(USER_REFERRAL);
+    print("Recived trxn id = ${referral}");
+    if(referral != null && referral.isNotEmpty) {
+      return referral;
     }
     return "";
   }

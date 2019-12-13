@@ -7,6 +7,7 @@ import 'package:go_luggage_free/auth/resetPassword/ResetPasswordScreen.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
@@ -151,15 +152,16 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
       var response = await http.post(forgotPasswordOtpGenerate, body: {
         "number": phoneController.text
       }, headers: {"X-Version": versionCodeHeader});
-      print("Response Status Code = ${response.statusCode}");
-      print("Response Body = ${response.body}");
-      NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body);
-      if(response.statusCode == 200 || response.statusCode == 201) {
-        setState(() {
+      NetworkRespoonseHandler.handleResponse(
+        response: response,
+        errorListener: this,
+        onSucess: (responseBody) {
+          setState(() {
           this.isLoading = false;
         });
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResetPasswordScreen()));
-      }
+        }
+      );
     }
   }
 
@@ -171,23 +173,26 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
         "password": passwordController.text }, headers: {"X-Version": versionCodeHeader});
       print("Response Status = ${response.statusCode}");
       NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body);
-      if(response.statusCode == 200) {
-        print("Response Body = ${response.body}");
-        var map = jsonDecode(response.body)["user"];
-        String jwt = jsonDecode(response.body)["token"];
-        print("Map = ${map}");
-        var userId = map["_id"];
-        var coustomerId = jsonDecode(response.body)['customer']['_id'];
-        var name = map["name"];
-        var email = map["email"];
-        var mobileNumber = map["mobile_number"].toString();
-        var userReferral = jsonDecode(response.body)["referralCode"].toString();
-        print("Recived Referral = $userReferral");
-        print("REcivedData = $userId\t$name\t$email\t$mobileNumber");
-        await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber, jwt: jwt, customerId: coustomerId);
-        Navigator.pop(context);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
-      }
+      NetworkRespoonseHandler.handleResponse(
+        errorListener: this,
+        response: response,
+        onSucess: (responseBody) async {
+          var map = jsonDecode(responseBody)["user"];
+          String jwt = jsonDecode(responseBody)["token"];
+          print("Map = ${map}");
+          var userId = map["_id"];
+          var coustomerId = jsonDecode(responseBody)['customer']['_id'];
+          var name = map["name"];
+          var email = map["email"];
+          var mobileNumber = map["mobile_number"].toString();
+          var userReferral = jsonDecode(responseBody)["referralCode"].toString();
+          print("Recived Referral = $userReferral");
+          print("REcivedData = $userId\t$name\t$email\t$mobileNumber");
+          await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber, jwt: jwt, customerId: coustomerId);
+          Navigator.pop(context);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
+        }
+      );
     }
   }
 

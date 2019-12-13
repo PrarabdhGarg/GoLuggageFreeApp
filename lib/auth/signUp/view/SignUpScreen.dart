@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
@@ -136,15 +137,18 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
           "userType": "CUSTOMER",
           "referralCode": referralCode,
       }, headers: {"X-Version": versionCodeHeader});
-      NetworkErrorChecker(networkErrorListener: this, respoonseBody: result.body);
-      if(result.statusCode == 201) {
-        print("Sign-Up sucessful");
-        var body = jsonDecode(result.body);
-        print("Body Recived = $body");
-        await SharedPrefsHelper.saveUserData(name: body["user"]["name"].toString(), mobileNumber: body["user"]["mobile_number"].toString(), email: body["user"]["email"].toString(), userId: body["user"]["_id"].toString(), jwt: body["token"].toString(), customerId: body["customer"]["_id"], userReferralCode: body["referralCode"].toString());
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomePage")));
-      }
+      NetworkRespoonseHandler.handleResponse(
+        errorListener: this,
+        response: result,
+        onSucess: (responseBody) async {
+           print("Sign-Up sucessful");
+          var body = jsonDecode(responseBody);
+          print("Body Recived = $body");
+          await SharedPrefsHelper.saveUserData(name: body["user"]["name"].toString(), mobileNumber: body["user"]["mobile_number"].toString(), email: body["user"]["email"].toString(), userId: body["user"]["_id"].toString(), jwt: body["token"].toString(), customerId: body["customer"]["_id"], userReferralCode: body["referralCode"].toString());
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomePage")));
+        }
+      );
     }
   }
 

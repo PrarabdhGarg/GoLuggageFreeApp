@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/CouponSelection/model/Coupon.dart';
 import 'package:go_luggage_free/CouponSelection/model/Coupon.dart';
+import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
@@ -167,44 +168,31 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> implement
     print("Reived response code = ${response.statusCode.toString()}");
     print("Recived Body = ${response.body.toString()}");
     NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body.toString());
-    if(response.statusCode == 200) {
-      List<dynamic> useableJSON = jsonDecode(response.body)["usableCoupons"];
-      print("Useable Coupons = ${useableJSON.toList()}");
-      List<dynamic> unuseableJSON = jsonDecode(response.body)["unusableCoupons"];
-      print("UnUseable Coupons = ${unuseableJSON.toList()}");
-      for(var couponResponse in useableJSON) {
-        print("Data = ${couponResponse.toString()}");
-        print("Ading coupon = ${Coupon.fromJSON(couponResponse, true).toString()}");
+    NetworkRespoonseHandler.handleResponse(
+      response: response,
+      errorListener: this,
+      onSucess: (responseBody) {
+        List<dynamic> useableJSON = jsonDecode(responseBody)["usableCoupons"];
+        print("Useable Coupons = ${useableJSON.toList()}");
+        List<dynamic> unuseableJSON = jsonDecode(responseBody)["unusableCoupons"];
+        print("UnUseable Coupons = ${unuseableJSON.toList()}");
+        for(var couponResponse in useableJSON) {
+          setState(() {
+            coupons.add(Coupon.fromJSON(couponResponse, true));
+          });
+          print("Returned from factory method");
+        }
+        for(var couponResponse in unuseableJSON) {
+          coupons.add(Coupon.fromJSON(couponResponse, false));
+        }
+        coupons.sort((a,b) => a.compareTo(b));
         setState(() {
-          coupons.add(Coupon.fromJSON(couponResponse, true));
+          print("Entered last print state");
+          this.coupons = coupons;
+          this.isLoading = false;
         });
-        print("Returned from factory method");
       }
-      /*useableJSON.forEach((couponResponse) {
-        print("Data = ${couponResponse.toString()}");
-        print("Ading coupon = ${Coupon.fromJSON(couponResponse, true).toString()}");
-        couponsIn.add(Coupon.fromJSON(couponResponse, true));
-        print("Returned from factory method");
-      });*/
-      /* unuseableJSON.forEach((couponResponse) {
-        print("Data = ${couponResponse.toString()}");
-        print("Ading coupon = ${Coupon.fromJSON(couponResponse, false).toString()}");
-        coupons.add(Coupon.fromJSON(couponResponse, false));
-      }); */
-      for(var couponResponse in unuseableJSON) {
-        print("Data = ${couponResponse.toString()}");
-        print("Ading coupon = ${Coupon.fromJSON(couponResponse, false).toString()}");
-        coupons.add(Coupon.fromJSON(couponResponse, false));
-      }
-      coupons.sort((a,b) => a.compareTo(b));
-      setState(() {
-        print("Entered last print state");
-        this.coupons = coupons;
-        this.isLoading = false;
-      });
-    }
-    // return new List();
-    // return new List();
+    );
   }
 
   onDiscountCouponTapped(int index) async {

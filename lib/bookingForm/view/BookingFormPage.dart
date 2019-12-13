@@ -11,6 +11,7 @@ import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/bookingTicketInfoScreen/view/BookingTicketInfoScreen.dart';
 import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
+import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
@@ -471,54 +472,49 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
         "bookingPersonName": nameController.text,
         "couponId": couponId
       }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
-      print("Response Code = ${responde.statusCode}");
-      print("Response Body = ${responde.body}");
-      ticket = bookingTicketFromJson(responde.body.toString());
-      NetworkErrorChecker(networkErrorListener: this, respoonseBody: responde.body);
-      if(responde.statusCode == 200 || responde.statusCode == 201) {
-        String bookingId = await json.decode(responde.body)["_id"];
-        var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
-        print(responseForPayment.statusCode);
-        print("Response = ${responseForPayment.body}");
-        NetworkErrorChecker(networkErrorListener: this, respoonseBody: responseForPayment.body);
-        if(responseForPayment.statusCode == 200 || responseForPayment.statusCode == 201) {
-          String orderId = jsonDecode(responseForPayment.body)["order_id"];
-          String razorpayKey = jsonDecode(responseForPayment.body)["key_id"];
-          String transaction_id = jsonDecode(responseForPayment.body)["transaction_id"];
-          await SharedPrefsHelper.addTransactionId(transaction_id);
-          print("Added Transaction id = ${json.decode(responde.body)["transaction"]}");
-          print("Recived Receipt id = ${orderId}");
+      NetworkRespoonseHandler.handleResponse(
+        response: responde,
+        errorListener: this,
+        onSucess: (responseBody) async {
+          ticket = bookingTicketFromJson(responseBody.toString());
+          String bookingId = await json.decode(responseBody)["_id"];
+          var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
+          NetworkRespoonseHandler.handleResponse(
+            response: responseForPayment,
+            errorListener: this,
+            onSucess: (responseBody1) async {
+              String orderId = jsonDecode(responseBody1)["order_id"];
+              String razorpayKey = jsonDecode(responseBody1)["key_id"];
+              String transaction_id = jsonDecode(responseBody1)["transaction_id"];
+              await SharedPrefsHelper.addTransactionId(transaction_id);
+              print("Added Transaction id = ${json.decode(responseBody)["transaction"]}");
+              print("Recived Receipt id = ${orderId}");
 
-          String number = await SharedPrefsHelper.getUserNumber();
-          String email = await SharedPrefsHelper.getUserEmail();
+              String number = await SharedPrefsHelper.getUserNumber();
+              String email = await SharedPrefsHelper.getUserEmail();
 
-          // rzp_test_FrEjSYTC6hMJvn
-          // rzp_live_Cod208QgiAuDMf
-          // ${(_numberOfBags*_numberOfDays*24*widget.price).round()*100}
-          var _razorPay = Razorpay();
-          _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
-          _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-          _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalEvent);
-          print("Price = $price");
-          print("Storage Cost = ${calculateStorageCost()}");
-          var _options = {
-            "key": razorpayKey,
-            "amount": calculateStorageCost() * 100,
-            "name": "GoLuggageFree",
-            "order_id": orderId,
-            "description": "Cloakrooms near you",
-            "prefill": {
-              "contact": number,
-              "email": email
-            },
-            "theme": {
-              "color": "#0078FF"
-            } 
-          };
-          print("Razor Pay Options = ${_options.toString()}");
-          _razorPay.open(_options);
+              var _razorPay = Razorpay();
+              _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
+              _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+              _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalEvent);
+              var _options = {
+                "key": razorpayKey,
+                "name": "GoLuggageFree",
+                "order_id": orderId,
+                "description": "Cloakrooms near you",
+                "prefill": {
+                  "contact": number,
+                  "email": email
+                },
+                "theme": {
+                  "color": "#0078FF"
+                } 
+              };
+              _razorPay.open(_options);
+            }
+          );
         }
-      }  
+      );
     }
   }
 
@@ -595,17 +591,19 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
     }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
     print(paymentConfirmationResponse.statusCode);
     print(paymentConfirmationResponse.body.toString());
-    if(paymentConfirmationResponse.statusCode == 200 || paymentConfirmationResponse.statusCode == 201) {
-      print("Payment Validation Recived");
-      await BookingTicketDAO.insertBookingTickets([ticket]);
-      setState(() {
-        isLoading = false;
-      });
-      // Navigator.of(context).pop(true);
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(ticket.id), settings: RouteSettings(name: "Ticket${ticket.bookingId}")));
-      // TODO handle backstack operations
-    }
+    NetworkRespoonseHandler.handleResponse(
+      errorListener: this,
+      response: paymentConfirmationResponse,
+      onSucess: (responseBody) async {
+        print("Payment Validation Recived");
+        await BookingTicketDAO.insertBookingTickets([ticket]);
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTicketInfoScreen(ticket.id), settings: RouteSettings(name: "Ticket${ticket.bookingId}")));
+      }
+    );
   }
 
   @override

@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/views/InfoRow.dart';
-import 'package:wc_flutter_share/wc_flutter_share.dart';
+
 
 class ProfilePage extends StatelessWidget {
   Map<String, String> userMap;

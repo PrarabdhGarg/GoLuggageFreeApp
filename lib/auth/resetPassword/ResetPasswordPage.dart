@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
+import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
@@ -80,16 +81,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> implements Networ
           "otp": _otpConreoller.text,
           "password": _newPasswordController.text
         }, headers: {"X-Version": versionCodeHeader});
-        print("Response Status = ${response.statusCode}");
-        print("Response Body = ${response.body}");
-        NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body);
-        if(response.statusCode == 200 || response.statusCode == 201) {
-          setState(() {
-            this.isLoading = false;
-          });
-          onToastMessageRecived(message: "Password Updated Sucessfully");
-          Navigator.pop(context);
-        }
+        NetworkRespoonseHandler.handleResponse(
+          response: response,
+          errorListener: this,
+          onSucess: (responseBody) {
+            setState(() {
+              this.isLoading = false;
+            });
+            onToastMessageRecived(message: "Password Updated Sucessfully");
+            Navigator.pop(context);
+          }
+        );
       } else {
         onToastMessageRecived(message: "New Password and confirmation Password must match");
       }

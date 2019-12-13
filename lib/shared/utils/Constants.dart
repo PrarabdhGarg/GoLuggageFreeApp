@@ -36,7 +36,7 @@ Color lightGrey = HexColor("#F5F5F5");
 
 Coupon selectedCoupon = null;
 
-bool isAppInTestingMode = true;
+bool isAppInTestingMode = false;
 
 List<String> completeListOfUserGovtIdTypes = [
   "AADHAR",

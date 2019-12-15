@@ -8,7 +8,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="go_luggage_free"
+        android:label="GoLuggageFree"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

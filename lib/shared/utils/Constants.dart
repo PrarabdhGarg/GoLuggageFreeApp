@@ -51,8 +51,8 @@ String versionCodeHeader = "1.0";
 // Please don't remove this form key. This is here to solve a major bug faced in the booking form page
 //  Will shift it to its right place as soon as I find out where this is supposed to be :)
 final GlobalKey<FormState> formKey = new GlobalKey();
-final TextEditingController nameController = new TextEditingController(text: "Prarabdh");
-final TextEditingController govtIdNumber = new TextEditingController(text: "Helilajfaj");
+final TextEditingController nameController = new TextEditingController(text: "");
+final TextEditingController govtIdNumber = new TextEditingController(text: "");
 final TextEditingController checkInController = new TextEditingController(text: "");
 final TextEditingController checkOutController = new TextEditingController(text: "");
 int numberOfBags = 1;

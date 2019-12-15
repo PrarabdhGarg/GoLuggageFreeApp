@@ -3,6 +3,7 @@ import 'package:country_pickers/country_pickers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
@@ -184,6 +185,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         setState(() {
           this.isLoading = false;
         });
+        Fluttertoast.showToast(msg: exception.message.toString());
         // TODO display appropriate message
         // this.message = exception.message.toString();
         print("Exception Occoured while signing in = ${exception.message.toString()}");
@@ -200,11 +202,12 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
           isLoading = false;
           isOtpVerification = true;
         });
+        Fluttertoast.showToast(msg: "Auto Retrival Timed out. Please Enter the OTP manually");
       };
 
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: _selectedCountryCode.phoneCode + phoneNumber,
-        timeout: const Duration(seconds: 5),
+        timeout: const Duration(seconds: 120),
         verificationCompleted: verificationCompleted,
         verificationFailed: verificaitonFailed,
         codeSent: codeSent,
@@ -214,6 +217,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
       setState(() {
         this.isLoading = false;
       });
+      Fluttertoast.showToast(msg: "Unknown Errror occoured. Please try again");
     }
   }
 

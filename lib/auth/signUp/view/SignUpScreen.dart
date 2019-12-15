@@ -31,6 +31,12 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
   TextEditingController passwordController = new TextEditingController(text: "");
   TextEditingController passwordConfirmationController = new TextEditingController(text: "");
   TextEditingController referralController = new TextEditingController(text: "");
+  bool isLoading;
+
+  @override
+  void initState() {
+    this.isLoading = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
           )
         ],
       ),
-      body: signUpPage(context),
+      body: isLoading ? Center(child: CircularProgressIndicator(),) : signUpPage(context),
     );
   }
 
@@ -125,6 +131,9 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
 
   Future<Null> onSignUpPressed() async {
     if(_formKey.currentState.validate() && passwordController.text == passwordConfirmationController.text) {
+      setState(() {
+        this.isLoading = true;
+      });
       await SharedPrefsHelper.addInvidedById(referralController.text);
       String referralCode = await SharedPrefsHelper.getInvidedById();
       print("Referral Code recived while signUp = ${referralCode}");
@@ -141,7 +150,10 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
         errorListener: this,
         response: result,
         onSucess: (responseBody) async {
-           print("Sign-Up sucessful");
+          setState(() {
+            this.isLoading = false;
+          });
+          print("Sign-Up sucessful");
           var body = jsonDecode(responseBody);
           print("Body Recived = $body");
           await SharedPrefsHelper.saveUserData(name: body["user"]["name"].toString(), mobileNumber: body["user"]["mobile_number"].toString(), email: body["user"]["email"].toString(), userId: body["user"]["_id"].toString(), jwt: body["token"].toString(), customerId: body["customer"]["_id"], userReferralCode: body["referralCode"].toString());
@@ -154,6 +166,9 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
 
   @override
   void onAlertMessageRecived({String title = "Alert", String message}) {
+    setState(() {
+      this.isLoading = false;
+    });
     print("Entered functtion for displaying alert Box");
     showDialog(
       context: context,
@@ -165,6 +180,9 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
 
   @override
   void onSnackbarMessageRecived({String message}) {
+    setState(() {
+      this.isLoading = false;
+    });
     print("Entered Function for displaying snackbar");
     Scaffold.of(context).showSnackBar(SnackBar(
        content: Text(message),
@@ -179,6 +197,9 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
 
   @override
   void onToastMessageRecived({String message}) {
+    setState(() {
+      this.isLoading = false;
+    });
     print("Entered Function for displaying toast");
     Fluttertoast.showToast(
       msg: message,

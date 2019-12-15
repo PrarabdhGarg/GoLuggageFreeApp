@@ -167,6 +167,9 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
 
   onLoginPressesed() async {
     if(_formKey.currentState.validate()) {
+      setState(() {
+        this.isLoading = true;
+      });
       print("Entered onTap Listener for the login button");
       var response = await http.post(logInUrl, body: {
         "phone_number": phoneController.text,
@@ -203,6 +206,9 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
 
   @override
   void onAlertMessageRecived({String title = "Alert", String message}) {
+    setState(() {
+      this.isLoading = false;
+    });
     print("Entered functtion for displaying alert Box");
     showDialog(
       context: context,
@@ -214,6 +220,9 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
 
   @override
   void onSnackbarMessageRecived({String message}) {
+    setState(() {
+      this.isLoading = false;
+    });
     print("Entered Function for displaying snackbar");
     Scaffold.of(context).showSnackBar(SnackBar(
        content: Text(message),
@@ -228,6 +237,9 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
 
   @override
   void onToastMessageRecived({String message}) {
+    setState(() {
+      this.isLoading = false;
+    });
     print("Entered Function for displaying toast");
     Fluttertoast.showToast(
       msg: message,

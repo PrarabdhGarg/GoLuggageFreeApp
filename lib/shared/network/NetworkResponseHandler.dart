@@ -15,7 +15,8 @@ class NetworkRespoonseHandler {
           NetworkErrorChecker(respoonseBody: response.body, networkErrorListener: errorListener);
         }
         else {
-          throw Exception("Obtained null error listener\n${response.statusCode}\n${response.body}\n${response.request}");
+          errorListener.onAlertMessageRecived(message: "Unknown error occoured. Please try after some time. If the problem persists, contact support@goluggagefree.com", title: "Error");
+          // throw Exception("Obtained null error listener\n${response.statusCode}\n${response.body}\n${response.request}");
         }
       }
     }

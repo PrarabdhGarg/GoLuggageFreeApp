@@ -167,7 +167,6 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> implement
     print("Response recived");
     print("Reived response code = ${response.statusCode.toString()}");
     print("Recived Body = ${response.body.toString()}");
-    NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body.toString());
     NetworkRespoonseHandler.handleResponse(
       response: response,
       errorListener: this,

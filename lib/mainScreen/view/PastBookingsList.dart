@@ -85,7 +85,7 @@ class _PastBookingsState extends State<PastBookings> {
                   var list = BookingTickets.fromMap(bookings).list;
                   BookingTicketDAO.insertBookingTickets(list);
                   if(bookings.length == 0) {
-                    return Center(child: Text("No Bookings Made Yet. Please Try again later", style: Theme.of(context).textTheme.headline,),);
+                    return Center(child: Text("No Bookings Made Yet.", style: Theme.of(context).textTheme.headline,),);
                   }
                   return ListView.builder(
                     itemCount: bookings.length,

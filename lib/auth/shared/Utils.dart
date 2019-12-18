@@ -2,12 +2,11 @@ import 'package:flutter_launcher_icons/constants.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 
 class Validators {
-  static DateTime checkInTime;
-
+  
   static String passwordValidator(String password) {
     if(password == null) return "Enter non-null Password";
     if(password.isEmpty) return "Password cannot be empty";
-    if(password.length < 7) return "Password should be of atlest 8 characters";
+    // if(password.length < 7) return "Password should be of atleast 8 characters";
     if(password.contains(' ')) return "Spaces not allowed";
     return null;
   }
@@ -60,23 +59,23 @@ class Validators {
   static String checkInValidator(DateTime checkIn) {
     print("Recived date time = ${checkIn}");
     print("Text in controller = ${checkInController.text}");
-    checkInTime = checkIn;
+    // checkInTime = checkIn;
     if(checkIn == null) return "Enter non-null checkIn Time";
     try {
       if(checkIn.toIso8601String().isEmpty) return "Enter non-empty checkIn Time";
     } catch(e) {
       return "Invalid";
     }
-    if(!(checkIn.isAfter(DateTime.now()))) return "You cannot checkIn before Today";
+    // if(!(checkIn.isAfter(DateTime.now().subtract(Duration(minutes: 5))))) return "You cannot checkIn before \n current time";
     return null;
   }
 
   static String checkOutValidator(DateTime checkOut) {
-    if(checkInTime == null) return "Select checkIn Time first";
+    // if(checkInTime == null) return "Select checkIn Time first";
     if(checkOut == null) return "Enter non-empty checkOut Time";
     if(checkOut.toIso8601String().isEmpty) return "CheckOut Time cannot be null";
-    if(checkOut.isBefore(checkInTime)) return "CheckOut cannot be before checkIn";
-    if(checkOut.isBefore(DateTime.now())) return "CheckOut cannot be before today";
+    // if(checkOut.isBefore(checkInTime)) return "CheckOut cannot be before checkIn";
+    if(checkOut.isBefore(DateTime.now())) return "CheckOut cannot be before \n current time";
     return null;
   }
 

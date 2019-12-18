@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -72,8 +73,24 @@ class ProfilePage extends StatelessWidget {
                     Container(height: 30,),
                     infoRow("Refferal Code", userMap["userReferral"], Theme.of(context).textTheme.headline),
                     Container(height: 30,),
-                    CustomWidgets.customLoginButton(text: "Copy Refferal Code", onPressed: () {
-                      Clipboard.setData(ClipboardData(text: userMap["userReferralCode"].toString()));
+                    CustomWidgets.customLoginButton(text: "Share Referral Code", onPressed: () async {
+                      final DynamicLinkParameters params = DynamicLinkParameters(
+                        uriPrefix: "https://referrals.goluggagefree.com",
+                        link: Uri.parse("https://goluggagefree.com?invitedBy=${userMap["userReferralCode"].toString()}"),
+                        androidParameters: AndroidParameters(
+                          packageName: "com.goluggagefree.goluggagefree",
+                          minimumVersion: 9,
+                          fallbackUrl: Uri.parse("https://play.google.com/store/apps/details?id=com.goluggagefree.goluggagefree")
+                        ),
+                        googleAnalyticsParameters: GoogleAnalyticsParameters(
+                          campaign: "user-referrals",
+                          medium: "peer-to-peer",
+                          source: "android-app"
+                        )
+                      );
+                      final ShortDynamicLink shortLink = await params.buildShortLink();
+                      final Uri link = shortLink.shortUrl;
+                      Clipboard.setData(ClipboardData(text: "Check out the GoLuggageFree app.Find cloakrooms near you and enjoy the city luggage-free! Use my referral code: ${userMap["userReferralCode"].toString()} to get 25% ogg on the first booking!\n${link.toString()}"));
                       Fluttertoast.showToast(msg: "Copied Referral Code to clipboard");
                     })
                   ],

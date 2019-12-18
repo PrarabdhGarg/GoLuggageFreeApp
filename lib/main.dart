@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
       child: CacheProvider(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'GoLuggageFree',
+          title: 'Go Luggage Free',
           theme: ThemeData(
             primarySwatch: Colors.blue,
             primaryColor: Colors.blue,

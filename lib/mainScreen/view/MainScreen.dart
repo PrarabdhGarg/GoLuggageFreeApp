@@ -107,6 +107,10 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
                     }
                 ),
               ),
+            ),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              child: Text("Vesion: 1.0.2"),
             )
           ],
         ),

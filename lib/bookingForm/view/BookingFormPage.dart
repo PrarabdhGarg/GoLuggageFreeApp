@@ -37,7 +37,7 @@ class BookingFormPage extends StatefulWidget {
 class _BookingFormPageState extends State<BookingFormPage> implements NetworkErrorListener {
   DateTime _checkIn = DateTime.now();
   DateTime _checkOut = DateTime.now();
-  String selectedUserGovtIdType = "AADHAR";
+  String selectedUserGovtIdType = prefix0.completeListOfUserGovtIdTypes[0];
   bool _termsAndConditionsAccepted = false;
   final format = DateFormat("yyyy-MM-dd HH:mm");
   bool isLoading;
@@ -80,7 +80,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                       children: <Widget>[
                         Text("Govt. Id Type", style: Theme.of(context).textTheme.overline.copyWith(fontSize: 8), textAlign: TextAlign.left,),
                         DropdownButton<String>(
-                          value: "AADHAR",
+                          value: selectedUserGovtIdType,
                           icon: Icon(Icons.arrow_drop_down),
                           items: completeListOfUserGovtIdTypes.map((item) {
                             return DropdownMenuItem(
@@ -136,38 +136,45 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                       controller: checkInController,
                       initialValue: checkInController.text != "" ? DateTime.parse(checkInController.text) : DateTime.now(),
                       validator: Validators.checkInValidator,
+                      onChanged: (DateTime newTime) {
+                        _checkIn = newTime;
+                      },
                       decoration: InputDecoration(
                         hintText: "Check In"
                       ),
                       onShowPicker: (context, currentValue) async {
                         final date = await showDatePicker(
                             context: context,
-                            firstDate: DateTime.now(),
-                            initialDate: currentValue ?? DateTime.now(),
+                            firstDate: DateTime.now().subtract(Duration(days: 1)),
+                            initialDate: DateTime.now(),
                             lastDate: DateTime(2100));
                         if (date != null) {
                           final time = await showTimePicker(
                             context: context,
-                            initialTime:
-                                TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                            initialTime:TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
                           );
-                          setState(() {
-                            print("Entered set State Checkin");
+                          try {
                             _checkIn = DateTimeField.combine(date, time);
-                            checkInController.text = currentValue.toString();
-                            calculateStorageCost();
-                            try {
-                              numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
-                            } catch(e) {
-                              print("Exception while calculating number of days" + e.toString());
-                              numberOfDays = numberOfDays;
-                              calculateStorageCost();
-                            }
-                            print("Number Of days = ${numberOfDays}");
-                          });
+                            numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
+                            calculateStorageCost(false);
+                          } catch(e) {
+                            print("Exception while calculating number of days" + e.toString());
+                            numberOfDays = numberOfDays;
+                            calculateStorageCost(false);
+                          }
+                          try {
+                            setState(() {
+                              print("Entered set State Checkin");
+                              checkInController.text = currentValue.toString();
+                              print("Number Of days = ${numberOfDays}");
+                            });
+                          }catch(e) {
+                            print("Exception = $e");
+                          }
                           return DateTimeField.combine(date, time) ?? DateTime.parse(checkInController.text);
                         } else {
-                          return currentValue ?? DateTime.parse(checkInController.text);
+                          checkInController.text = currentValue?.toString() ?? checkInController.text ?? DateTime.now().toString();
+                          return currentValue ?? DateTime.now();
                         }
                       },
                     )
@@ -189,38 +196,48 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                       format: format,
                       initialValue: checkOutController.text != "" ? DateTime.parse(checkOutController.text) : DateTime.now(),
                       controller: checkOutController,
+                      validator: Validators.checkOutValidator,
+                      onChanged: (DateTime newTime) {
+                        print("New Time = ${newTime.toString()}");
+                        _checkOut = newTime;
+                        try {
+                          setState(() {
+                            print("Entered set State Checkout");
+                            checkOutController.text = newTime?.toString(); 
+                            numberOfDays = numberOfDays;
+                            print("Number Of days = ${_checkOut.toString()}");
+                          });
+                        } catch(e) {
+                          print("Exception = $e");
+                        }
+                      },
                       decoration: InputDecoration(
                         hintText: "Check Out"
                       ),
                       onShowPicker: (context, currentValue) async {
                         final date = await showDatePicker(
                             context: context,
-                            firstDate: _checkIn ?? DateTime.now(),
-                            initialDate: _checkIn ?? DateTime.now(),
+                            firstDate: DateTime.now().subtract(Duration(days: 1)),
+                            initialDate: DateTime.now(),
                             lastDate: DateTime(2100));
                         if (date != null) {
                           final time = await showTimePicker(
                             context: context,
-                            initialTime:
-                                TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
                           );
-                          setState(() {
-                            print("Entered set State Checkout");
+                          try {
                             _checkOut = DateTimeField.combine(date, time);
-                            checkOutController.text = currentValue.toString();
-                            try {
-                              numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
-                              calculateStorageCost();
-                            } catch(e) {
-                              print(e.toString());
-                              numberOfDays = numberOfDays;
-                              calculateStorageCost();
-                            }
-                            print("Number Of days = ${numberOfDays}");
-                          });
+                            numberOfDays = calculateNumberOfDays(_checkIn, _checkOut);
+                            calculateStorageCost(false);
+                          } catch(e) {
+                            print(e.toString());
+                            numberOfDays = numberOfDays;
+                            calculateStorageCost(false);
+                          }
                           return DateTimeField.combine(date, time);
                         } else {
-                          return currentValue;
+                          checkOutController.text = currentValue?.toString() ?? checkOutController.text ?? DateTime.now().toString();  
+                          return currentValue ?? DateTime.now();
                         }
                       },
                     ),
@@ -255,7 +272,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                             setState(() {
                               print("Entered Set State with value = ${value}");
                               numberOfBags = value;
-                              calculateStorageCost();
+                              calculateStorageCost(true);
                             });
                           },
                         ),
@@ -449,72 +466,81 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
   }
 
   onBookingButtonPressed() async {
+    print("CheckOut = ${_checkOut}");
     if(formKey.currentState.validate()) {
-      print("Entered Booking Button Presed");
-      setState(() {
-        isLoading = true;
-      });
-      String jwt = await SharedPrefsHelper.getJWT();
-      String couponId = "";
-      try {
-        couponId = selectedCoupon.id;
-      } catch(e) {
-        print("Ecxeption in getting id for slected coupon");
-        couponId = "";
-      }
-      // print("Making a booking with coupon id = ${selectedCoupon.id}");
-      var responde = await http.post(makeBooking+"${widget.storageSpaceId}/book", body: json.encode({
-        "numberOfBags": numberOfBags,
-        "checkInTime": _checkIn.toIso8601String(),
-        "checkOutTime": _checkOut.toIso8601String(),
-        "userGovtIdType": "Aadhaar",
-        "userGovtId": govtIdNumber.text,
-        "bookingPersonName": nameController.text,
-        "couponId": couponId
-      }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
-      NetworkRespoonseHandler.handleResponse(
-        response: responde,
-        errorListener: this,
-        onSucess: (responseBody) async {
-          ticket = bookingTicketFromJson(responseBody.toString());
-          String bookingId = await json.decode(responseBody)["_id"];
-          var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
-          NetworkRespoonseHandler.handleResponse(
-            response: responseForPayment,
-            errorListener: this,
-            onSucess: (responseBody1) async {
-              String orderId = jsonDecode(responseBody1)["order_id"];
-              String razorpayKey = jsonDecode(responseBody1)["key_id"];
-              String transaction_id = jsonDecode(responseBody1)["transaction_id"];
-              await SharedPrefsHelper.addTransactionId(transaction_id);
-              print("Added Transaction id = ${json.decode(responseBody)["transaction"]}");
-              print("Recived Receipt id = ${orderId}");
-
-              String number = await SharedPrefsHelper.getUserNumber();
-              String email = await SharedPrefsHelper.getUserEmail();
-
-              var _razorPay = Razorpay();
-              _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
-              _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-              _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalEvent);
-              var _options = {
-                "key": razorpayKey,
-                "name": "GoLuggageFree",
-                "order_id": orderId,
-                "description": "Cloakrooms near you",
-                "prefill": {
-                  "contact": number,
-                  "email": email
-                },
-                "theme": {
-                  "color": "#0078FF"
-                } 
-              };
-              _razorPay.open(_options);
-            }
-          );
+      if((_checkOut?.isAfter(_checkIn) ?? false) && (_checkIn?.isAfter(DateTime.now().subtract(Duration(minutes: 5))) ?? false)) {
+        print("Entered correct form condition");
+        setState(() {
+          isLoading = true;
+        });
+        String jwt = await SharedPrefsHelper.getJWT();
+        String couponId = "";
+        try {
+          couponId = selectedCoupon.id;
+        } catch(e) {
+          print("Ecxeption in getting id for slected coupon");
+          couponId = "";
         }
-      );
+        // print("Making a booking with coupon id = ${selectedCoupon.id}");
+        var responde = await http.post(makeBooking+"${widget.storageSpaceId}/book", body: json.encode({
+          "numberOfBags": numberOfBags,
+          "checkInTime": _checkIn?.toIso8601String(),
+          "checkOutTime": _checkOut?.toIso8601String(),
+          "userGovtIdType": "Aadhaar",
+          "userGovtId": govtIdNumber.text,
+          "bookingPersonName": nameController.text,
+          "couponId": couponId
+        }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
+        NetworkRespoonseHandler.handleResponse(
+          response: responde,
+          errorListener: this,
+          onSucess: (responseBody) async {
+            ticket = bookingTicketFromJson(responseBody.toString());
+            String bookingId = await json.decode(responseBody)["_id"];
+            var responseForPayment = await http.post(payForBooking + bookingId, headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
+            NetworkRespoonseHandler.handleResponse(
+              response: responseForPayment,
+              errorListener: this,
+              onSucess: (responseBody1) async {
+                String orderId = jsonDecode(responseBody1)["order_id"];
+                String razorpayKey = jsonDecode(responseBody1)["key_id"];
+                String transaction_id = jsonDecode(responseBody1)["transaction_id"];
+                await SharedPrefsHelper.addTransactionId(transaction_id);
+                print("Added Transaction id = ${json.decode(responseBody)["transaction"]}");
+                print("Recived Receipt id = ${orderId}");
+
+                String number = await SharedPrefsHelper.getUserNumber();
+                String email = await SharedPrefsHelper.getUserEmail();
+
+                var _razorPay = Razorpay();
+                _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSucess);
+                _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+                _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalEvent);
+                var _options = {
+                  "key": razorpayKey,
+                  "name": "Go Luggage Free",
+                  "order_id": orderId,
+                  "description": "Cloakrooms near you",
+                  "prefill": {
+                    "contact": number,
+                    "email": email
+                  },
+                  "theme": {
+                    "color": "#0078FF"
+                  } 
+                };
+                _razorPay.open(_options);
+              }
+            );
+          }
+        );
+      }
+      if(_checkOut.isBefore(_checkIn)) {
+        Fluttertoast.showToast(msg: "Cannot check-out before check-in time");
+      }
+      if((_checkIn?.isBefore(DateTime.now().subtract(Duration(minutes: 5))) ?? false)) {
+        Fluttertoast.showToast(msg: "Cannot check-in before current time");
+      }
     }
   }
 
@@ -555,8 +581,8 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
 
   onAddCouponsButtonPressed() async {
     bool isCouponSelected = await Navigator.push(context, MaterialPageRoute(builder: (context) => CouponSelectionScreen(
-      checkInTime: _checkIn.toIso8601String(),
-      checkOutTime: _checkOut.toIso8601String(),
+      checkInTime: _checkIn?.toIso8601String(),
+      checkOutTime: _checkOut?.toIso8601String(),
       name: nameController.text.toString(),
       numberOfBags: numberOfBags,
       storageSpaceId: widget.storageSpaceId,
@@ -566,7 +592,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
     print("Boolean recived from pop = $isCouponSelected");
     if(isCouponSelected) {
       setState(() {
-        price = calculateStorageCost();
+        price = calculateStorageCost(true);
         couponSelected = true;
       });
     }
@@ -608,6 +634,9 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
 
   @override
   void onAlertMessageRecived({String title = "Alert", String message}) {
+    setState(() {
+      isLoading = false;
+    });
     print("Entered functtion for displaying alert Box");
     showDialog(
       context: context,
@@ -619,6 +648,9 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
 
   @override
   void onSnackbarMessageRecived({String message}) {
+    setState(() {
+      isLoading = false;
+    });
     print("Entered Function for displaying snackbar");
     Scaffold.of(context).showSnackBar(SnackBar(
        content: Text(message),
@@ -633,6 +665,9 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
 
   @override
   void onToastMessageRecived({String message}) {
+    setState(() {
+      isLoading = false;
+    });
     print("Entered Function for displaying toast");
     Fluttertoast.showToast(
       msg: message,
@@ -641,20 +676,29 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
     );
   }
 
-  int calculateStorageCost() {
+  int calculateStorageCost(bool x) {
+    calculateNumberOfDays(_checkIn, _checkOut);
     int orignalPrice = (numberOfBags*numberOfDays*24*widget.price).round();
     if(selectedCoupon != null) {
       if(selectedCoupon.type == "DISCOUNT" || selectedCoupon.type == "REFERRAL_DISCOUNT") {
         int discount = (orignalPrice * (1 - selectedCoupon.value*0.01)).round();
-        setState(() {
-          price = discount;
-        });
-        return discount;
+        if(x) {
+          setState(() {
+            price = orignalPrice - discount;
+          });
+        } else {
+          price = orignalPrice - discount;
+        }
+        return orignalPrice - discount;
       }
     } else {
-      setState(() {
-      price = orignalPrice;
-    });
+      if(x) {
+        setState(() {
+          price = orignalPrice;
+        });
+      } else {
+        price = orignalPrice;
+      }
     return orignalPrice;  
     }
   }

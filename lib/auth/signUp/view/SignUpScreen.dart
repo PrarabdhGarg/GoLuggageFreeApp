@@ -161,6 +161,8 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomePage")));
         }
       );
+    } else if(passwordConfirmationController.text != passwordController.text) {
+      Fluttertoast.showToast(msg: "Password and confirm Password fields don't match");
     }
   }
 

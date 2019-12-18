@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
           setState(() {
           this.isLoading = false;
         });
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResetPasswordScreen()));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResetPasswordScreen(), settings: RouteSettings(name: "ForgotPasswordScreen")));
         }
       );
     }
@@ -175,7 +175,6 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
         "phone_number": phoneController.text,
         "password": passwordController.text }, headers: {"X-Version": versionCodeHeader});
       print("Response Status = ${response.statusCode}");
-      NetworkErrorChecker(networkErrorListener: this, respoonseBody: response.body);
       NetworkRespoonseHandler.handleResponse(
         errorListener: this,
         response: response,
@@ -193,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
           print("REcivedData = $userId\t$name\t$email\t$mobileNumber");
           await SharedPrefsHelper.saveUserData(userId: userId, name: name, email: email, mobileNumber: mobileNumber, jwt: jwt, customerId: coustomerId);
           Navigator.pop(context);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0)));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(0), settings: RouteSettings(name: "HomeScreen")));
         }
       );
     }

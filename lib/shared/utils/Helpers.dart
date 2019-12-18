@@ -33,11 +33,24 @@ String getUserReadableTime(DateTime dateTime) {
 }
 
 int calculateNumberOfDays(DateTime start, DateTime end) {
+  print("Start = ${start.toString()}");
+  print("End = ${end.toString()}");
+  if(start == null || end == null) {
+    print("Entered if for nill condition");
+    return 1;
+  }
   Duration diff = end.difference(start).abs();
-  if(diff.inHours % 24 == 0)
-    return diff.inDays;
-  else
+  print("Difference = ${diff.toString()}");
+  int hoursDifference = diff.inHours;
+  if(hoursDifference == 0) {
+    if(diff.inDays == 0) {
+      return 1;
+    } else {
+      return diff.inDays;
+    }
+  } else {
     return (diff.inDays + 1);
+  }
 }
 
 abstract class CustomBottomNavPageChangeListener{

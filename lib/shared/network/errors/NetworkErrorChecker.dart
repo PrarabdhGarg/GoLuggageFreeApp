@@ -48,7 +48,11 @@ class NetworkErrorChecker {
               break;
             }
           }
+        } else {
+          networkErrorListener.onToastMessageRecived(message: "Unknown Error occoured. Please try again");
         }
+      } else {
+        networkErrorListener.onToastMessageRecived(message: "Unknown Error occoured. Please try again");
       }
     }
   }

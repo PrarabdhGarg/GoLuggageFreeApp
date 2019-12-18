@@ -184,6 +184,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
       final PhoneVerificationFailed verificaitonFailed = (AuthException exception) {
         setState(() {
           this.isLoading = false;
+          this.isOtpVerification = true;
         });
         Fluttertoast.showToast(msg: exception.message.toString());
         // TODO display appropriate message
@@ -207,8 +208,8 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
 
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: _selectedCountryCode.phoneCode + phoneNumber,
-        timeout: const Duration(seconds: 120),
         verificationCompleted: verificationCompleted,
+        timeout: Duration(seconds: 0),
         verificationFailed: verificaitonFailed,
         codeSent: codeSent,
         codeAutoRetrievalTimeout: autoretrivalTimeout
@@ -222,6 +223,9 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
   }
 
   onVerifyRequest() async {
+    setState(() {
+      this.isLoading = true;
+    });
     print("Code Entered = ${phoneController.text}");
     _authCredential = await PhoneAuthProvider.getCredential(verificationId: _verificationId, smsCode: phoneController.text);
     print("Recived Auth Credential = ${_authCredential.toString()}");
@@ -238,6 +242,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         this.isOtpVerification = false;
       });
       // Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => SignUpScreen(phoneNumber)));
+      // Navigator.popUntil(context, (var route) => route.isFirst);
       Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(phoneNumber, _selectedCountryCode.phoneCode), settings: RouteSettings(name: "SignUpScreen")));
     } catch(e) {
       print("${e.toString()}");

@@ -49,7 +49,7 @@ class DrawerTile extends StatelessWidget {
       case "FAQ": {
         return Icon(Icons.question_answer);
       }
-      case "Contact": {
+      case "Contact Us": {
         return Icon(Icons.info);
       }
       default: {

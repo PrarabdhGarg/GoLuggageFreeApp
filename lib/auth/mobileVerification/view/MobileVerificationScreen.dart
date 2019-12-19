@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/signUp/view/SignUpScreen.dart';
+import 'package:go_luggage_free/more/ContactUs.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -49,11 +50,12 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
             child: GestureDetector(
               child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
               onTap: () async {
-                print("Entered onTap");
+                /* print("Entered onTap");
                 String phoneNumber = "+917854866007";
                 String url = "whatsapp://send?phone=$phoneNumber";
-                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber"); */
                 // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
               },
             ),
           )

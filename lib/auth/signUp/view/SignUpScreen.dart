@@ -5,10 +5,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/more/ContactUs.dart';
 import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
 import 'package:http/http.dart' as http;
@@ -60,11 +62,12 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
             child: GestureDetector(
               child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
               onTap: () async {
-                print("Entered onTap");
+                /* print("Entered onTap");
                 String phoneNumber = "+917854866007";
                 String url = "whatsapp://send?phone=$phoneNumber";
-                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber"); */
                 // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
               },
             ),
           )
@@ -130,6 +133,11 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
   
 
   Future<Null> onSignUpPressed() async {
+    try{
+    logFormData("SignUp Form\nName: ${nameController.text}\nEmail: ${emailController.text}\nRefferal Code: ${referralController.text}\nNumber: ${widget.phoneNumber}");
+    }catch(e){
+      print("Exception $e");
+    }finally{
     if(_formKey.currentState.validate() && passwordController.text == passwordConfirmationController.text) {
       setState(() {
         this.isLoading = true;
@@ -164,7 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
     } else if(passwordConfirmationController.text != passwordController.text) {
       Fluttertoast.showToast(msg: "Password and confirm Password fields don't match");
     }
-  }
+  }}
 
   @override
   void onAlertMessageRecived({String title = "Alert", String message}) {

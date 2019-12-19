@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
 import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
+import 'package:go_luggage_free/more/ContactUs.dart';
 import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
@@ -78,11 +79,12 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
             child: GestureDetector(
               child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
               onTap: () async {
-                print("Entered onTap");
+                /* print("Entered onTap");
                 String phoneNumber = "+917854866007";
                 String url = "whatsapp://send?phone=$phoneNumber";
-                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber"); */
                 // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
               },
             ),
           )
@@ -94,7 +96,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
             DrawerTile(text: "Home", onPressed: this, index: 0,),
             DrawerTile(text: "Profile", onPressed: this, index: 1,),
             // DrawerTile(text: "FAQ", onPressed: this, index: 2,),
-            // DrawerTile(text: "Contact", onPressed: this, index: 3,),
+            DrawerTile(text: "Contact Us", onPressed: this, index: 2,),
             Container(
               alignment: Alignment.bottomLeft,
               margin: EdgeInsets.only(left: 8.0, top: (MediaQuery.of(context).size.height * 0.75)),
@@ -110,7 +112,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
             ),
             Container(
               padding: EdgeInsets.all(8.0),
-              child: Text("Vesion: 1.0.2"),
+              child: Text("Vesion: 1.0.3"),
             )
           ],
         ),
@@ -146,6 +148,10 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
       }
     });
     Navigator.of(context).pop();
+    if(index == 2) {
+      print("Entered if condition after pop");
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
+    }
   }
 
   void enableFirebaseCloudMessagingListeners() {

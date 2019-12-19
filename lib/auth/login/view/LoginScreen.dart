@@ -7,6 +7,7 @@ import 'package:go_luggage_free/auth/resetPassword/ResetPasswordScreen.dart';
 import 'package:go_luggage_free/auth/shared/Utils.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
 import 'package:go_luggage_free/mainScreen/view/MainScreen.dart';
+import 'package:go_luggage_free/more/ContactUs.dart';
 import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
@@ -38,11 +39,12 @@ class LoginPage extends StatelessWidget {
             child: GestureDetector(
               child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
               onTap: () async {
-                print("Entered onTap");
+                /* print("Entered onTap");
                 String phoneNumber = "+917854866007";
                 String url = "whatsapp://send?phone=$phoneNumber";
-                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber"); */
                 // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
               },
             ),
           )
@@ -140,6 +142,11 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
   }
 
   onForgotPasswordPressed() async {
+    try {
+      logFormData("Forgot Password\nNumber: ${phoneController.text}");
+    } catch(e) {
+      print("e$e");
+    }finally {
     if(phoneController.text.isEmpty) {
       onToastMessageRecived(message: "Please Enter the phone Number");
     } else if(Validators.phoneValidator(phoneController.text) !=  null) {
@@ -163,9 +170,14 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
         }
       );
     }
-  }
+  }}
 
   onLoginPressesed() async {
+    try{
+    logFormData("Login Screen\nNumber: ${phoneController.text}");
+    }catch(e){
+      print("Exception $e");
+    }finally{
     if(_formKey.currentState.validate()) {
       setState(() {
         this.isLoading = true;
@@ -196,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
         }
       );
     }
-  }
+  }}
 
   onSignUpPressed() async {
     // Navigator.of(context).push(PageRouteBuilder(opaque: false, pageBuilder: (BuildContext context,_,__) => MobileVerificationScreen()));

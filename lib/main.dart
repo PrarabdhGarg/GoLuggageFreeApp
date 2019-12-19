@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,6 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<GraphQLClient> _graphQlClient = getClient();
+    FirebaseAnalytics analytics = FirebaseAnalytics();
     return GraphQLProvider(
       client: _graphQlClient,
       child: CacheProvider(
@@ -68,6 +71,9 @@ class MyApp extends StatelessWidget {
             )
           ),
           home: LoginPage(),
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: analytics)
+          ],
         ),
       ),
     );

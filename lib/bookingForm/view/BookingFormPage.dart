@@ -467,6 +467,12 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
 
   onBookingButtonPressed() async {
     print("CheckOut = ${_checkOut}");
+    String number = await SharedPrefsHelper.getUserNumber();
+    try{
+    logFormData("Booking Form\nName: ${nameController.text}\nGovtId: ${govtIdNumber.text}\nCheckIn: ${_checkIn}\nCheckOut: ${_checkOut}\nNumberOfBags: ${numberOfBags}\nNumber: $number");
+    }catch(e){
+      print("Exception = $e");
+    }finally{
     if(formKey.currentState.validate()) {
       if((_checkOut?.isAfter(_checkIn) ?? false) && (_checkIn?.isAfter(DateTime.now().subtract(Duration(minutes: 5))) ?? false)) {
         print("Entered correct form condition");
@@ -542,7 +548,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
         Fluttertoast.showToast(msg: "Cannot check-in before current time");
       }
     }
-  }
+  }}
 
   Widget couponSelectedWidget() {
     print("Entered Coupon Selected Widget");

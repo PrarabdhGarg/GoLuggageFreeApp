@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
+import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 List<String> extractListFromJson(List<dynamic> list) {
   List<String> finalList = new List();
@@ -30,6 +35,14 @@ String getHumanReadableDate(DateTime dateTime) {
 
 String getUserReadableTime(DateTime dateTime) {
   return dateTime.hour.toString() + ":" + dateTime.minute.toString();
+}
+
+Future<Null> logFormData(String text) async {
+  print("Entered form logging $text");
+  var response = await http.post(formDataLoggingUrl, body: jsonEncode({
+    "text": text
+  }), headers: {"Content-Type": "application/json"});
+  print(response.body.toString());
 }
 
 int calculateNumberOfDays(DateTime start, DateTime end) {

@@ -26,6 +26,8 @@ String resetPassword = baseUrl + "users/resetPassword";
 // While making an api call to this end-point, you will have to add /{storageSpace.id}/book
 String makeBooking = baseUrl + "api/bookings/";
 
+String formDataLoggingUrl = "https://hooks.slack.com/services/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";
+
 Color buttonColor = HexColor("#0078FF");
 
 Color disabledButtonColor = Colors.grey;
@@ -46,7 +48,7 @@ List<String> completeListOfUserGovtIdTypes = [
   "Other"
 ];
 
-String versionCodeHeader = "2.0";
+String versionCodeHeader = "3.0";
 
 // Please don't remove this form key. This is here to solve a major bug faced in the booking form page
 //  Will shift it to its right place as soon as I find out where this is supposed to be :)

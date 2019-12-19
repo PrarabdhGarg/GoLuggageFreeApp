@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/auth/resetPassword/ResetPasswordPage.dart';
+import 'package:go_luggage_free/more/ContactUs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
@@ -25,11 +26,12 @@ class ResetPasswordScreen extends StatelessWidget {
             child: GestureDetector(
               child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
               onTap: () async {
-                print("Entered onTap");
+                /* print("Entered onTap");
                 String phoneNumber = "+917854866007";
                 String url = "whatsapp://send?phone=$phoneNumber";
-                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber"); */
                 // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
               },
             ),
           )

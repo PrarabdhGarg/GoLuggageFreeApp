@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/bookingTicketInfoScreen/model/BookingTicketInfoController.dart';
+import 'package:go_luggage_free/more/ContactUs.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/views/InfoRow.dart';
 import 'package:provider/provider.dart';
@@ -40,11 +41,12 @@ class _BookingTicketInfoScreenState extends State<BookingTicketInfoScreen> {
               child: GestureDetector(
                 child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
                 onTap: () async {
-                  print("Entered onTap");
+                  /* print("Entered onTap");
                   String phoneNumber = "+917854866007";
                   String url = "whatsapp://send?phone=$phoneNumber";
-                  await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber");
+                  await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber"); */
                   // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
                 },
               ),
             )

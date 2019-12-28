@@ -69,7 +69,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Center(
                   child: FlatButton(
-                    child: Icon(Icons.home, color: this.currentPageId == 0 ? buttonColor : Colors.grey,),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(Icons.home, color: this.currentPageId == 0 ? buttonColor : Colors.grey,),
+                        this.currentPageId == 0 ? Text("Home") : Text("")
+                      ],
+                    ),
                     onPressed: () {
                       widget.listener.onBottomNavPageChanged(0);
                       setState(() {
@@ -93,7 +98,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Center(
                   child: FlatButton(
-                    child: Icon(Icons.card_travel, color: this.currentPageId == 1 ? buttonColor : Colors.grey,),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(Icons.card_travel, color: this.currentPageId == 1 ? buttonColor : Colors.grey,),
+                        this.currentPageId == 1 ? Text("Bookings") : Text("")
+                      ],
+                    ),
                     onPressed: () {
                       widget.listener.onBottomNavPageChanged(1);
                       setState(() {

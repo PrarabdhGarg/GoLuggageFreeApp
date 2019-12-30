@@ -35,6 +35,7 @@ class StorageSpace {
   String location;
   String ownerDetail;
   bool open;
+  int numOfBookings;
 
   StorageSpace({
     this.id,
@@ -51,7 +52,8 @@ class StorageSpace {
     this.displayLocation,
     this.location,
     this.ownerDetail,
-    this.open
+    this.open,
+    this.numOfBookings
   });
 
   factory StorageSpace.fromResponse(Map<String, dynamic> response) => new StorageSpace(
@@ -70,6 +72,7 @@ class StorageSpace {
     ownerDetail: response["ownerDetail"].toString() ?? "",
     open: response["open"] ?? false,
     location: response["location"] ?? "",
+    numOfBookings: response["numOfBookings"] ?? 50,
   );
 
   factory StorageSpace.fromResponseForBookings(Map<String, dynamic> response) => new StorageSpace(
@@ -100,7 +103,8 @@ class StorageSpace {
     displayLocation: response["displayLocation"] ?? "",
     ownerDetail: response["ownerDetail"].toString() ?? "",
     open: response["open"] == 1,
-    location: response["location"] ?? ""
+    location: response["location"] ?? "",
+    numOfBookings: response["numOfBookings"] ?? 50,
   );
 
   Map<String, dynamic> toMap() => {
@@ -117,6 +121,7 @@ class StorageSpace {
     "displayLocation": displayLocation,
     "location": location,
     "ownerDetail": ownerDetail,
-    "open": open ? 1 : 0
+    "open": open ? 1 : 0,
+    "numOfBookings": numOfBookings,
   };
 }

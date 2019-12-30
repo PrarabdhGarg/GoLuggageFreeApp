@@ -36,6 +36,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
       ownerDetail
       open
       ownerImage
+      numOfBookings
       area {
         _id
         name

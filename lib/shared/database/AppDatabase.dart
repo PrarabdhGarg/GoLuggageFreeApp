@@ -38,7 +38,7 @@ class AppDatabase {
 
   Future<Database> initDatabase() async {
     String databasePath = path.join(await getDatabasesPath(), 'database.db');
-    _database = await openDatabase(databasePath, version: 1, onCreate: (db,_) async {
+    _database = await openDatabase(databasePath, version: 2, onCreate: (db,_) async {
       await db.execute('''PRAGMA foreign_keys = ON''');
       await db.execute('''CREATE TABLE Storages(
         id TEXT PRIMARY KEY NOT NULL,
@@ -54,7 +54,8 @@ class AppDatabase {
         displayLocation TEXT NULL,
         location TEXT NULL,
         ownerDetail TEXT NULL,
-        open INTEGER NOT NULL
+        open INTEGER NOT NULL,
+        numOfBookings INTEGER
       )''');
       await db.execute('''CREATE TABLE Media(
         id TEXT,
@@ -76,8 +77,18 @@ class AppDatabase {
         createdAt TEXT NULL,
         FOREIGN KEY(storageSpaceId) REFERENCES Storages(id)
       )''');
+    }, onUpgrade: (db, oldVersion, newversion) async {
+      var batch = db.batch();
+      if(oldVersion == 1) {
+        _updateDatabaseFrom1to2(batch);
+      }
+      await batch.commit();
     });
     return _database;
+  }
+
+  void _updateDatabaseFrom1to2(Batch batch) {
+    batch.execute('ALTER TABLE Storages ADD COLUMN numOfBookings INTEGER DEFAULT 50');
   }
 
   Future<StorageSpacesDAO> getStorageSpaceDAO() async {

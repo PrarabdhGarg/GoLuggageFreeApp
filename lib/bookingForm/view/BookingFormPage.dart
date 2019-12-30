@@ -413,7 +413,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
               ],
             ),
             couponSelectedWidget(),
-            Align(
+            /* Align(
               alignment: Alignment.center,
               child: Container(
                 margin: EdgeInsets.all(16.0),
@@ -425,6 +425,18 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                   child: Text("Add Coupons", style: Theme.of(context).textTheme.button,),
                   onPressed: onAddCouponsButtonPressed,
                 ),
+              ),
+            ), */
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(left: 24.0, right: 24.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1")
+              ),
+              child: FlatButton(
+                onPressed: onAddCouponsButtonPressed,
+                child: Text("Add Coupons", style: Theme.of(context).textTheme.button,),
               ),
             ),
             Container(

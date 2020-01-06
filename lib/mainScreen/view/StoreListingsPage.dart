@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
 import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
@@ -11,6 +12,7 @@ import 'package:go_luggage_free/storeInfoScreen/view/StoreInfoScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class StoreListingsPage extends StatefulWidget {
   @override
@@ -91,19 +93,38 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
     return ListView.builder(
       itemCount: storageSpaces.length,
       itemBuilder: (context, index) {
-        return GestureDetector(
-          child: StorageWidget(storageSpaces[index], index),
-          onTap: () async {
-            // Navigator.of(context).push(PageRouteBuilder(opaque: false, maintainState: true, pageBuilder: (BuildContext context,_,__) => StoreInfoScreen(storageSpaces[index].id)));
-            FirebaseAnalytics _analytics = CustomAnalyticsHelper.getAnalyticsInstance();
-            await _analytics.logViewItem(
-              itemId: storageSpaces[index].id,
-              itemName: storageSpaces[index].name,
-              startDate: DateTime.now().toString(),
-              itemCategory: "Storage Space"
-            );
-            Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id), maintainState: false));
-          },
+        return Stack(
+          children: <Widget>[
+            GestureDetector(
+              child: StorageWidget(storageSpaces[index], index),
+              onTap: () async {
+                // Navigator.of(context).push(PageRouteBuilder(opaque: false, maintainState: true, pageBuilder: (BuildContext context,_,__) => StoreInfoScreen(storageSpaces[index].id)));
+                FirebaseAnalytics _analytics = CustomAnalyticsHelper.getAnalyticsInstance();
+                await _analytics.logViewItem(
+                  itemId: storageSpaces[index].id,
+                  itemName: storageSpaces[index].name,
+                  startDate: DateTime.now().toString(),
+                  itemCategory: "Storage Space"
+                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => StoreInfoScreen(storageSpaces[index].id), maintainState: false));
+              },
+            ),
+            /* Transform.rotate(
+              angle: -(pi/4.0),
+              origin: Offset(0, 18),
+              child: Container(
+                width: 73,
+                height: 15,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(topRight: Radius.circular(24.0), topLeft: Radius.circular(24.0)),
+                  color: Colors.blue
+                ),
+                padding: EdgeInsets.only(left: 4.0, top: 2.0),
+                margin: EdgeInsets.only(top: 16.0),
+                child: Center(child: Text("${storageSpaces[index].numOfBookings.toString()} Bookings", style: TextStyle(color: Colors.white, fontSize: 10),)),
+              ),
+            ), */
+          ],
         );
       },
     );
@@ -199,14 +220,27 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                   Container(
                     child: Align(
                       alignment: Alignment.bottomLeft,
-                      child: RatingBarIndicator(
-                        rating: storageSpace.rating,
-                        itemCount: 5,
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        itemSize: 15,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 4.0, right: 8.0),
+                            child: Text(storageSpace.rating.toString(), style: Theme.of(context).textTheme.body1,),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Icon(Icons.star, color: Colors.yellow, size: 20,),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 4.0, right: 16.0),
+                              child: Center(child: Text("${storageSpace.numOfBookings} Bookings",)),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   )

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
 import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
 import 'package:go_luggage_free/more/ContactUs.dart';
+import 'package:go_luggage_free/more/FAQ.dart';
 import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
@@ -95,7 +96,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
           children: <Widget>[
             DrawerTile(text: "Home", onPressed: this, index: 0,),
             DrawerTile(text: "Profile", onPressed: this, index: 1,),
-            // DrawerTile(text: "FAQ", onPressed: this, index: 2,),
+            DrawerTile(text: "FAQ", onPressed: this, index: 3,),
             DrawerTile(text: "Contact Us", onPressed: this, index: 2,),
             Container(
               alignment: Alignment.bottomLeft,
@@ -151,6 +152,9 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
     if(index == 2) {
       print("Entered if condition after pop");
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
+    }
+    if(index == 3) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => FAQ(), settings: RouteSettings(name: "FAQ Page")));
     }
   }
 

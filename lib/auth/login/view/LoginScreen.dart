@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/mobileVerification/view/MobileVerificationScreen.dart';
@@ -182,10 +183,12 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
       setState(() {
         this.isLoading = true;
       });
+      String fcmToken = await FirebaseMessaging().getToken();
       print("Entered onTap Listener for the login button");
       var response = await http.post(logInUrl, body: {
         "phone_number": phoneController.text,
-        "password": passwordController.text }, headers: {"X-Version": versionCodeHeader});
+        "password": passwordController.text,
+        "fcm_token": fcmToken }, headers: {"X-Version": versionCodeHeader});
       print("Response Status = ${response.statusCode}");
       NetworkRespoonseHandler.handleResponse(
         errorListener: this,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
@@ -143,6 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
         this.isLoading = true;
       });
       await SharedPrefsHelper.addInvidedById(referralController.text);
+      String fcmToken = await FirebaseMessaging().getToken();
       String referralCode = await SharedPrefsHelper.getInvidedById();
       print("Referral Code recived while signUp = ${referralCode}");
       var result = await http.post(signUpUrl, body: {
@@ -153,6 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> implements NetworkErrorList
           "mobile_number_countryCode": widget.countryCode,
           "userType": "CUSTOMER",
           "referralCode": referralCode,
+          "fcm_token": fcmToken
       }, headers: {"X-Version": versionCodeHeader});
       NetworkRespoonseHandler.handleResponse(
         errorListener: this,

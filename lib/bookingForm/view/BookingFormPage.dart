@@ -429,10 +429,10 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
             ), */
             Container(
               width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(left: 24.0, right: 24.0),
+              margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1")
+                color: Theme.of(context).buttonColor
               ),
               child: FlatButton(
                 onPressed: onAddCouponsButtonPressed,
@@ -441,7 +441,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(left: 24.0, right: 24.0),
+              margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1")

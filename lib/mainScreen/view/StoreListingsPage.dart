@@ -217,8 +217,12 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                   Container(
                     child: Text(storageSpace.name, style: Theme.of(context).textTheme.body1,),
                   ),
-                  Container(height: 25,),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
                   Container(
+                    padding: EdgeInsets.only(bottom: 8.0),
                     child: Align(
                       alignment: Alignment.bottomLeft,
                       child: Row(

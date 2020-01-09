@@ -37,6 +37,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
       timings
       ownerDetail
       open
+      type
       ownerImage
       numOfBookings
       area {
@@ -226,19 +227,14 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                             margin: EdgeInsets.only(left: 4.0, right: 8.0),
                             child: Text(storageSpace.rating.toString(), style: Theme.of(context).textTheme.body1,),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              alignment: Alignment.centerLeft,
-                              child: Icon(Icons.star, color: Colors.yellow, size: 20,),
-                            ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Icon(Icons.star, color: Colors.yellow, size: 20,),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              margin: EdgeInsets.only(left: 4.0, right: 16.0),
-                              child: Center(child: Text("${storageSpace.numOfBookings} Bookings",)),
-                            ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            margin: EdgeInsets.only(left: 12.0, right: 4.0),
+                            child: Center(child: Text("${storageSpace.numOfBookings} Bookings",)),
                           )
                         ],
                       ),
@@ -264,7 +260,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                   ),
                 ),
                 Container(child: Text("CCTV", style: TextStyle(fontSize: 8,color: storageSpace.hasCCTV ? Colors.black : Colors.transparent),),),
-                Container(height: 10,),
+                Container(height: 15,),
                 Container(child: Text("\u20B9${(storageSpace.costPerHour*24).round()}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),),
                 // Container(child: Text("Per Day", style: TextStyle(fontSize: 10),),),
               ],
@@ -276,12 +272,17 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   }
 
   Widget selectOverlayIcon(int index) {
-    if(index == 1 || index == 2 || index == 3) {
-      return Icon(Icons.train, color: Colors.white,size: 34.0,);
-    } else if(index == 4) {
-      return Icon(Icons.local_airport, color: Colors.white,size: 34.0,);
-    } else {
-      return Icon(Icons.store, color: Colors.white,size: 34.0,);
+    switch(storageSpaces[index].type) {
+      case "Railway Station": 
+        return Icon(Icons.train, color: Colors.white,size: 34.0,);
+      case "Airport":
+        return Icon(Icons.local_airport, color: Colors.white,size: 34.0,);
+      case "Hotel":
+        return Icon(Icons.hotel, color: Colors.white,size: 34.0,);
+      case "Store":
+        return Icon(Icons.store, color: Colors.white,size: 34.0,);
+      default:
+        return Icon(Icons.store, color: Colors.white,size: 34.0,);
     }
   }
 }

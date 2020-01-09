@@ -55,7 +55,8 @@ class AppDatabase {
         location TEXT NULL,
         ownerDetail TEXT NULL,
         open INTEGER NOT NULL,
-        numOfBookings INTEGER
+        numOfBookings INTEGER,
+        type TEXT NULL
       )''');
       await db.execute('''CREATE TABLE Media(
         id TEXT,
@@ -89,6 +90,7 @@ class AppDatabase {
 
   void _updateDatabaseFrom1to2(Batch batch) {
     batch.execute('ALTER TABLE Storages ADD COLUMN numOfBookings INTEGER DEFAULT 50');
+    batch.execute('ALTER TABLE Storages ADD COLUMN type TEXT DEFAULT ''');
   }
 
   Future<StorageSpacesDAO> getStorageSpaceDAO() async {

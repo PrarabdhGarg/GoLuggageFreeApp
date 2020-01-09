@@ -5,6 +5,7 @@ import 'package:go_luggage_free/more/ContactUs.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/views/InfoRow.dart';
 import 'package:go_luggage_free/storeInfoScreen/model/StoreInfoScreenController.dart';
+import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:url_launcher/url_launcher.dart';

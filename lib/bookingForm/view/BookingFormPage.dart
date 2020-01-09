@@ -494,7 +494,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
         String jwt = await SharedPrefsHelper.getJWT();
         String couponId = "";
         try {
-          couponId = selectedCoupon.id;
+          couponId = selectedCoupon.id == "-1" ? selectedCoupon.code : selectedCoupon.id;
         } catch(e) {
           print("Ecxeption in getting id for slected coupon");
           couponId = "";
@@ -564,7 +564,9 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
 
   Widget couponSelectedWidget() {
     print("Entered Coupon Selected Widget");
-    if(couponSelected) {
+    print("$couponSelected");
+    print("${prefix0.selectedCoupon?.id}");
+    if(prefix0.selectedCoupon != null && prefix0.selectedCoupon.id != "-1") {
       return Container(
         margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         padding: EdgeInsets.all(8.0),
@@ -594,11 +596,30 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
         ),
       );
     }
+    if(prefix0.selectedCoupon != null && selectedCoupon.id == "-1") {
+      print("Entered second if");
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          color: Theme.of(context).backgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: HexColor("#DDDDDD"),
+              spreadRadius: 1.0,
+              blurRadius: 1.0,
+            ),
+          ],
+        ),
+        child: Text(prefix0.selectedCoupon.code),
+      );
+    }
     return Container();
   }
 
   onAddCouponsButtonPressed() async {
-    bool isCouponSelected = await Navigator.push(context, MaterialPageRoute(builder: (context) => CouponSelectionScreen(
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => CouponSelectionScreen(
       checkInTime: _checkIn?.toIso8601String(),
       checkOutTime: _checkOut?.toIso8601String(),
       name: nameController.text.toString(),
@@ -607,8 +628,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
       userGovtId: govtIdNumber.text.toString(),
       netStorageCost: price,
     ), settings: RouteSettings(name: "Coupons Selection ")));
-    print("Boolean recived from pop = $isCouponSelected");
-    if(isCouponSelected) {
+    if(prefix0.selectedCoupon != null) {
       setState(() {
         price = calculateStorageCost(true);
         couponSelected = true;

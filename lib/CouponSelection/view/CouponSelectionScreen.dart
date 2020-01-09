@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/CouponSelection/model/Coupon.dart';
@@ -25,6 +26,7 @@ class CouponSelectionScreen extends StatefulWidget {
   String checkOutTime;
   String storageSpaceId;
   int netStorageCost;
+  TextEditingController codeController = TextEditingController(text: "");
 
   CouponSelectionScreen({
     @required this.name,
@@ -42,13 +44,20 @@ class CouponSelectionScreen extends StatefulWidget {
 
 class _CouponSelectionScreenState extends State<CouponSelectionScreen> implements NetworkErrorListener{
   List<Coupon> coupons;
+  List<String> suggestions = ["Hello", "Hi"];
   bool isLoading;
+  String manualCouponCode = "";
 
   @override
   void initState() {
     getApplicableCoupons();
+    getSuggestions();
     this.coupons = [];
     this.isLoading = true;
+  }
+
+  Future<Null> getSuggestions() {
+    // TODO Implement feature of auto-complete in the future
   }
 
   @override
@@ -95,44 +104,109 @@ class _CouponSelectionScreenState extends State<CouponSelectionScreen> implement
           )
         ),
         child: isLoading ? Center(child: CircularProgressIndicator(),) :
-          coupons.isEmpty ? Center(child: Text("Sorry. No applicable coupons"),) :
-            ListView.builder(
-              itemCount: coupons.length,
-              itemBuilder: (BuildContext context, int index) {
-                return FlatButton(
-                  onPressed: () {
-                    onDiscountCouponTapped(index);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      color: Theme.of(context).backgroundColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: HexColor("#DDDDDD"),
-                          spreadRadius: 1.0,
-                          blurRadius: 1.0,
+            Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(4.0),
+                  margin: EdgeInsets.all(4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: EdgeInsets.all(4.0),
+                          child: AutoCompleteTextField<String>(
+                            suggestions: suggestions,
+                            controller: widget.codeController,
+                            itemBuilder: (context, suggestion) => Container(
+                              child: Container(
+                                padding: EdgeInsets.all(4.0),
+                                margin: EdgeInsets.all(4.0),
+                                child: Text(suggestion, style: Theme.of(context).textTheme.body1.copyWith(color: Colors.black),),
+                              )
+                            ),
+                            suggestionsAmount: suggestions.length,
+                            clearOnSubmit: false,
+                            itemFilter: (item, query) {return item.toLowerCase().contains(query.toLowerCase());},
+                            textChanged: (String code) {
+                              print("Entered text changed");
+                              setState(() {
+                                widget.codeController.text = code;
+                                manualCouponCode = code;
+                              });
+                            },
+                            itemSubmitted: (String code) {
+                              print("Entered on Submitted button with $code");
+                              setState(() {
+                                widget.codeController.text = code;
+                                manualCouponCode = code;
+                              });
+                            },
+                            submitOnSuggestionTap: true,
+                          ),
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 4.0, left: 4.0),
+                        margin: EdgeInsets.only(right: 16.0, left: 8.0, top: 8.0),
+                        // color: Colors.blueAccent,
+                        child: GestureDetector(
+                          child: Text("ADD", style: Theme.of(context).textTheme.headline.copyWith(color: Colors.red),),
+                          onTap: () {
+                            selectedCoupon = Coupon(id: "-1", code: manualCouponCode);
+                            print("Entered text = ${widget.codeController.text}\n$manualCouponCode");
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: coupons.isEmpty ? Center(child: Text("Sorry. No applicable coupons"),) :  Container(
+                    child: ListView.builder(
+                      itemCount: coupons.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return FlatButton(
+                          onPressed: () {
+                            onDiscountCouponTapped(index);
+                          },
+                          child: Container(
                             margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                            child: Text(coupons[index].title, style: Theme.of(context).textTheme.headline.copyWith(color: coupons[index].isUseable ? Colors.black : Colors.grey))
-                        ),
-                        Container(
-                            margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                            child: Text(coupons[index].description, style: Theme.of(context).textTheme.body1.copyWith(color: coupons[index].isUseable ? Colors.black : Colors.grey))
-                        ),
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              color: Theme.of(context).backgroundColor,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: HexColor("#DDDDDD"),
+                                  spreadRadius: 1.0,
+                                  blurRadius: 1.0,
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                    child: Text(coupons[index].title, style: Theme.of(context).textTheme.headline.copyWith(color: coupons[index].isUseable ? Colors.black : Colors.grey))
+                                ),
+                                Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                    child: Text(coupons[index].description, style: Theme.of(context).textTheme.body1.copyWith(color: coupons[index].isUseable ? Colors.black : Colors.grey))
+                                ),
 
-                      ],
+                              ],
+                            ),
+                          ),
+                        );
+                      }
                     ),
                   ),
-                );
-              }
+                )
+              ],
             )
       ),
     );

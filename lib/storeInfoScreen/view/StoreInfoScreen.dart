@@ -216,7 +216,7 @@ class StoreInfoPage extends StatelessWidget {
                   Divider(color: Colors.grey[300],),
                   infoRow("Current Status", _controller.storageSpace.open ? "Open" : "Closed", Theme.of(context).textTheme.headline),
                   Divider(color: Colors.grey[300],),
-                  infoRow("Store Tmings", _controller.storageSpace.timings, Theme.of(context).textTheme.headline),
+                  infoRow("Store Timings", _controller.storageSpace.timings, Theme.of(context).textTheme.headline),
                   Divider(color: Colors.grey[300],),
                   infoRow("Price(per bag per day)", ((_controller.storageSpace.costPerHour*24.0).round()).toString(), Theme.of(context).textTheme.headline),
                   Container(height: 20,)

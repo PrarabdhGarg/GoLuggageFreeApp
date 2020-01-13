@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsHelper {
@@ -26,6 +27,7 @@ class SharedPrefsHelper {
     }
     if(name != null) {
       await _prefs.setString(NAME, name);
+      userName = await getUserName();
     }
     if(customerId != null) {
       await _prefs.setString(CUST_ID, customerId);

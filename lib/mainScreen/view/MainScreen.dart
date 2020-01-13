@@ -8,6 +8,7 @@ import 'package:go_luggage_free/more/FAQ.dart';
 import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:go_luggage_free/shared/views/ProfileWidget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
@@ -66,7 +67,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
     print("Entered Build");
     return Scaffold(
       appBar: AppBar(
-        title: Text(appBarTitle, style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
+        title: Text(titles[_selectedDrawerIndex], style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
         iconTheme: IconThemeData(color: Colors.black),
         actions: <Widget>[
           Container(
@@ -94,6 +95,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
+            ProfileWidget(),
             DrawerTile(text: "Home", onPressed: this, index: 0,),
             DrawerTile(text: "Profile", onPressed: this, index: 1,),
             DrawerTile(text: "FAQ", onPressed: this, index: 3,),

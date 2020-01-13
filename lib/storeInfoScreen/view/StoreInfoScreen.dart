@@ -43,11 +43,6 @@ class _StoreInfoScreenState extends State<StoreInfoScreen> {
               child: GestureDetector(
                 child: Center(child: Text("Contact Us", style: Theme.of(context).textTheme.body1.copyWith(color: Colors.blue[900]),)),
                 onTap: () async {
-                  /* print("Entered onTap");
-                  String phoneNumber = "+917854866007";
-                  String url = "whatsapp://send?phone=$phoneNumber";
-                  await canLaunch(url) ? launch(url) : launch("tel://$phoneNumber"); */
-                  // await FlutterLaunch.launchWathsApp(phone: "8369276419", message: "");
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => ContactUs(), settings: RouteSettings(name: "Contact Us Page")));
                 },
               ),
@@ -87,17 +82,19 @@ class StoreInfoPage extends StatelessWidget {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: CarouselSlider(
+                  viewportFraction: 1.0,
                   autoPlay: false,
                   scrollDirection: Axis.horizontal,
                   items: _controller.storageSpace.storeImages.map((image) {
                     return Builder(
                       builder: (BuildContext context) {
                         return Container(
+                          margin: EdgeInsets.only(right: 16.0, left: 16.0),
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: NetworkImage(imageBaseUrl+image),
-                              fit: BoxFit.fitWidth
+                              fit: BoxFit.fill
                             ),
                           ),
                         );

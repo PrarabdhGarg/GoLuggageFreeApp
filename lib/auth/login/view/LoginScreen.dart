@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> implements NetworkErrorListen
                 ),
                 Flexible(
                   flex: 1,
-                  child: CustomWidgets.customEditText(controller: phoneController, context: context, hint: "Please Enter Phone Number", label: "Phone Number", validator: Validators.phoneValidator, inputType: TextInputType.phone),
+                  child: CustomWidgets.customEditText(controller: phoneController, context: context, hint: "Please Enter Mobile Number", label: "Mobile Number", validator: Validators.phoneValidator, inputType: TextInputType.phone),
                 ),
                 Flexible(
                   flex: 1,

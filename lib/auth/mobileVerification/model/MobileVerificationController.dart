@@ -19,7 +19,7 @@ class MobileVerificationController with ChangeNotifier {
     this.isLoading = true;
     notifyListeners();
     final PhoneVerificationCompleted verificationCompleted = (AuthCredential phoneAuthCredential) {
-      print("Phone Number Verification Completed");
+      print("Mobile Number Verification Completed");
       // _firebaseAuth.signInWithCredential(phoneAuthCredential);
       print("Recived PhoneAuth Credential = ${phoneAuthCredential}");
     };

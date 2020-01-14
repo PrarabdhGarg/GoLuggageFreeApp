@@ -156,7 +156,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
                 ), */
                 Expanded(
                   flex: 1,
-                  child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Phone Number", hint: "Please Enter Phone Number", validator: Validators.phoneValidator, inputType: TextInputType.phone)
+                  child: CustomWidgets.customEditText(context: context, controller: phoneController,label: "Mobile Number", hint: "Please Enter Mobile Number", validator: Validators.phoneValidator, inputType: TextInputType.phone)
                 ),
               ],
             ),
@@ -176,7 +176,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
         phoneController.text = "";
       });
       final PhoneVerificationCompleted verificationCompleted = (AuthCredential phoneAuthCredential) async {
-        print("Phone Number Verification Completed");
+        print("Mobile Number Verification Completed");
         _user = await _firebaseAuth.signInWithCredential(phoneAuthCredential);
         _authCredential = phoneAuthCredential;
         print("Recived PhoneAuth Credential = ${phoneAuthCredential}");

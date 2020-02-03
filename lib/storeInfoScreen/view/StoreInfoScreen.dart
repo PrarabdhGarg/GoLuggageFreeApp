@@ -27,8 +27,8 @@ class _StoreInfoScreenState extends State<StoreInfoScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Cloakroom", style: Theme.of(context).textTheme.title,),
-          leading :IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black,),
+          leading :FlatButton(
+            child: Icon(Icons.arrow_back, color: Colors.black,),
             onPressed:() => Navigator.pop(context, false)
           ),
           actions: <Widget>[
@@ -121,6 +121,7 @@ class StoreInfoPage extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Expanded(
                         flex: 4,
@@ -128,12 +129,12 @@ class StoreInfoPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Container(
-                              margin: EdgeInsets.only(bottom: 8.0),
-                              child: Text(_controller.storageSpace.displayLocation, style: Theme.of(context).textTheme.headline)
+                              margin: EdgeInsets.only(bottom: 4.0),
+                              child: Text(_controller.storageSpace.displayLocation, style: Theme.of(context).textTheme.headline.copyWith(fontSize: 20))
                             ),
                             Container(
                               margin: EdgeInsets.only(bottom: 8.0),
-                              child: Text(_controller.storageSpace.name, style: Theme.of(context).textTheme.body2,)
+                              child: Text(_controller.storageSpace.name, style: Theme.of(context).textTheme.body2.copyWith(fontSize: 14, fontWeight: FontWeight.w600),)
                             ),
                             Container(height: 10,),
                             Container(child: Text(_controller.storageSpace.ownerDetail,style: Theme.of(context).textTheme.body1,),)
@@ -145,6 +146,7 @@ class StoreInfoPage extends StatelessWidget {
                         child: Container(
                           margin: EdgeInsets.only(left: 8.0),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Container(
                                 margin: EdgeInsets.all(8.0),
@@ -194,6 +196,7 @@ class StoreInfoPage extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 8.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(right: 8.0),
@@ -202,7 +205,7 @@ class StoreInfoPage extends StatelessWidget {
                             child: Icon(Icons.location_on, color: Theme.of(context).buttonColor,),
                           ),
                           Expanded(
-                            child: Text(_controller.storageSpace.address, style: Theme.of(context).textTheme.body1,),
+                            child: Text(_controller.storageSpace.address, style: Theme.of(context).textTheme.body1.copyWith(fontSize: 14),),
                           ),
                         ],
                       ),
@@ -215,7 +218,8 @@ class StoreInfoPage extends StatelessWidget {
                   Divider(color: Colors.grey[300],),
                   infoRow("Store Timings", _controller.storageSpace.timings, Theme.of(context).textTheme.headline),
                   Divider(color: Colors.grey[300],),
-                  infoRow("Price(per bag per day)", ((_controller.storageSpace.costPerHour*24.0).round()).toString(), Theme.of(context).textTheme.headline),
+                  // TODO decrease size of per bag per day in the bracket
+                  infoRow("Price (per bag per day)", ((_controller.storageSpace.costPerHour*24.0).round()).toString(), Theme.of(context).textTheme.headline),
                   Container(height: 20,)
                 ],
               ),

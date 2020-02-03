@@ -60,12 +60,12 @@ class MyApp extends StatelessWidget {
             ),
             buttonColor: buttonColor,
             textTheme: TextTheme(
-              title: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Roboto'),
-              button: TextStyle(color: Colors.white, fontFamily: 'Roboto'),
-              overline: TextStyle(color: buttonColor, fontSize: 10.0, fontFamily: 'Roboto'),
-              headline: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Roboto'), 
-              body1: TextStyle(color: Colors.grey, fontSize: 12, fontFamily: 'Roboto'),
-              body2: TextStyle(color: Colors.grey, fontSize: 16, fontFamily: 'Roboto'),
+              title: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.w600, fontFamily: 'Poppins'),
+              button: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+              overline: TextStyle(color: buttonColor, fontSize: 10.0, fontFamily: 'Poppins'),
+              headline: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600, fontFamily: 'Poppins'), 
+              body1: TextStyle(color: Colors.grey, fontSize: 12, fontFamily: 'Poppins'),
+              body2: TextStyle(color: Colors.grey, fontSize: 16, fontFamily: 'Poppins'),
             )
           ),
           home: LoginPage(),

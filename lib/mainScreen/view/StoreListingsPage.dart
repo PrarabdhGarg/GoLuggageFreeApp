@@ -334,12 +334,13 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                       child: Row(
                         children: <Widget>[
                           Container(
-                            margin: EdgeInsets.only(left: 4.0, right: 8.0),
+                            margin: EdgeInsets.only(top: 2.0, left: 4.0, right: 4.0),
                             child: Text(storageSpace.rating.toString(), style: Theme.of(context).textTheme.body1,),
                           ),
                           Container(
+                            margin: EdgeInsets.only(right: 4.0),
                             alignment: Alignment.centerLeft,
-                            child: Icon(Icons.star, color: Colors.yellow, size: 20,),
+                            child: Icon(Icons.star, color: HexColor("#ffc107"), size: 20,),
                           ),
                           Container(
                             alignment: Alignment.centerLeft,
@@ -358,7 +359,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
             padding: EdgeInsets.only(right: 8.0),
             child: Column(
               children: <Widget>[
-                Container(height: 25,),
+                Container(height: 15,),
                 Container(
                   height: 30,
                   width: 30,
@@ -370,8 +371,8 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                   ),
                 ),
                 Container(child: Text("CCTV", style: TextStyle(fontSize: 8,color: storageSpace.hasCCTV ? Colors.black : Colors.transparent),),),
-                Container(height: 15,),
-                Container(child: Text("\u20B9${(storageSpace.costPerHour*24).round()}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),),
+                Container(height: 20,),
+                Container(child: Text("\u20B9${(storageSpace.costPerHour*24).round()}", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 17, fontFamily: 'Roboto'),),),
                 // Container(child: Text("Per Day", style: TextStyle(fontSize: 10),),),
               ],
             ),

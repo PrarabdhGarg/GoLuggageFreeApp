@@ -44,7 +44,7 @@ class CustomWidgets {
             )
           ),
           hintText: hint,
-          labelStyle: Theme.of(context).textTheme.overline
+          labelStyle: Theme.of(context).textTheme.overline.copyWith(fontSize: 13, color: Colors.grey)
         ),
         controller: controller,
         validator: validator,

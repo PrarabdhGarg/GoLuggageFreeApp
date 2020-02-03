@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/CouponSelection/view/CouponSelectionScreen.dart';
 import 'package:go_luggage_free/auth/shared/CustomWidgets.dart';
@@ -12,17 +14,20 @@ import 'package:go_luggage_free/bookingTicketInfoScreen/view/BookingTicketInfoSc
 import 'package:go_luggage_free/mainScreen/model/BookingTicketDAO.dart';
 import 'package:go_luggage_free/shared/database/models/BookingTicket.dart';
 import 'package:go_luggage_free/shared/network/NetworkResponseHandler.dart';
-import 'package:go_luggage_free/shared/network/errors/NetworkErrorChecker.dart';
 import 'package:go_luggage_free/shared/network/errors/NetworkErrorListener.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
+import 'package:intent/action.dart' as prefix2;
+import 'package:intent/extra.dart';
+import 'package:intent/intent.dart' as prefix1;
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intent/intent.dart';
 
 class BookingFormPage extends StatefulWidget {
   double price;
@@ -37,7 +42,7 @@ class BookingFormPage extends StatefulWidget {
 class _BookingFormPageState extends State<BookingFormPage> implements NetworkErrorListener {
   DateTime _checkIn = DateTime.now();
   DateTime _checkOut = DateTime.now();
-  String selectedUserGovtIdType = prefix0.completeListOfUserGovtIdTypes[0];
+  String selectedUserGovtIdType;
   bool _termsAndConditionsAccepted = false;
   final format = DateFormat("yyyy-MM-dd HH:mm");
   bool isLoading;
@@ -70,16 +75,24 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
               flex: 1,
               child: CustomWidgets.customEditText(label: "Govt. ID(Aadhar, DL or Passport)", hint: "Enter a valid Govt. Id", validator: Validators.govtIdValidator, controller: govtIdNumber, context: context),
             ),*/
+            // TODO align govt id and id no
             Container(
               child: Row(
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 12.0, left: 32.0),
+                    margin: EdgeInsets.only(top: 14.0, left: 32.0),
                     alignment: Alignment.centerLeft,
                     child: Column(
                       children: <Widget>[
-                        Text("Govt. Id Type", style: Theme.of(context).textTheme.overline.copyWith(fontSize: 8), textAlign: TextAlign.left,),
+                        // Text("Govt. Id Type", style: Theme.of(context).textTheme.overline.copyWith(fontSize: 12), textAlign: TextAlign.left,),
                         DropdownButton<String>(
+                          hint: Text("Govt. ID Type"),
+                          underline: Divider(
+                            color: Colors.black,
+                            height: 2,
+                          ),
+                          isDense: false,
+                          isExpanded: false,
                           value: selectedUserGovtIdType,
                           icon: Icon(Icons.arrow_drop_down),
                           items: completeListOfUserGovtIdTypes.map((item) {
@@ -247,7 +260,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 16.0, bottom: 48.0),
+              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
               child: Row(
                 children: <Widget>[
                   Container(width: 24.0,),
@@ -290,7 +303,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Row(
                 children: <Widget>[
                   Container(
@@ -353,7 +366,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
+              margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Row(
                 children: <Widget>[
                   Container(
@@ -429,18 +442,6 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
             ), */
             Container(
               width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                color: Theme.of(context).buttonColor
-              ),
-              child: FlatButton(
-                onPressed: onAddCouponsButtonPressed,
-                child: Text("Add Coupons", style: Theme.of(context).textTheme.button,),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -458,6 +459,22 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                 child: Text("Book Now", style: Theme.of(context).textTheme.button,),
               ),
             ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0,),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                border: Border.all(
+                  color: prefix0.buttonColor,
+                  width: 2.0
+                )
+                // color: Theme.of(context).buttonColor
+              ),
+              child: FlatButton(
+                onPressed: onAddCouponsButtonPressed,
+                child: Text("Add Coupons", style: Theme.of(context).textTheme.button.copyWith(color: prefix0.buttonColor),),
+              ),
+            ),
             /* Align(
               alignment: Alignment.center,
               child: Container(
@@ -472,6 +489,22 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
                 ),
               ),
             ) */
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                border: Border.all(
+                  color: prefix0.buttonColor,
+                  width: 2.0
+                )
+                // color: Theme.of(context).buttonColor
+              ),
+              child: FlatButton(
+                onPressed: onShareReferralCodePressed,
+                child: Text("Share Referral Code", style: Theme.of(context).textTheme.button.copyWith(color: prefix0.buttonColor),),
+              ),
+            ),
           ],
         ),
       ),
@@ -550,6 +583,34 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
       }
     );
   } */
+
+  onShareReferralCodePressed() async {
+    String referralCode = await SharedPrefsHelper.getUserReferralCode();
+    final DynamicLinkParameters params = DynamicLinkParameters(
+      uriPrefix: "https://referrals.goluggagefree.com",
+      link: Uri.parse("https://goluggagefree.com?invitedBy=$referralCode"),
+      androidParameters: AndroidParameters(
+        packageName: "com.goluggagefree.goluggagefree",
+        minimumVersion: 9,
+        fallbackUrl: Uri.parse("https://play.google.com/store/apps/details?id=com.goluggagefree.goluggagefree")
+      ),
+      googleAnalyticsParameters: GoogleAnalyticsParameters(
+        campaign: "user-referrals",
+        medium: "peer-to-peer",
+        source: "android-app"
+      )
+    );
+    final ShortDynamicLink shortLink = await params.buildShortLink();
+    final Uri link = shortLink.shortUrl;
+    String text = "Check out the GoLuggageFree app.Find cloakrooms near you and enjoy the city luggage-free! Use my referral code: $referralCode to get 25% ogg on the first booking!\n${link.toString()}";
+    prefix1.Intent()
+      ..setAction(prefix2.Action.ACTION_SEND_MULTIPLE)
+      ..setType('text/plain')
+      ..putExtra(Extra.EXTRA_TEXT, text)
+      ..startActivity().catchError((e) => print(e));
+    Clipboard.setData(ClipboardData(text: text));
+    Fluttertoast.showToast(msg: "Copied Referral Code to clipboard");
+  }
 
   onBookingButtonPressed() async {
     print("CheckOut = ${_checkOut}");

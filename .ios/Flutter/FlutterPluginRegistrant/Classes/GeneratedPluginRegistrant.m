@@ -15,6 +15,7 @@
 #import <fluttertoast/FluttertoastPlugin.h>
 #import <geolocator/GeolocatorPlugin.h>
 #import <google_api_availability/GoogleApiAvailabilityPlugin.h>
+#import <intent/IntentPlugin.h>
 #import <location_permissions/LocationPermissionsPlugin.h>
 #import <path_provider/PathProviderPlugin.h>
 #import <permission_handler/PermissionHandlerPlugin.h>
@@ -39,6 +40,7 @@
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
   [GoogleApiAvailabilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleApiAvailabilityPlugin"]];
+  [IntentPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntentPlugin"]];
   [LocationPermissionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocationPermissionsPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];

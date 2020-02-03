@@ -29,6 +29,7 @@ Depends on all your plugins, and provides a function to register them.
   s.dependency 'fluttertoast'
   s.dependency 'geolocator'
   s.dependency 'google_api_availability'
+  s.dependency 'intent'
   s.dependency 'location_permissions'
   s.dependency 'path_provider'
   s.dependency 'permission_handler'

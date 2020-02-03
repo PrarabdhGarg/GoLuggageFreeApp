@@ -51,6 +51,7 @@ dependencies:
   geolocator: ^5.2.0
   contacts_service: ^0.3.10
   permission_handler: ^3.0.1
+  intent: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -70,12 +71,19 @@ flutter_icons:
 flutter:
 
   fonts: 
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins/Poppins-SemiBold.ttf
+          weight: 600
     - family: Roboto
       fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
-        - asset: assets/fonts/Roboto-Bold.ttf
+        - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto/Roboto-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Roboto-Italic.ttf
+        - asset: assets/fonts/Roboto/Roboto-Italic.ttf
           style: italic
   uses-material-design: true
   # The following line ensures that the Material Icons font is

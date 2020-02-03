@@ -48,6 +48,9 @@ dependencies:
   flutter_country_picker: ^0.1.4
   autocomplete_textfield: ^1.7.3
   # country_code_picker: ^1.1.7
+  geolocator: ^5.2.0
+  contacts_service: ^0.3.10
+  permission_handler: ^3.0.1
 
 dev_dependencies:
   flutter_test:

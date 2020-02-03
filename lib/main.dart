@@ -1,11 +1,9 @@
 import 'dart:async';
-
+import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:go_luggage_free/auth/login/view/LoginScreen.dart';
 import 'package:go_luggage_free/shared/network/GraphQlProvider.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
@@ -13,7 +11,6 @@ import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Sentry.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:statusbar/statusbar.dart';
 
 void main() {
   runZoned(() async{
@@ -22,7 +19,7 @@ void main() {
     onError: (Object error , StackTrace trace) {
       try {
         if(prefix0.isAppInTestingMode) {
-          print("Error occoured = $error");
+          print("Error occoured Global = $error");
           print(trace);
         } else {
           Sentry.getSentryClient().captureException(
@@ -40,6 +37,7 @@ class MyApp extends StatelessWidget {
 
   MyApp() {
     checkForDynamicLinks();
+    getPhoneBookData();
   }
 
   @override
@@ -77,6 +75,13 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<Null> getPhoneBookData() async {
+    Iterable<Contact> contacts = await ContactsService.getContacts(withThumbnails: false);
+    contacts.forEach((Contact contact) {
+      print("${contact.givenName}");
+    });
   }
 
   Future<Null> checkForDynamicLinks() async {

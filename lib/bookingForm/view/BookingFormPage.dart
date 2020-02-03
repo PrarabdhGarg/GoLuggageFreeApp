@@ -449,6 +449,7 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
               child: FlatButton(
                 onPressed: _termsAndConditionsAccepted ? () {
                   try {
+                    // showCurrencyDialog();
                     onBookingButtonPressed();
                   } catch(e) {
                     print("Ecxeption inside try for booking button, \n $e");
@@ -476,6 +477,79 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
       ),
     );
   }
+
+  /* showCurrencyDialog() async {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        int index = 0;
+        return AlertDialog(
+          elevation: 1.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0)
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                onBookingButtonPressed(currencies[index]);
+              },
+            )
+          ],
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 16.0, bottom: 32.0),
+                      child: Text("Select Currency to pay", style: Theme.of(context).textTheme.headline,),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Radio(
+                        value: 0,
+                        groupValue: index,
+                        onChanged: (int value) {
+                          setState(() {
+                            index = value;
+                          });
+                        },
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 16.0),
+                        child: Text(currencies[0]),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Radio(
+                        value: 1,
+                        groupValue: index,
+                        onChanged: (int value) {
+                          setState(() {
+                            index = value;
+                          });
+                        },
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 16.0),
+                        child: Text(currencies[1]),
+                      )
+                    ],
+                  )
+                ],
+              );
+            },
+          ),
+        );
+      }
+    );
+  } */
 
   onBookingButtonPressed() async {
     print("CheckOut = ${_checkOut}");
@@ -507,7 +581,8 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
           "userGovtIdType": "Aadhaar",
           "userGovtId": govtIdNumber.text,
           "bookingPersonName": nameController.text,
-          "couponId": couponId
+          "couponId": couponId,
+          // "currency": currency ?? "INR"
         }), headers: {HttpHeaders.authorizationHeader: jwt, "Content-Type": "application/json", "X-Version": versionCodeHeader});
         NetworkRespoonseHandler.handleResponse(
           response: responde,

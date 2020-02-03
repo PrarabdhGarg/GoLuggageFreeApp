@@ -12,7 +12,7 @@ class StorageSpaces {
       try {
         newList.add(StorageSpace.fromResponse(item));
       } catch(e) {
-
+        print(e.toString());
       }
     });
     return new StorageSpaces(newList);

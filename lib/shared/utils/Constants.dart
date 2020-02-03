@@ -49,6 +49,11 @@ List<String> completeListOfUserGovtIdTypes = [
   "Other"
 ];
 
+/* List<String> currencies = [
+  "INR",
+  "USD"
+]; */
+
 String versionCodeHeader = "3.0";
 
 String userName = "UserName";

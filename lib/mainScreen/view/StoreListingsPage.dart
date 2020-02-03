@@ -1,18 +1,21 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';  
 import 'dart:ui';
-
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix0;
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_luggage_free/mainScreen/model/StorrageSpacesDAO.dart';
+import 'package:go_luggage_free/mainScreen/model/SuggestedLocation.dart';
 import 'package:go_luggage_free/shared/database/models/StorageSpace.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/CustomAnalyticsHelper.dart';
 import 'package:go_luggage_free/storeInfoScreen/view/StoreInfoScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
-import 'package:provider/provider.dart';
-import 'dart:math';
+import 'package:http/http.dart' as http;
 
 class StoreListingsPage extends StatefulWidget {
   @override
@@ -21,6 +24,11 @@ class StoreListingsPage extends StatefulWidget {
 
 class _StoreListingsPageState extends State<StoreListingsPage> {
   List<StorageSpace> storageSpaces;
+  List<SuggestedLocation> searchSuggestions = List();
+  GlobalKey<AutoCompleteTextFieldState<SuggestedLocation>> searchKey = GlobalKey();
+  bool isLoading;
+  Timer _debounce;
+
   String getStrorageSpaces = """
   query {
       storageSpaces {
@@ -47,14 +55,112 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
     }
   }
   """;
+
+  @override
+  void initState() {
+    isLoading = true;
+    getStorageSpaceNearCoordinates(defaultLocation: true);
+  }
+
+  _onSearchQueryChanged(String searchText) {
+    if(_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(const Duration(milliseconds: 1000), () {
+      print("Fetching new data");
+      fetchUpdatedSuggestions(searchText);
+    });
+  }
+
+  Future<Null> fetchUpdatedSuggestions(String searchQuery) async {
+    List<SuggestedLocation> newSearchList = List();
+    var result = await http.get("https://atlas.mapmyindia.com/api/places/search/json?query="+searchQuery, headers: {HttpHeaders.authorizationHeader: "bearer 365019a3-e114-4f18-be4e-093d4d47a900"});
+    if(result.statusCode == 200 || result.statusCode == 201) {
+      print("Suggestions call successful with body = ${result.body}");
+      var map = jsonDecode(result.body.toString());
+      List<dynamic> places = map["suggestedLocations"];
+      if(places?.isNotEmpty ?? false) {
+        for(var place in places) {
+          print("Place = $place");
+          searchKey.currentState.addSuggestion(SuggestedLocation.fromJson(place));
+        }
+        print("New suggestionsList = $searchSuggestions");
+      }
+    } else {
+      print("Result code = ${result.statusCode}");
+      print("${result.body}");
+    }
+    // Sort out the sugesstions rquest along with Dushyant
+  }
+
+  Future<Null> getStorageSpaceNearCoordinates({@required bool defaultLocation, double lattitude, double longitude}) async {
+    setState(() {
+      isLoading = true;
+    });
+    if(defaultLocation) {
+      try {
+        print("Entering try");
+        var geolocator = Geolocator()..forceAndroidLocationManager;
+        var currentLocation = await geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation);
+        lattitude = currentLocation.latitude;
+        longitude = currentLocation.longitude;
+        print("Loction = $lattitude \n $longitude");
+      } on PlatformException catch(e) {
+        print(e.toString());
+        setState(() {
+          // TODO discuss with dus_t about this
+        });
+      }
+    }
+    print("Inside request to server with lat = $lattitude and longitude = $longitude");
+  }
+
   @override
   Widget build(BuildContext context) {
     print("Entered Build For Store Listings");
-    if(storageSpaces == null) {
-      print("Entered if");
-      return buildPage();
-    } 
-    return buildList(storageSpaces);
+    return Column(
+      children: <Widget>[
+        Container(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child:AutoCompleteTextField<SuggestedLocation>(
+                  key: searchKey,
+                  suggestions: searchSuggestions,
+                  itemFilter: (SuggestedLocation item, String query) {
+                    return true;
+                  },
+                  itemSubmitted: (SuggestedLocation item) {
+                    print("Entered Item Submittted");
+                    searchKey.currentState.textField.controller.text = item.name;
+                    getStorageSpaceNearCoordinates(defaultLocation: false, lattitude: item.lattitude, longitude: item.longitude);
+                  },
+                  itemBuilder: (BuildContext context, SuggestedLocation item) => Container(
+                    padding: EdgeInsets.all(4.0),
+                    child: Text(item.name),
+                  ),
+                  textChanged: (String text) {
+                    print("Entered on Text changed");
+                    _onSearchQueryChanged(text);
+                  },
+                )
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
+                child: GestureDetector(
+                  child: Icon(
+                    Icons.search
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: storageSpaces == null ? buildPage() : buildList(storageSpaces),
+        )
+      ],
+    );
   }
 
   Widget buildPage() {
@@ -288,5 +394,21 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
       default:
         return Icon(Icons.store, color: Colors.white,size: 34.0,);
     }
+  }
+
+  Future<List<SuggestedLocation>> getSuggestedLocations(String searchText) async {
+    if(searchText == null || searchText == "")
+      searchText = "";
+    List<SuggestedLocation> suggestionsList = List();
+    var result = await http.get("https://atlas.mapmyindia.com/api/places/search/json?query"+searchText, headers: {HttpHeaders.authorizationHeader: "bearer 365019a3-e114-4f18-be4e-093d4d47a900"});
+    if(result.statusCode == 200 || result.statusCode == 201) {
+      print("Suggestions call successful with body = ${result.body}");
+      var map = jsonDecode(result.body.toString());
+      List<dynamic> places = map["suggestedLocations"];
+      for(var place in places) {
+        suggestionsList.add(SuggestedLocation.fromJson(place));
+      }
+    }
+    return suggestionsList;
   }
 }

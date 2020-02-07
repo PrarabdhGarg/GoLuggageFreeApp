@@ -6,7 +6,11 @@ import 'package:go_luggage_free/shared/utils/Helpers.dart';
 
 String sentryDSN = "https://3c62b1ab40344f35803a04da958e7b6f@sentry.io/1851321";
 
-String baseUrl = "https://api.goluggagefree.com/";
+String productionUrl = "https://apis.goluggagefree.com/";
+
+String testUrl = "http://test.goluggagefree.com/";
+
+String baseUrl = testUrl;
 
 String imageBaseUrl = baseUrl;
 
@@ -23,6 +27,8 @@ String payForBooking = baseUrl + "api/payFor/";
 String forgotPasswordOtpGenerate = baseUrl + "users/forgotPasswordOTP";
 
 String resetPassword = baseUrl + "users/resetPassword";
+
+String getMapMyIndiaToken = baseUrl + "api/getMapMyIndiaAccessToken";
 
 // While making an api call to this end-point, you will have to add /{storageSpace.id}/book
 String makeBooking = baseUrl + "api/bookings/";

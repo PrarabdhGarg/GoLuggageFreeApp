@@ -66,6 +66,8 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
   Widget build(BuildContext context) {
     print("Entered Build");
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text(titles[_selectedDrawerIndex], style: Theme.of(context).textTheme.title, textAlign: TextAlign.start,),
         iconTheme: IconThemeData(color: Colors.black),

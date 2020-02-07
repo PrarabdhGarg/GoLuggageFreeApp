@@ -5,12 +5,11 @@ import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class FAQ extends StatelessWidget {
-  String FaqQuery = """"
+  String faqQuery = """"
     query {
       faqQuestions {
         question,
-        answer,
-        imageUrl
+        answer
       }
     }
   """;
@@ -48,7 +47,7 @@ class FAQ extends StatelessWidget {
       ),
       body: Query(
         options: QueryOptions(
-          document: FaqQuery
+          document: faqQuery
         ),
         builder: (QueryResult result, { VoidCallback refetch, FetchMore fetchMore }) {
           if(result.errors != null) {

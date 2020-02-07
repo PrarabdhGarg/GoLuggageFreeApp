@@ -29,11 +29,38 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   GlobalKey<AutoCompleteTextFieldState<SuggestedLocation>> searchKey = GlobalKey();
   bool isLoading;
   Timer _debounce;
-  String latitude = "0.0", longitude = "0.0";
+  String latitude = "", longitude = "";
 
-  String getStrorageSpaces = """
+  String getStrorageSpacesWithParams = """
   query getStorageSpaces(\$latitude: String!, \$longitude: String!) {
       storageSpaces (latitude: \$latitude, longitude: \$longitude) {
+      _id
+      name
+      ownerName
+      storeImages
+      hasCCTV
+      address
+      longAddress
+      location
+      rating
+      costPerHour
+      timings
+      ownerDetail
+      open
+      type
+      ownerImage
+      numOfBookings
+      area {
+        _id
+        name
+      }
+    }
+  }
+  """;
+
+  String getStorageSpaces = """
+  query {
+    storageSpaces {
       _id
       name
       ownerName
@@ -130,50 +157,77 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   @override
   Widget build(BuildContext context) {
     print("Entered Build For Store Listings");
-    return Column(
-      children: <Widget>[
-        Container(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child:AutoCompleteTextField<SuggestedLocation>(
-                  key: searchKey,
-                  suggestions: searchSuggestions,
-                  itemFilter: (SuggestedLocation item, String query) {
-                    return true;
-                  },
-                  itemSubmitted: (SuggestedLocation item) {
-                    print("Entered Item Submittted");
-                    searchKey.currentState.textField.controller.text = item.name;
-                    getStorageSpaceNearCoordinates(defaultLocation: false, latitude: item.lattitude, longitude: item.longitude);
-                  },
-                  itemBuilder: (BuildContext context, SuggestedLocation item) => Container(
-                    padding: EdgeInsets.all(4.0),
-                    child: Text(item.name),
-                  ),
-                  textChanged: (String text) {
-                    print("Entered on Text changed");
-                    _onSearchQueryChanged(text);
-                  },
-                )
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 4.0),
-                child: GestureDetector(
-                  child: Icon(
-                    Icons.search
-                  ),
+    return WillPopScope(
+      onWillPop: () async {
+        print("Entered on will pop scope");
+        if(latitude != "" || longitude != "") {
+          setState(() {
+            this.latitude = "";
+            this.longitude = "";
+          });
+          return false;
+        } else {
+          return true;
+        }
+      },
+      child: Column(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 16.0, left: 16.0, top: 4.0, bottom: 8.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25.0),
+              color: HexColor("#e4e6e6")
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child:Container(
+                    margin: EdgeInsets.only(right: 16.0, left: 8.0),
+                    child: AutoCompleteTextField<SuggestedLocation> (
+                      key: searchKey,
+                      suggestions: searchSuggestions,
+                      clearOnSubmit: false,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: HexColor("#b4b2b2"),
+                        ),
+                        border: InputBorder.none,
+                        hintText: "Search for nearby locations",
+                        hintStyle: Theme.of(context).textTheme.body1.copyWith(color: HexColor("#8e8b8b"), fontSize: 14)
+                      ),
+                      itemFilter: (SuggestedLocation item, String query) {
+                        return true;
+                      },
+                      itemSubmitted: (SuggestedLocation item) {
+                        print("Entered Item Submittted");
+                        searchKey.currentState.textField.controller.text = item.name;
+                        getStorageSpaceNearCoordinates(defaultLocation: false, latitude: item.lattitude, longitude: item.longitude);
+                      },
+                      itemBuilder: (BuildContext context, SuggestedLocation item) => Container(
+                        padding: EdgeInsets.all(4.0),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                          child: Text(item.name, style: Theme.of(context).textTheme.body1.copyWith(color: Colors.black),)
+                        ),
+                      ),
+                      textChanged: (String text) {
+                        print("Entered on Text changed");
+                        _onSearchQueryChanged(text);
+                      },
+                    ),
+                  )
                 ),
-              )
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          flex: 1,
-          child: buildPage(),
-        )
-      ],
+          Expanded(
+            flex: 1,
+            child: buildPage(),
+          )
+        ],
+      ),
     );
   }
 
@@ -188,9 +242,9 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
         ),
         child: Query(
           options: QueryOptions(
-            document: getStrorageSpaces,
+            document: latitude == "" && longitude == "" ? getStorageSpaces : getStrorageSpacesWithParams,
             fetchPolicy: FetchPolicy.cacheFirst,
-            variables: {
+            variables: latitude == "" && longitude == "" ? { } : {
               'latitude': latitude,
               'longitude': longitude
             }
@@ -435,5 +489,13 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
       }
     }
     return suggestionsList;
+  }
+
+  @override
+  void dispose() {
+    latitude = "";
+    longitude = "";
+    print("Entered on Dispose");
+    super.dispose();
   }
 }

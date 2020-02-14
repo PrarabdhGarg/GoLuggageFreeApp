@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> {
                   child: FlatButton(
                     child: Column(
                       children: <Widget>[
+                        Container(height: 4.0,),
                         Icon(Icons.home, color: this.currentPageId == 0 ? buttonColor : Colors.grey,),
                         this.currentPageId == 0 ? Text("Home") : Text("")
                       ],

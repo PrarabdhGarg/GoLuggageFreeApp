@@ -101,11 +101,16 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
 
   Future<Null> fetchUpdatedSuggestions(String searchQuery) async {
     String jwt = await SharedPrefsHelper.getJWT();
+    print("JWT = $jwt");
     var response = await http.get(getMapMyIndiaToken, headers: {HttpHeaders.authorizationHeader: "$jwt"});
+    print("Result code = ${response.statusCode}");
+    print("${response.body}");
     if(response.statusCode == 200) {
       String token = jsonDecode(response.body.toString())["accessToken"].toString();
       print("AccessToken Recived = $token");
       var result = await http.get("https://atlas.mapmyindia.com/api/places/search/json?query="+searchQuery, headers: {HttpHeaders.authorizationHeader: "bearer $token"});
+      print("Result code = ${result.statusCode}");
+      print("${result.body}");
       if(result.statusCode == 200 || result.statusCode == 201) {
         print("Suggestions call successful with body = ${result.body}");
         var map = jsonDecode(result.body.toString());
@@ -117,12 +122,8 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
           }
           print("New suggestionsList = $searchSuggestions");
         }
-      } else {
-        print("Result code = ${result.statusCode}");
-        print("${result.body}");
       }
     }
-    // Sort out the sugesstions rquest along with Dushyant
   }
 
   Future<Null> getStorageSpaceNearCoordinates({@required bool defaultLocation, double latitude, double longitude}) async {
@@ -141,8 +142,10 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
       } on PlatformException catch(e) {
         print(e.toString());
         setState(() {
-          // TODO discuss with dus_t about this
+          
         });
+      } catch(e) {
+        print(e.toString());
       }
     } else {
       print("Entered else statement");
@@ -471,6 +474,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
   }
 
   Future<List<SuggestedLocation>> getSuggestedLocations(String searchText) async {
+    print("Entered fun 1");
     if(searchText == null || searchText == "")
       searchText = "";
     List<SuggestedLocation> suggestionsList = List();

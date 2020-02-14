@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -37,7 +36,7 @@ class MyApp extends StatelessWidget {
 
   MyApp() {
     checkForDynamicLinks();
-    getPhoneBookData();
+    // getPhoneBookData();
   }
 
   @override
@@ -77,12 +76,12 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Future<Null> getPhoneBookData() async {
+  /* Future<Null> getPhoneBookData() async {
     Iterable<Contact> contacts = await ContactsService.getContacts(withThumbnails: false);
     contacts.forEach((Contact contact) {
       print("${contact.givenName}");
     });
-  }
+  } */
 
   Future<Null> checkForDynamicLinks() async {
     print("Entered dynamic links handler");

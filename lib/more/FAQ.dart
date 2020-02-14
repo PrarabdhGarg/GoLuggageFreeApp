@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/more/ContactUs.dart';
-import 'package:go_luggage_free/more/Question.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+
+class Question {
+  String question;
+  String answer;
+
+  Question({
+    this.question,
+    this.answer
+  });
+}
 
 class FAQ extends StatelessWidget {
-  String faqQuery = """"
-    query {
-      faqQuestions {
-        question,
-        answer
-      }
-    }
-  """;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,50 +45,23 @@ class FAQ extends StatelessWidget {
           )
         ],
       ),
-      body: Query(
-        options: QueryOptions(
-          document: faqQuery
+      body: Container(
+        margin: EdgeInsets.all(8.0),
+        child: ListView.builder(
+          itemCount: faqs.length,
+          itemBuilder: (context, index) => Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(4.0),
+                child: Text(faqs[index].question, style: Theme.of(context).textTheme.headline, textAlign: TextAlign.left,),
+              ),
+              Container(
+                padding: EdgeInsets.all(4.0),
+                child: Text(faqs[index].answer, style: Theme.of(context).textTheme.body1, textAlign: TextAlign.left,),
+              )
+            ],
+          ),
         ),
-        builder: (QueryResult result, { VoidCallback refetch, FetchMore fetchMore }) {
-          if(result.errors != null) {
-            print("Error in Fetching Faq = ${result.errors}");
-            return Center(child: Text("An Error Occoured. Please try later"),);
-          }
-          if(result.loading) {
-            print("Loading FAQ's data");
-            return Center(child: CircularProgressIndicator(),);
-          }
-          print("Result for faq = ${result.data.toString()}");
-          List<dynamic> faqs = result.data["faqQuestions"];
-          List<Question> questions = [];
-          faqs.forEach((faq) {
-            questions.add(Question.fromMap(faq));
-          });
-          if(questions.isEmpty) {
-            return Center(child: Text("No FAQ Questions yet. Try again later"),);
-          }
-          return Container(
-            child: ListView.builder(
-              itemCount: questions.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                        child: Text(questions[index].question, style: Theme.of(context).textTheme.headline),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                        child: Text(questions[index].answer, style: Theme.of(context).textTheme.body1.copyWith(color: Colors.black),),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        },
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_luggage_free/bookingForm/view/BookingFormPage.dart';
 import 'package:go_luggage_free/more/ContactUs.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BookingFormScreen extends StatelessWidget {
   double price;

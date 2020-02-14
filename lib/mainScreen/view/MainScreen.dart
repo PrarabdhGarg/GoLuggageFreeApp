@@ -1,6 +1,9 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_luggage_free/mainScreen/view/DrawerTile.dart';
 import 'package:go_luggage_free/mainScreen/view/HomePage.dart';
 import 'package:go_luggage_free/more/ContactUs.dart';
@@ -8,7 +11,9 @@ import 'package:go_luggage_free/more/FAQ.dart';
 import 'package:go_luggage_free/profile/view/ProfileScreen.dart';
 import 'package:go_luggage_free/shared/utils/Constants.dart';
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
+import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:go_luggage_free/shared/views/ProfileWidget.dart';
+import 'package:go_luggage_free/bookingForm/view/BookingFromScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
@@ -97,14 +102,48 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
-            ProfileWidget(),
+            // ProfileWidget(),
             DrawerTile(text: "Home", onPressed: this, index: 0,),
             DrawerTile(text: "Profile", onPressed: this, index: 1,),
             DrawerTile(text: "FAQ", onPressed: this, index: 3,),
             DrawerTile(text: "Contact Us", onPressed: this, index: 2,),
             Container(
+              alignment: Alignment.centerLeft,
+              child: FlatButton(
+                child: Text("Refer and Earn 25% Off", style: Theme.of(context).textTheme.headline.copyWith(color: buttonColor),),
+                onPressed: () async {
+                  String referralCode = await SharedPrefsHelper.getUserReferralCode();
+                  final DynamicLinkParameters params = DynamicLinkParameters(
+                    uriPrefix: "https://referrals.goluggagefree.com",
+                    link: Uri.parse("https://goluggagefree.com?invitedBy=$referralCode"),
+                    androidParameters: AndroidParameters(
+                      packageName: "com.goluggagefree.goluggagefree",
+                      minimumVersion: 9,
+                      fallbackUrl: Uri.parse("https://play.google.com/store/apps/details?id=com.goluggagefree.goluggagefree")
+                    ),
+                    googleAnalyticsParameters: GoogleAnalyticsParameters(
+                      campaign: "user-referrals",
+                      medium: "peer-to-peer",
+                      source: "android-app"
+                    )
+                  );
+                  final ShortDynamicLink shortLink = await params.buildShortLink();
+                  final Uri link = shortLink.shortUrl;
+                  String text = "Download the *GoLuggageFree App*. Find cloakrooms near you and enjoy the city luggage-free! Use my referral code: $referralCode to get 25% off on your first booking. ${link.toString()}";
+                  /* prefix1.Intent()
+                    ..setAction(prefix2.Action.ACTION_SEND_MULTIPLE)
+                    ..setType('text/plain')
+                    ..putExtra(Extra.EXTRA_TEXT, text)
+                    ..startActivity().catchError((e) => print(e)); */
+                  await canLaunch("whatsapp://send?text=$text") ? launch("whatsapp://send?text=$text") : print("Unable to launch whatsApp on phone");
+                  Clipboard.setData(ClipboardData(text: text));
+                  Fluttertoast.showToast(msg: "Copied Referral Code to clipboard");
+                },
+              ),
+            ),
+            Container(
               alignment: Alignment.bottomLeft,
-              margin: EdgeInsets.only(left: 8.0, top: (MediaQuery.of(context).size.height * 0.75)),
+              margin: EdgeInsets.only(left: 8.0, top: (MediaQuery.of(context).size.height * 0.5)),
               child: RichText(
                 text: TextSpan(
                     text: "Privacy Policy",
@@ -117,7 +156,7 @@ class MainScreenState extends State<MainScreen>  implements OnDrawerItemClickedC
             ),
             Container(
               padding: EdgeInsets.all(8.0),
-              child: Text("Vesion: 1.0.3"),
+              child: Text("Vesion: 1.1.3"),
             )
           ],
         ),

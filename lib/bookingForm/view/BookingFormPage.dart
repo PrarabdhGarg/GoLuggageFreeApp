@@ -20,14 +20,10 @@ import 'package:go_luggage_free/shared/utils/Constants.dart' as prefix0;
 import 'package:go_luggage_free/shared/utils/Helpers.dart';
 import 'package:go_luggage_free/shared/utils/SharedPrefsHelper.dart';
 import 'package:go_luggage_free/shared/views/StandardAlertBox.dart';
-import 'package:intent/action.dart' as prefix2;
-import 'package:intent/extra.dart';
-import 'package:intent/intent.dart' as prefix1;
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:intent/intent.dart';
 
 class BookingFormPage extends StatefulWidget {
   double price;
@@ -442,25 +438,6 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
             ), */
             Container(
               width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1")
-              ),
-              child: FlatButton(
-                onPressed: _termsAndConditionsAccepted ? () {
-                  try {
-                    // showCurrencyDialog();
-                    onBookingButtonPressed();
-                  } catch(e) {
-                    print("Ecxeption inside try for booking button, \n $e");
-                  }
-                } : null,
-                child: Text("Book Now", style: Theme.of(context).textTheme.button,),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 16.0,),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -502,7 +479,26 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
               ),
               child: FlatButton(
                 onPressed: onShareReferralCodePressed,
-                child: Text("Share Referral Code", style: Theme.of(context).textTheme.button.copyWith(color: prefix0.buttonColor),),
+                child: Text("Refer and Earn 25% off", style: Theme.of(context).textTheme.button.copyWith(color: prefix0.buttonColor),),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(left: 24.0, right: 24.0, top: 8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                color: _termsAndConditionsAccepted ? Theme.of(context).buttonColor : HexColor("#5874a1")
+              ),
+              child: FlatButton(
+                onPressed: _termsAndConditionsAccepted ? () {
+                  try {
+                    // showCurrencyDialog();
+                    onBookingButtonPressed();
+                  } catch(e) {
+                    print("Ecxeption inside try for booking button, \n $e");
+                  }
+                } : null,
+                child: Text("Book Now", style: Theme.of(context).textTheme.button,),
               ),
             ),
           ],
@@ -602,12 +598,13 @@ class _BookingFormPageState extends State<BookingFormPage> implements NetworkErr
     );
     final ShortDynamicLink shortLink = await params.buildShortLink();
     final Uri link = shortLink.shortUrl;
-    String text = "Check out the GoLuggageFree app.Find cloakrooms near you and enjoy the city luggage-free! Use my referral code: $referralCode to get 25% ogg on the first booking!\n${link.toString()}";
-    prefix1.Intent()
+    String text = "Download the *GoLuggageFree App*. Find cloakrooms near you and enjoy the city luggage-free! Use my referral code: $referralCode to get 25% off on your first booking. ${link.toString()}";
+    /* prefix1.Intent()
       ..setAction(prefix2.Action.ACTION_SEND_MULTIPLE)
       ..setType('text/plain')
       ..putExtra(Extra.EXTRA_TEXT, text)
-      ..startActivity().catchError((e) => print(e));
+      ..startActivity().catchError((e) => print(e)); */
+    await canLaunch("whatsapp://send?text=$text") ? launch("whatsapp://send?text=$text") : print("Unable to launch whatsApp on phone");
     Clipboard.setData(ClipboardData(text: text));
     Fluttertoast.showToast(msg: "Copied Referral Code to clipboard");
   }

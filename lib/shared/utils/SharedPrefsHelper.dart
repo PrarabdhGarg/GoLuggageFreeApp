@@ -13,6 +13,7 @@ class SharedPrefsHelper {
   static final String CUST_ID = "CUST_ID";
   static final String REFFERED_BY = "REFFERED_BY";
   static final String USER_REFERRAL = "USER_REFERRAL";
+  static final String MAP_MY_INDIA_ACCESS_TOKEN = "ACCESS_TOKEN";
 
   static Future<Null> saveUserData({String userId, String name, String email, String mobileNumber, @required String jwt, String customerId, String userReferralCode}) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -154,5 +155,20 @@ class SharedPrefsHelper {
       return referral;
     }
     return "";
+  }
+
+  static Future<Null> setMapMyIndiaAccessToken(String token) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    bool result = await _prefs.setString(MAP_MY_INDIA_ACCESS_TOKEN, token);
+    print("Result for adding = $result");
+  }
+
+  static Future<String> getMapMyIndiaAccessToken() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String token = await _prefs.getString(MAP_MY_INDIA_ACCESS_TOKEN);
+    if(token == null || token.isEmpty) {
+      return "";
+    }
+    return token;
   }
 }

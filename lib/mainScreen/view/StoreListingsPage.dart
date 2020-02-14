@@ -101,31 +101,35 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
 
   Future<Null> fetchUpdatedSuggestions(String searchQuery) async {
     String jwt = await SharedPrefsHelper.getJWT();
-    print("JWT = $jwt");
-    var response = await http.get(getMapMyIndiaToken, headers: {HttpHeaders.authorizationHeader: "$jwt"});
-    print("Result code = ${response.statusCode}");
-    print("${response.body}");
-    if(response.statusCode == 200) {
+    String mmiToken = await SharedPrefsHelper.getMapMyIndiaAccessToken();
+    if(mmiToken == "") {
+      var response = await http.get(getMapMyIndiaToken, headers: {HttpHeaders.authorizationHeader: "$jwt"});
+      print("Result code = ${response.statusCode}");
+      print("${response.body}");
+      if(response.statusCode != 200) 
+        return;
       String token = jsonDecode(response.body.toString())["accessToken"].toString();
       print("AccessToken Recived = $token");
-      var result = await http.get("https://atlas.mapmyindia.com/api/places/search/json?query="+searchQuery, headers: {HttpHeaders.authorizationHeader: "bearer $token"});
-      print("Result code = ${result.statusCode}");
-      print("${result.body}");
-      if(result.statusCode == 200 || result.statusCode == 201) {
-        print("Suggestions call successful with body = ${result.body}");
-        var map = jsonDecode(result.body.toString());
-        List<dynamic> places = map["suggestedLocations"];
-        if(places?.isNotEmpty ?? false) {
-          for(var place in places) {
-            print("Place = $place");
-            searchKey.currentState.addSuggestion(SuggestedLocation.fromJson(place));
-          }
-          print("New suggestionsList = $searchSuggestions");
+      await SharedPrefsHelper.setMapMyIndiaAccessToken(token);
+    }
+    var result = await http.get("https://atlas.mapmyindia.com/api/places/search/json?query="+searchQuery, headers: {HttpHeaders.authorizationHeader: "bearer $mmiToken"});
+    print("Result code = ${result.statusCode}");
+    print("${result.body}");
+    if(result.statusCode >= 200 && result.statusCode < 300) {
+      print("Suggestions call successful with body = ${result.body}");
+      var map = jsonDecode(result.body.toString());
+      List<dynamic> places = map["suggestedLocations"];
+      if(places?.isNotEmpty ?? false) {
+        searchKey.currentState.suggestions = [];
+        for(var place in places) {
+          print("Place = $place");
+          searchKey.currentState.addSuggestion(SuggestedLocation.fromJson(place));
         }
+        print("New suggestionsList = $searchSuggestions");
       }
     }
   }
-
+  
   Future<Null> getStorageSpaceNearCoordinates({@required bool defaultLocation, double latitude, double longitude}) async {
     print("Entered getNearLocation");
     setState(() {
@@ -204,7 +208,7 @@ class _StoreListingsPageState extends State<StoreListingsPage> {
                         return true;
                       },
                       itemSubmitted: (SuggestedLocation item) {
-                        print("Entered Item Submittted");
+                        print("Entered Item Submittted with ${item.lattitude} , ${item.longitude}");
                         searchKey.currentState.textField.controller.text = item.name;
                         getStorageSpaceNearCoordinates(defaultLocation: false, latitude: item.lattitude, longitude: item.longitude);
                       },
